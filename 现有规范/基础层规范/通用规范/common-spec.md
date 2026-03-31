@@ -3,7 +3,7 @@ description: "AI Coding Rules - 通用编码规范"
 globs: "*.md,*.java,*.cpp,*.ts,*.js,*.vue,*.py,*.go,*.rs,*.cs,*.swift,*.kt"
 alwaysApply: false
 version: 1.0.1
-author: wangxin49245
+author: 架构办
 created: 2025-11-3
 lastUpdated: 2025-11-3
 ---
@@ -222,4 +222,4 @@ lastUpdated: 2025-11-3
 
 | 版本 | 日期 | 修改内容 | 作者 |
 |------|------|----------|------|
-| 1.0.1 | 2025-11-3 | 初始版本，参考 Google/lifedever 规范 | wangxin49245 |
+| 1.0.1 | 2025-11-3 | 初始版本，参考 Google/lifedever 规范 | 架构办 |
