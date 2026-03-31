@@ -1,565 +1,415 @@
 ---
-description: "AI Coding Rules - 单元测试规范"
-globs: *.md,*.java
+description: "AI Coding Rules - 单元测试通用规范"
+globs: "*.md,*.java,*.cpp,*.ts,*.py,*.go,*.rs"
 alwaysApply: false
-version: 1.0.0
-author: liulm50695
-created: 2025-09-19
-lastUpdated: 2025-09-19
+version: 1.0.1
+author: 架构办
+created: 2025-11-3
+lastUpdated: 2025-11-3
 ---
 
-# CCM单元测试规范
+# 单元测试通用规范
 
-## 强制约束
+## 概述
 
-### 1. 测试框架要求
+本规范为单元测试的通用规范，参考 AAA（Arrange-Act-Assert）、Given-When-Then、测试金字塔等知名方法论，为 AI 编码助手提供测试编写指导。
 
-**必须**使用以下技术栈进行单元测试：
-- **JUnit**: 4.12版本（已配置）
-- **Spring Boot Test**: 2.7.18版本（通过JResCloud集成）
-- **Spring Test**: 用于集成测试（已配置）
-- **JUnit Assert**: 用于断言验证（**推荐使用**）
-- **Lombok**: @Slf4j用于日志记录
-- **FastJSON**: com.alibaba.fastjson.JSON用于JSON处理
-- **XStream**: 用于XML序列化处理
+## 核心原则
 
-### 2. 测试目录结构要求
+### 测试目的
 
-**必须**严格按照以下目录结构组织测试代码：
-```
-src/test/java/com/hundsun/ccm/fundtransfer/
-├── [银行代码]/                    # 按银行分类的测试
-│   ├── service/                   # 银行特定服务测试
-│   │   └── MoneyOrderServiceTest.java
-│   └── [bank_code]rec/           # 银行报文处理测试
-│       └── [Bank]SendTest.java
-├── integration/                   # 集成模块测试
-│   └── stragy/                   # 策略模块测试
-│       └── BankLimiterStrategyManagerTest.java
-├── test/                         # 通用测试工具
-│   └── DozerMapperTest.java
-└── [其他银行目录]/
-    ├── service/
-    └── [bank_code]rec/
-```
+| 目的 | 说明 |
+|------|------|
+| **验证正确性** | 验证代码是否按预期工作 |
+| **回归保护** | 防止修改破坏已有功能 |
+| **文档作用** | 测试即文档，展示代码用法 |
+| **设计反馈** | 测试困难通常意味着设计问题 |
 
-**银行代码目录示例**：
-- `Icbc/` - 工商银行
-- `abc/` - 农业银行
-- `ccb/` - 建设银行
-- `boc/` - 中国银行
-- `cmb/` - 招商银行
-- `citic/` - 中信银行
-- `xy/` - 兴业银行
-- `sh/` - 上海银行
+### FIRST 原则
 
-### 3. 测试类命名规范
+| 原则 | 说明 |
+|------|------|
+| **Fast（快速）** | 测试执行应毫秒级完成 |
+| **Independent（独立）** | 测试之间无依赖，可独立运行 |
+| **Repeatable（可重复）** | 每次运行结果一致，无随机性 |
+| **Self-Validating（自验证）** | 测试结果明确，无需人工判断 |
+| **Timely（及时）** | 测试与代码同步编写 |
 
-**必须**遵循以下命名约定：
-- 服务测试类：`MoneyOrderServiceTest.java`（按银行目录组织）
-- 报文处理测试类：`[Bank]SendTest.java`（如IcbcSendTest.java）
-- 工具类测试：`[工具类名]Test.java`（如DozerMapperTest.java）
-- 策略测试类：`[策略类名]Test.java`
-- 测试方法：`test[功能描述]()`或具体的业务方法名
+详见 [The FIRST Principles of Unit Testing](https://www.agilealliance.org/first-principles-of-unit-testing/)
 
-示例：
-```java
-// 正确命名
-MoneyOrderServiceTest.java
-IcbcSendTest.java
-BankLimiterStrategyManagerTest.java
+## 测试结构模式
 
-// 测试方法命名
-public void testMoneyOrder()
-public void test1251()
-public void testParseBankConfig()
-```
+### AAA 模式（Arrange-Act-Assert）
 
-### 4. 基础测试类规范
-
-#### 4.1 标准Spring Boot测试注解
-**所有测试类**必须使用以下标准注解组合：
+| 阶段 | 说明 | 示例 |
+|------|------|------|
+| **Arrange（准备）** | 准备测试数据和环境 | 创建对象、设置 Mock |
+| **Act（执行）** | 执行被测操作 | 调用方法 |
+| **Assert（断言）** | 验证结果 | 断言返回值 |
 
 ```java
-@Slf4j
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class MoneyOrderServiceTest {
+// AAA 模式示例
+@Test
+void testSaveUser() {
+    // Arrange - 准备
+    User user = new User("test", "test@example.com");
+    when(userRepository.save(user)).thenReturn(user);
     
-    @Autowired
-    private MoneyOrderServiceImpl moneyOrderService;
+    // Act - 执行
+    User result = userService.save(user);
     
-    @Before
-    public void setUp() throws Exception {
-        log.info("测试开始");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        log.info("测试结束");
-    }
+    // Assert - 断言
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo("test");
 }
 ```
 
-#### 4.2 JUnit 5风格测试（可选）
-对于新的测试类，可以使用JUnit 5风格：
+### Given-When-Then 模式
+
+| 阶段 | 说明 | 示例 |
+|------|------|------|
+| **Given（给定）** | 给定测试前置条件 | 给定用户已存在 |
+| **When（当）** | 当执行某个操作 | 当更新用户 |
+| **Then（则）** | 则期望得到结果 | 则返回更新后的用户 |
 
 ```java
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-public class BankLimiterStrategyManagerTest {
+// Given-When-Then 模式示例
+@Test
+void testUpdateUser() {
+    // Given - 给定
+    User existingUser = User.builder()
+        .id(1)
+        .name("oldName")
+        .build();
     
-    @BeforeEach
-    void setUp() {
-        // 初始化逻辑
-    }
+    // When - 当
+    User updatedUser = userService.update(1, "newName");
+    
+    // Then - 则
+    assertThat(updatedUser.getName()).isEqualTo("newName");
+}
+```
+
+### 四阶段测试模式
+
+| 阶段 | 说明 |
+|------|------|
+| **Setup（设置）** | 设置测试环境 |
+| **Exercise（执行）** | 执行被测操作 |
+| **Verify（验证）** | 验证结果 |
+| **Teardown（清理）** | 清理测试数据 |
+
+详见 [The Arrange, Act, and Assert Pattern](https://semaphoreci.com/blog/aaa-pattern-test-automation)
+
+## 测试金字塔
+
+### 金字塔结构
+
+```
+        /\
+       /  \
+      / E2E \
+     /--------\
+    / 集成测试  \
+   /------------\
+  /   单元测试   \
+ /________________\
+```
+
+| 层级 | 数量 | 速度 | 成本 |
+|------|------|------|------|
+| 单元测试 | 最多 | 最快 | 最低 |
+| 集成测试 | 中等 | 中等 | 中等 |
+| E2E 测试 | 最少 | 最慢 | 最高 |
+
+### 测试分布建议
+
+| 层级 | 比例 | 说明 |
+|------|------|------|
+| 单元测试 | 70% | 覆盖核心业务逻辑 |
+| 集成测试 | 20% | 覆盖组件交互 |
+| E2E 测试 | 10% | 覆盖关键路径 |
+
+### 测试层次
+
+| 层次 | 说明 |
+|------|------|
+| **单元测试** | 测试单个类或函数，无外部依赖 |
+| **组件测试** | 测试多个协同工作的类 |
+| **集成测试** | 测试与外部系统交互 |
+| **E2E 测试** | 从用户角度完整测试 |
+
+详见 [The Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
+
+## 测试命名规范
+
+### 命名方法
+
+| 格式 | 说明 |
+|------|------|
+| `test[方法名][场景][预期结果]` | 通用格式 |
+| `should[预期行为]When[条件]` | 行为驱动格式 |
+| `given[前置条件]when[操作]then[结果]` | GWT 格式 |
+
+### 命名示例
+
+| 场景 | 方法名 |
+|------|--------|
+| 保存有效用户 | `testSaveUser_WithValidData_ReturnsSuccess` |
+| 保存空用户 | `testSaveUser_WithNullUser_ThrowsException` |
+| 查询存在的用户 | `testFindById_WhenUserExists_ReturnsUser` |
+| 查询不存在的用户 | `testFindById_WhenUserNotExists_ReturnsNull` |
+
+### 良好命名特征
+
+| 特征 | 说明 |
+|------|------|
+| **描述性** | 名称清晰描述测试内容 |
+| **一致性** | 遵循项目命名约定 |
+| **可读性** | 无需注释即理解测试内容 |
+
+## 测试覆盖原则
+
+### 覆盖目标
+
+| 类型 | 说明 |
+|------|------|
+| **路径覆盖** | 测试所有代码路径 |
+| **边界覆盖** | 测试边界条件 |
+| **异常覆盖** | 测试异常情况 |
+
+### 边界条件
+
+| 类型 | 示例 |
+|------|------|
+| **空值** | null, "", [] |
+| **边界值** | 0, -1, MAX_VALUE |
+| **极值** | 极大/极小数值 |
+| **特殊值** | 空字符串、空白字符 |
+
+### 黄金原则
+
+| 规则 | 说明 |
+|------|------|
+| **正确性** | 测试真实需求，而非实现 |
+| **独立性** | 测试之间无依赖 |
+| **单一性** | 每个测试一个断言组 |
+| **清晰性** | 测试逻辑清晰 |
+
+## 测试代码质量
+
+### 测试代码规范
+
+| 规则 | 说明 |
+|------|------|
+| **DRY（勿重复）** | 公共逻辑提取到 fixture |
+| **单一职责** | 每个测试验证一个行为 |
+| **无魔法数字** | 使用常量替代 |
+| **清晰的断言消息** | 断言包含描述信息 |
+
+### 测试异味（Test Smells）
+
+| 问题 | 说明 |
+|------|------|
+| **冗余测试** | 测试与其他测试重复 |
+| **错误逻辑** | 测试逻辑错误 |
+| **脆弱测试** | 测试依赖实现细节 |
+| **断 言 缺 失** | 没有断言的测试 |
+| **隐藏依赖** | 依赖外部状态 |
+
+### 良好测试特征
+
+| 特征 | 说明 |
+|------|------|
+| **可读性** | 测试即文档 |
+| **可维护性** | 易于修改和扩展 |
+| **可靠性** | 结果稳定 |
+| **快速执行** | 毫秒级完成 |
+
+## 常见测试模式
+
+### 测试替身模式
+
+| 模式 | 说明 | 用途 |
+|------|------|------|
+| **Dummy** | 仅填充参数 | 不使用 |
+| **Stub** | 返回预设数据 | 状态验证 |
+| **Spy** | 记录调用信息 | 行为验证 |
+| **Mock** | 预设行为和期望 | 交互验证 |
+| **Fake** | 简化实现 | 替代真实对象 |
+
+### Stub vs Mock
+
+| 模式 | 说明 |
+|------|------|
+| **Stub** | 提供预设数据，关注状态 |
+| **Mock** | 验证交互行为，关注行为 |
+
+### 验证方式
+
+| 方式 | 说明 |
+|------|------|
+| **状态验证** | 验证对象状态变化 |
+| **行为验证** | 验证方法调用 |
+
+## 连续测试实践
+
+### TDD（测试驱动开发）
+
+| 阶段 | 说明 |
+|------|------|
+| **Red（红）** | 编写失败的测试 |
+| **Green（绿）** | 编写最小实现代码 |
+| **Refactor（重构）** | 重构代码 |
+
+### BDD（行为驱动开发）
+
+| 阶段 | 说明 |
+|------|------|
+| **Given** | 给定场景 |
+| **When** | 当发生动作 |
+| **Then** | 则得到结果 |
+
+### 测试先行
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 先写测试，再写实现 |
+| **强制** | 测试必须通过 |
+| **推荐** | 重构时保持测试绿色 |
+
+## 测试隔离
+
+### 隔离原则
+
+| 规则 | 说明 |
+|------|------|
+| **无外部依赖** | 使用 Mock 替代 |
+| **无共享状态** | 每个测试独立数据 |
+| **无执行顺序** | 任意顺序执行 |
+
+### 测试数据隔离
+
+| 方法 | 说明 |
+|------|------|
+| **随机数据** | 使用 UUID/时间戳 |
+| **测试数据库** | 使用独立数据库 |
+| **事务回滚** | 测试后回滚 |
+
+## 断言最佳实践
+
+### 断言原则
+
+| 规则 | 说明 |
+|------|------|
+| **明确断言** | 断言具体值，非笼统 |
+| **单一关注** | 每个断言验证一点 |
+| **有意义的消息** | 断言失败说明原因 |
+
+### 断言技巧
+
+| 技巧 | 说明 |
+|------|------|
+| **比较顺序** | expected在前，actual在后 |
+| **部分验证** | 使用 `hasProperty` 等 |
+| **软断言** | 收集多个失败一次报告 |
+
+## 测试审查检查清单
+
+### 代码审查
+
+| 检查项 | 说明 |
+|--------|------|
+| 测试名称 | 描述清晰 |
+| AAA 结构 | 准备/执行/断言分离 |
+| 断言质量 | 明确的断言 |
+| Mock 使用 | 正确设置和验证 |
+| 测试隔离 | 无共享状态 |
+
+### 测试质量
+
+| 检查项 | 说明 |
+|--------|------|
+| 覆盖率 | 关键路径已覆盖 |
+| 边界条件 | 边界值已测试 |
+| 异常处理 | 异常情况已测试 |
+| 性能 | 执行时间合理 |
+
+## Clean Architecture 测试覆盖
+
+### 各层测试策略
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  表现层 (Interface)                  │
+│         Controllers, API, Handlers                   │
+│  → 适合：集成测试（MockMvc, HTTP 集成测试）            │
+├─────────────────────────────────────────────────────┤
+│                  应用层 (Use Cases)                  │
+│              Interactors, UseCases                   │
+│  → 适合：单元测试（纯业务逻辑，无外部依赖）            │
+├─────────────────────────────────────────────────────┤
+│                  领域层 (Entities)                   │
+│         Entities, Domain Services                    │
+│  → 适合：单元测试（核心业务规则）                     │
+├─────────────────────────────────────────────────────┤
+│                 基础设施层 (Infrastructure)         │
+│        Repositories, External Services               │
+│  → 适合：集成测试（真实数据库、第三方服务）           │
+└─────────────────────────────────────────────────────┘
+```
+
+### 测试覆盖优先级
+
+| 层级 | 测试类型 | 优先级 | 说明 |
+|------|----------|--------|------|
+| **领域层** | 单元测试 | ⭐⭐⭐⭐⭐ | 核心业务规则，最需覆盖 |
+| **应用层** | 单元测试 | ⭐⭐⭐⭐⭐ | 用例逻辑，纯业务无依赖 |
+| **表现层** | 集成测试 | ⭐⭐⭐⭐ | HTTP 层测试 |
+| **基础设施层** | 集成测试 | ⭐⭐ | 外部依赖测试 |
+
+### 各层测试说明
+
+| 层级 | 适合测试 | 原因 |
+|------|----------|------|
+| **领域层** | 单元测试 | 核心业务规则，是代码核心价值，必须用单元测试充分覆盖 |
+| **应用层** | 单元测试 | 用例是业务流程编排，纯业务逻辑无外部依赖，适合单元测试 |
+| **表现层** | 集成测试 | 涉及 HTTP 框架，用集成测试验证请求/响应 |
+| **基础设施层** | 集成测试 | 依赖外部系统（DB、API），用集成测试验证 |
+
+### 示例：领域层单元测试
+
+```java
+// 领域层 - 实体测试
+class OrderTest {
     
     @Test
-    void testParseBankConfig() {
-        // 测试逻辑
-    }
-}
-```
-
-### 5. 测试数据管理规范
-
-#### 5.1 银行业务测试数据构造
-**必须**为每个银行提供标准的测试数据构造方法：
-
-```java
-@Slf4j
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class MoneyOrderServiceTest {
-    
-    // 工行划款测试数据
-    public static MoneyOrderReqFindDTO setIcbcMoneyOrder() throws IOException {
-        MoneyOrderReqFindDTO dto = new MoneyOrderReqFindDTO();
-        dto.setInstCode("102");  // 工行代码
-        dto.setCash(new BigDecimal("1.6"));
-        dto.setFundId("T150204686");
-        dto.setDeptCode("1");
-        dto.setOutAcntNo("609767935");
-        dto.setOutAcntName("COS测试1");
-        dto.setInAcntNo("6225380099862627");
-        dto.setInAcntName("帐户二一BPXSM");
-        dto.setPayDate("20190118");
-        dto.setRemark("工行划款测试");
-        dto.setOperationType("1");
-        dto.setSubsysNo("1234");
-        return dto;
-    }
-    
-    // 工行当日明细测试数据
-    public static AccTodayDetailFindDTO setIcbcAccTodey() {
-        AccTodayDetailFindDTO dto = new AccTodayDetailFindDTO();
-        dto.setInstCode("102");
-        dto.setAcntName("COS测试1");
-        dto.setAcntCode("609767935");
-        dto.setFundId("1");
-        dto.setBeginDate("20190118");
-        dto.setDeptCode("1");
-        dto.setSubsysNo("111");
-        return dto;
-    }
-    
-    // 工行余额查询测试数据
-    public static AccBalanceDetailFindDTO setAccBalance() {
-        AccBalanceDetailFindDTO dto = new AccBalanceDetailFindDTO();
-        dto.setFundId("1");
-        dto.setInstCode("102");
-        dto.setBeginDate("20190118");
-        dto.setEndDate("20190118");
-        dto.setDeptCode("1");
-        dto.setAcntCode("609767935");
-        dto.setAcntName("COS测试1");
-        dto.setSubsysNo("11");
-        return dto;
-    }
-}
-```
-
-#### 5.2 测试数据隔离
-**必须**确保测试数据完全隔离：
-- **使用测试专用的机构代码和账户**
-- **测试数据不能影响其他测试**
-- **使用日期时间戳生成唯一标识**
-
-### 6. Mock使用规范
-
-#### 6.1 银行适配器测试Mock
-```java
-@Slf4j
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class IcbcSendTest {
-    
-    @Autowired
-    private IcbcBackDataProcessor processRevMsg;
-    
-    @Test
-    public void test1251() throws Exception {
-        // 模拟深证通参数
-        Map<String, Object> testMap = new HashMap<>();
-        testMap.put("STZ_USER_ID", "testUser");
-        testMap.put("STZ_APP_ID", "testApp");
+    void cancel_WithPendingStatus_ReturnsCancelled() {
+        // 核心业务规则测试
+        Order order = new Order(OrderStatus.PENDING);
+        Order cancelled = order.cancel();
         
-        // 模拟银行返回的XML报文
-        String mockXmlResponse = "<OUT>" +
-                "<FILE_TYPE>1251</FILE_TYPE>" +
-                "<FUND_ID>4686</FUND_ID>" +
-                "<REPORT_TYPE>01</REPORT_TYPE>" +
-                "<BEGIN_DATE>20190130</BEGIN_DATE>" +
-                "</OUT>";
-        
-        // 执行测试
-        processRevMsg.onRevMsg(TghCodeEnum.ICBC, compressXml(mockXmlResponse), testMap);
-    }
-    
-    // 压缩XML工具方法
-    private String compressXml(String xml) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = new GZIPOutputStream(out);
-        gzip.write(xml.getBytes());
-        gzip.close();
-        return Base64.getEncoder().encodeToString(out.toByteArray());
-    }
-}
-```
-
-#### 6.2 服务层测试Mock
-```java
-@MockBean
-private BankProviderApi bankProviderApi;
-
-@MockBean
-private ChannelProviderApi channelProviderApi;
-
-@Test
-public void testMoneyOrderReq() {
-    // Given - 设置Mock行为
-    when(bankProviderApi.packageMsg(any()))
-        .thenReturn("mock银行报文");
-    when(channelProviderApi.sendMsg(any(), any(), any()))
-        .thenReturn(true);
-    
-    // When - 执行测试
-    String result = moneyOrderService.moneyOrderReq(setIcbcMoneyOrder());
-    
-    // Then - 验证结果
-    assertNotNull("返回结果不应为空", result);
-    verify(bankProviderApi, times(1)).packageMsg(any());
-    verify(channelProviderApi, times(1)).sendMsg(any(), any(), any());
-}
-```
-
-### 7. 异常测试规范
-
-**必须**为每个关键方法编写异常场景测试：
-
-```java
-@Test(expected = ServiceException.class)
-public void testMoneyOrderReq_NullInput_ThrowsException() {
-    // When & Then
-    moneyOrderService.moneyOrderReq(null);
-}
-
-@Test
-public void testMoneyOrderReq_InvalidInstCode_ReturnsError() {
-    // Given
-    MoneyOrderReqFindDTO invalidDto = setIcbcMoneyOrder();
-    invalidDto.setInstCode("999"); // 无效机构代码
-    
-    // When & Then
-    try {
-        moneyOrderService.moneyOrderReq(invalidDto);
-        fail("应该抛出异常");
-    } catch (ServiceException e) {
-        assertTrue("错误信息应包含机构代码", 
-                   e.getMessage().contains("机构代码"));
-    }
-}
-```
-
-### 8. 断言规范
-
-#### 8.1 JUnit断言示例
-```java
-// 基本断言
-Assert.assertNotNull("UUID不应为空", uuid);
-Assert.assertEquals("机构代码应该匹配", "102", result.getInstCode());
-Assert.assertTrue("金额应该大于0", result.getAmount().compareTo(BigDecimal.ZERO) > 0);
-
-// 集合断言
-Assert.assertFalse("列表不应为空", resultList.isEmpty());
-Assert.assertEquals("列表大小应该为2", 2, resultList.size());
-
-// JSON断言
-JSONObject jsonResult = JSON.parseObject(result);
-Assert.assertEquals("状态应该为成功", "SUCCESS", jsonResult.getString("status"));
-```
-
-#### 8.2 JUnit 5断言示例
-```java
-// 现代断言风格
-assertNotNull(result, "结果不应为空");
-assertEquals("SUCCESS", result.getStatus(), "状态应该为成功");
-assertTrue(result.getAmount().compareTo(BigDecimal.ZERO) > 0, "金额应该大于0");
-
-// 断言异常
-assertThrows(ServiceException.class, () -> {
-    service.processInvalidData(null);
-}, "空数据应该抛出ServiceException");
-```
-
-### 9. 银行适配器测试规范
-
-**必须**为每个银行适配器编写专门的测试：
-
-```java
-@Slf4j
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class IcbcSendTest {
-    
-    @Autowired
-    private IcbcBackDataProcessor processRevMsg;
-    
-    @Test
-    public void test1251() throws Exception {
-        // 测试工行划款回执处理
-        testBankResponse("1251", buildIcbcTransferResponse());
+        assertThat(cancelled.getStatus()).isEqualTo(OrderStatus.CANCELLED);
     }
     
     @Test
-    public void test1061() throws Exception {
-        // 测试工行当日明细回执处理
-        testBankResponse("1061", buildIcbcDetailResponse());
-    }
-    
-    @Test
-    public void test1341() throws Exception {
-        // 测试工行指令作废回执处理
-        testBankResponse("1341", buildIcbcCancelResponse());
-    }
-    
-    private void testBankResponse(String fileType, String xmlResponse) throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("STZ_USER_ID", "testUser");
-        params.put("STZ_APP_ID", "testApp");
+    void cancel_WithCompletedStatus_ThrowsException() {
+        Order order = new Order(OrderStatus.COMPLETED);
         
-        // 执行银行回执处理
-        processRevMsg.onRevMsg(TghCodeEnum.ICBC, compressXml(xmlResponse), params);
-        
-        log.info("{}类型报文处理完成", fileType);
+        assertThatThrownBy(order::cancel)
+            .isInstanceOf(InvalidStatusTransitionException.class);
     }
 }
 ```
 
-### 10. 性能测试规范
+### 总结
 
-**关键方法**必须包含性能测试：
+> **单元测试重点覆盖：领域层 + 应用层**
+> 
+> 这两层是纯业务逻辑，无外部依赖，最适合单元测试，也是代码价值最高的部分。
 
-```java
-@Test(timeout = 10000) // 10秒超时
-public void testBatchMoneyOrder_Performance() {
-    // Given
-    List<MoneyOrderReqFindDTO> batchOrders = new ArrayList<>();
-    for (int i = 0; i < 100; i++) {
-        batchOrders.add(setIcbcMoneyOrder());
-    }
-    
-    // When
-    long startTime = System.currentTimeMillis();
-    List<String> results = new ArrayList<>();
-    for (MoneyOrderReqFindDTO order : batchOrders) {
-        results.add(moneyOrderService.moneyOrderReq(order));
-    }
-    long endTime = System.currentTimeMillis();
-    
-    // Then
-    assertEquals("批量处理结果数量应正确", 100, results.size());
-    assertTrue("批量处理应在10秒内完成", (endTime - startTime) < 10000);
-    log.info("批量处理100笔指令耗时: {}ms", (endTime - startTime));
-}
-```
+## 版本历史
 
-### 11. 日志测试规范
-
-**必须**验证关键操作的日志记录：
-
-```java
-@Test
-public void testMoneyOrderReq_LogsCorrectly() {
-    // Given
-    MoneyOrderReqFindDTO order = setIcbcMoneyOrder();
-    
-    // When
-    String result = moneyOrderService.moneyOrderReq(order);
-    
-    // Then
-    assertNotNull("处理结果不应为空", result);
-    // 注意: 实际项目中应使用日志测试框架验证日志内容
-    log.info("测试划款指令处理完成, UUID: {}", result);
-}
-```
-
----
-
-## Maven配置要求
-
-### 测试执行配置
-
-**注意**：CCM系统的Maven配置默认跳过测试执行（`<maven.test.skip>true</maven.test.skip>`）。
-
-**运行测试的正确方法**：
-
-#### 方法1：临时运行测试
-```bash
-# 运行所有测试
-mvn test -Dmaven.test.skip=false
-
-# 运行特定测试类
-mvn test -Dtest=MoneyOrderServiceTest -Dmaven.test.skip=false
-
-# 运行特定银行的测试
-mvn test -Dtest=com.hundsun.ccm.fundtransfer.Icbc.service.MoneyOrderServiceTest -Dmaven.test.skip=false
-
-# 运行特定测试方法
-mvn test -Dtest=MoneyOrderServiceTest#testMoneyOrder -Dmaven.test.skip=false
-```
-
-#### 方法2：修改pom.xml配置（开发环境）
-如需长期运行测试，修改`ccm-capitalchannel/pom.xml`：
-```xml
-<properties>
-    <maven.test.skip>false</maven.test.skip>  <!-- 改为false启用测试 -->
-</properties>
-```
-
-### 测试依赖配置
-
-当前已配置的测试相关依赖：
-```xml
-<dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.12</version>
-    <scope>test</scope>
-</dependency>
-
-<!-- Spring Boot Test自动配置 -->
-<dependency>
-    <groupId>com.hundsun.jrescloud</groupId>
-    <artifactId>jrescloud-starter</artifactId>
-    <!-- 包含Spring Boot Test支持 -->
-</dependency>
-```
-
----
-
-## CCM特有测试规范
-
-### 1. 银行代码枚举测试
-```java
-@Test
-public void testBankCodeEnum() {
-    // 验证银行代码枚举
-    assertEquals("工行代码应为102", "102", TghCodeEnum.ICBC.getCode());
-    assertEquals("农行代码应为103", "103", TghCodeEnum.ABC.getCode());
-    assertEquals("建行代码应为105", "105", TghCodeEnum.CCB.getCode());
-}
-```
-
-### 2. 深证通参数测试
-```java
-@Test
-public void testSztParams() {
-    Map<String, Object> sztParams = new HashMap<>();
-    sztParams.put("STZ_USER_ID", "testUser");
-    sztParams.put("STZ_APP_ID", "testApp");
-    
-    assertNotNull("深证通用户ID不应为空", sztParams.get("STZ_USER_ID"));
-    assertNotNull("深证通应用ID不应为空", sztParams.get("STZ_APP_ID"));
-}
-```
-
-### 3. XML处理测试
-```java
-@Test
-public void testXmlProcessing() {
-    // 测试XStream XML处理
-    XStream xstream = new XStream(new XppDriver(new NoNameCoder()));
-    xstream.autodetectAnnotations(true);
-    
-    // 测试XML序列化和反序列化
-    String xml = "<test><value>123</value></test>";
-    Object result = xstream.fromXML(xml);
-    assertNotNull("XML解析结果不应为空", result);
-}
-```
-
-### 4. 对象映射测试
-```java
-@Test
-public void testDozerMapping() {
-    // 测试Dozer对象映射
-    HkAccDetailRet source = new HkAccDetailRet();
-    source.setAcntCode("1234567890");
-    
-    AccDetailRetStandDTO target = new AccDetailRetStandDTO();
-    dozerBeanMapper.map(source, target);
-    
-    assertEquals("账户代码应正确映射", "1234567890", target.getBankAccountNo());
-}
-```
-
----
-
-## 禁止行为
-
-### 绝对禁止以下行为：
-
-1. **禁止**在测试中使用生产环境的机构代码和账户
-2. **禁止**在测试中进行真实的银行通信
-3. **禁止**在测试中操作生产数据库
-4. **禁止**编写没有断言的测试方法
-5. **禁止**使用`Thread.sleep()`等待异步操作
-6. **禁止**在测试中使用硬编码的生产配置
-7. **禁止**编写相互依赖的测试用例
-8. **禁止**忽略测试失败，必须修复后再提交代码
-9. **禁止**在测试中使用真实的文件路径和网络资源
-10. **禁止**测试方法中包含业务逻辑代码
-
----
-
-## 强制检查清单
-
-### 测试类创建检查清单
-- [ ] 类名遵循命名规范（MoneyOrderServiceTest等）
-- [ ] 添加正确的注解（@SpringBootTest、@RunWith等）
-- [ ] 按银行目录正确组织测试文件
-- [ ] 添加@Slf4j日志注解
-- [ ] 实现@Before和@After方法
-
-### 测试方法检查清单
-- [ ] 测试方法名称清晰描述测试内容
-- [ ] 每个测试方法包含至少一个断言
-- [ ] 使用标准的测试数据构造方法
-- [ ] 添加适当的异常测试
-- [ ] 验证Mock对象的调用
-
-### 银行适配器测试检查清单
-- [ ] 为每个支持的FILE_TYPE编写测试
-- [ ] 测试XML报文的压缩和解压
-- [ ] 验证深证通参数的正确传递
-- [ ] 测试银行枚举代码的正确使用
-- [ ] 验证报文处理的完整流程
-
-### 性能和日志检查清单
-- [ ] 关键方法添加性能测试和超时设置
-- [ ] 验证重要操作的日志输出
-- [ ] 批量操作的性能测试
-- [ ] 异常情况的日志记录测试
+| 版本 | 日期 | 修改内容 | 作者 |
+|------|------|----------|------|
+| 1.0.1 | 2025-11-3 | 初始版本，参考 AAA/GWT/测试金字塔，新增 Clean Architecture 测试覆盖 | 架构办 |
