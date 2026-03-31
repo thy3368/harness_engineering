@@ -1,366 +1,260 @@
 ---
-description: "AI Coding Rules - API设计规范"
-globs: *.md,*.java
+description: "AI Coding Rules - API 设计规范"
+globs: "*.md,*.java,*.ts,*.go,*.py"
 alwaysApply: false
-version: 1.0.0
-author: liulm50695
-created: 2025-09-19
-lastUpdated: 2025-09-19
+version: 1.0.1
+author: 架构办
+created: 2025-11-3
+lastUpdated: 2025-11-3
 ---
 
-# CCM API设计强制约束规则
+# API 设计规范
 
-## 第一部分：控制层接口约束（Web API）
+## 概述
 
-### 控制器类约束
-- **类名必须以Controller结尾**：如`MoneyOrderController`、`AccBalanceController`
-- **必须添加**：`@RestController`
-- **必须添加**：`@RequestMapping(value = "/capitalchannelmanager")`
-- **必须添加**：`@Slf4j`注解用于日志记录
-- **建议实现相应的接口**：如`implements MoneyOrderService`
+本规范为恒生 OpenAPI RESTful 接口设计规范，规定了 HTTP + JSON 协议接口的设计原则和标准。
 
-### 控制层接口示例
+详见 [OpenAPI 的 RESTful 风格接口规范](./OpenAPI的RESTful风格接口规范V0.1.1.md)
 
-#### 标准POST接口示例
-```java
-@Slf4j
-@RestController
-@RequestMapping(value = "/capitalchannelmanager")
-public class MoneyOrderController implements MoneyOrderService {
-    
-    @Autowired
-    private MoneyOrderService moneyOrderService;
-    @Autowired
-    private DozerBeanMapper dozerBeanMapper;
-    
-    @Override
-    @PostMapping(value = "/moneyOrderReq")
-    public ResponseData<String> moneyOrderReq(@RequestBody MoneyOrderStandDTO moneyOrderStandDTO) {
-        // 数据有效性验证
-        if (StringUtils.isBlank(moneyOrderStandDTO.getCustodianBankNo())) {
-            throw new ServiceException(CCMResultCodeConstant.getMessage(
-                CCMResultCodeConstant.Status.ERROR_MISS_ORDERPARAMS, "CUSTODIAN_BANK_NO[托管行代码]"));
-        }
-        log.info("[划款请求入参] " + moneyOrderStandDTO.toString());
-        try {
-            // 业务逻辑处理
-            MoneyOrderReqFindDTO dto = new MoneyOrderReqFindDTO();
-            dozerBeanMapper.map(moneyOrderStandDTO, dto);
-            return ResponseData.ok(moneyOrderService.moneyOrderReq(dto));
-        } catch (ServiceException ex) {
-            return ResponseData.fail(500, ex.getError() != null ? 
-                ex.getError().getErrorCode() : null, ex.getMessage());
-        } catch (SQLException ex) {
-            return ResponseData.fail(500, "数据库SQL执行异常");
-        } catch (Exception ex) {
-            return ResponseData.fail(500, ex.getMessage());
-        }
-    }
+## 基本原则
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 当标准合理的时候遵守标准 |
+| **强制** | API 接口应该对用户友好，并且容易输入 |
+| **强制** | API 接口应该简单、直观、容易使用 |
+| **强制** | API 接口应该具有足够的灵活性来支持上层应用 |
+| **强制** | API 接口设计需权衡上述几个原则 |
+
+## HTTP 方法使用规范
+
+### 方法定义
+
+| 方法 | 用途 | 安全性 | 幂等性 |
+|------|------|--------|--------|
+| GET | 获取资源表述 | 安全 | 幂等 |
+| POST | 创建资源 / 控制器操作 | 不安全 | 非幂等 |
+| PUT | 完整更新或替换资源 | 不安全 | 幂等 |
+| PATCH | 部分更新资源 | 不安全 | 非幂等 |
+| DELETE | 删除资源 | 不安全 | 幂等 |
+| HEAD | 获取响应头，无正文 | 安全 | 幂等 |
+| OPTIONS | 获取支持的方法列表 | 安全 | 幂等 |
+
+### 使用规则
+
+| 方法 | 规则 |
+|------|------|
+| GET | 用于安全且幂等的信息获取；绝对不要用于不安全或非幂等的操作 |
+| POST | 通过工厂资源创建新资源；通过控制器资源修改资源；执行需要大量数据输入的查询 |
+| PUT | 用于完整更新或替换资源；客户端可以决定资源 URI 时使用 |
+| DELETE | 用于删除指定资源；应满足幂等性（多次调用副作用相同） |
+| PATCH | 用于部分更新；是**不安全且非幂等的** |
+| PUT/DELETE/PATCH | **禁用**（出于安全性考虑） |
+
+详见 [OpenAPI 规范 - 接口方法](./OpenAPI的RESTful风格接口规范V0.1.1.md#接口方法)
+
+## 资源设计规范
+
+### 基本要求
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 隐藏内部资源，暴露必需的外部资源 |
+| **强制** | 一个资源必须具有一个或者多个标识 |
+| **强制** | 使用 URI 作为资源标识，且应具有可读性 |
+| **强制** | 使用小写字母（URI 是大小写敏感的） |
+
+### 资源类型
+
+| 类型 | 说明 |
+|------|------|
+| 单个资源 | 通过 URI 标识的独立资源 |
+| 资源集合 | 一组拥有相同操作逻辑的资源集合 |
+| 控制器资源 | 以原子方式修改多个资源的资源 |
+| 计算/处理函数 | 将计算函数本身视为资源，使用 GET 获取结果 |
+
+### 资源识别建议
+
+| 规则 | 说明 |
+|------|------|
+| **推荐** | 分析需求用例，找到可以用"创建"、"读取"、"更新"或"删除"动作来操作的名词 |
+| **推荐** | 将每个名词都标识为资源 |
+| **推荐** | 使用 POST、GET、PUT 和 DELETE 方法分别为每个资源实现 CRUD 操作 |
+
+详见 [OpenAPI 规范 - 资源](./OpenAPI的RESTful风格接口规范V0.1.1.md#资源)
+
+## URI 设计规范
+
+### 基本规范
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 通过 URI 使用域及子域对资源进行合理的分组或划分 |
+| **强制** | 使用斜杠（/）来表示资源之间的层次关系 |
+| **强制** | 将 API 的版本号放入 URI 中（不使用 HTTP HEAD） |
+| **强制** | 使用小写字母 |
+| **强制** | 在路径部分使用逗号（,）和分号（;）表示非层次元素 |
+| **强制** | 禁止使用 '|' 字符 |
+| **强制** | 使用连字符（-）和下划线（_）来改善可读性（首选连字符） |
+| **强制** | 使用 "与" 符号（&）来分隔查询参数 |
+| **强制** | 避免出现文件扩展名（.php, .jsp 等） |
+| **强制** | 设计 URI 时应该让它能保持很长一段时间 |
+
+### URI 模板
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 标记替换及匹配应该保持简单 |
+| **强制** | 标记限制在 URI 的路径段、查询参数值 |
+| **强制** | 为 URI 模板中使用的每个标记添加文档 |
+
+### 重定向
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | URI 必须改变时，保留旧的 URI，使用响应码 301 重定向 |
+
+详见 [OpenAPI 规范 - URI](./OpenAPI的RESTful风格接口规范V0.1.1.md#uri)
+
+## 表述格式规范
+
+### 媒体类型
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 至少支持 JSON 和 XML 两种格式 |
+| **强制** | 允许请求和响应使用不同的媒体类型 |
+| **强制** | JSON 默认使用 UTF-8 编码 |
+| **强制** | XML 避免使用 text/xml（默认 us-ascii），使用 application/xml（UTF-8） |
+
+### JSON 规范
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 在每个表述中包含 self 链接指向资源自身 |
+| **强制** | 包含实体标识符（URN） |
+| **强制** | 如有本地化文本，添加 lang 属性标识语言 |
+
+### XML 规范
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 遵循 XML 标准规范 RFC3023 |
+| **强制** | 包含 self 链接 |
+| **强制** | 包含实体标识符（URN） |
+| **强制** | 如有自然语言文本，添加 xml:lang 属性 |
+
+### 集合表述
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 集合成员在结构和语法上相似 |
+| **强制** | 包含 self 链接 |
+| **强制** | 分页时包含 next/previous 链接 |
+| **推荐** | 包含 total 属性指示集合大小 |
+| **推荐** | 包含 first 和 last 链接 |
+
+### 二进制数据
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 避免使用 Base64 编码将二进制数据与文本数据编码在一起 |
+| **强制** | 使用 multipart/mixed 等分段媒体类型 |
+| **推荐** | 作为独立资源提供二进制数据下载链接 |
+
+详见 [OpenAPI 规范 - 表述](./OpenAPI的RESTful风格接口规范V0.1.1.md#表述)
+
+## 错误处理规范
+
+### 基本准则
+
+| 规则 | 说明 |
+|------|------|
+| **强制** | 客户端错误返回 4xx 状态码 |
+| **强制** | 服务器错误返回 5xx 状态码 |
+| **强制** | 响应中包含 Date 头 |
+| **强制** | 除非 HEAD 请求，否则都应包含正文 |
+| **强制** | 响应正文要具有描述性，说明后续措施 |
+| **强制** | 禁止返回成功状态码但正文中包含错误信息 |
+| **强制** | 非法请求需要记录在案 |
+
+### 状态码使用
+
+| 状态码 | 说明 |
+|--------|------|
+| 200 | OK - 请求成功 |
+| 201 | Created - 资源创建成功 |
+| 204 | No Content - 删除成功，无返回内容 |
+| 301 | Moved Permanently - 永久重定向 |
+| 303 | See Other - 控制器操作成功，重定向到资源 |
+| 400 | Bad Request - 请求参数错误 |
+| 401 | Unauthorized - 未认证 |
+| 403 | Forbidden - 无权限 |
+| 404 | Not Found - 资源不存在 |
+| 409 | Conflict - 资源冲突 |
+| 422 | Unprocessable Entity - 业务校验失败 |
+| 429 | Too Many Requests - 请求过多 |
+| 500 | Internal Server Error - 服务器内部错误 |
+| 503 | Service Unavailable - 服务不可用 |
+
+### 错误响应格式
+
+```json
+{
+  "error_no": "错误码",
+  "error_info": "错误描述",
+  "detail": "详细错误信息（可选）"
 }
 ```
 
-#### 标准GET接口示例
-```java
-@GetMapping(value = "/sztConfigSynchronize")
-public ResponseData<String> sztConfigSynchronize(@RequestParam(required = false) String bicCode) {
-    log.info("[深圳通配置同步] bicCode={}", bicCode);
-    try {
-        // 业务逻辑处理
-        return ResponseData.ok(sztConfigSynchronizeService.synchronize(bicCode));
-    } catch (Exception ex) {
-        log.error("深圳通配置同步失败", ex);
-        return ResponseData.fail(500, ex.getMessage());
-    }
-}
-```
+详见 [OpenAPI 规范 - 错误及处理](./OpenAPI的RESTful风格接口规范V0.1.1.md#错误及处理)
 
-### 控制层强制约束
-- **URL路径必须以功能名称命名**：如`/moneyOrderReq`、`/detailsAccBalance`
-- **POST请求必须使用**：`@RequestBody`接收JSON参数
-- **GET请求必须使用**：`@RequestParam`接收参数
-- **必须启用参数校验**：使用`StringUtils.isBlank()`等进行非空校验
-- **必须返回**：`ResponseData<T>`统一格式
-- **必须添加日志记录**：使用`log.info()`记录请求参数和处理结果
-- **必须进行异常处理**：分类处理`ServiceException`、`SQLException`等异常
+## 安全要求
 
-## 第二部分：RPC接口约束（对外服务）
+### 通讯协议
 
-### RPC接口示例
+| 规则 | 说明 |
+|------|------|
+| **强制** | 使用 HTTPS 安全超文本传输协议 |
+| **强制** | 传输敏感数据必须使用 HTTPS |
 
-#### 标准RPC接口定义
-```java
-@CloudService
-public interface MoneyOrderService {
-    
-    /**
-     * 划款指令请求
-     */
-    @CloudFunction(functionId = "moneyOrderReq")
-    ResponseData<String> moneyOrderReq(@CloudFunctionParam("moneyOrderStandDTO") MoneyOrderStandDTO param);
-    
-    /**
-     * 批量划款指令请求
-     */
-    @CloudFunction(functionId = "moneyOrderReqPatch")
-    ResponseData<String> moneyOrderReqPatch(@CloudFunctionParam("moneyOrderStandPatchDTO") MoneyOrderStandPatchDTO param);
-    
-    /**
-     * 划款指令查询
-     */
-    @CloudFunction(functionId = "moneyOrderView")
-    MoneyOrderResponse moneyOrderView(@CloudFunctionParam("queryViewDTO") QueryViewDTO param) 
-        throws InvocationTargetException, IllegalAccessException;
-}
-```
+### 身份认证
 
-#### 控制器接口定义示例
-```java
-@CloudService
-public interface AccBalanceControllerInterface {
-    
-    @CloudFunction(apiUrl = "listAccBalance", functionId = "900102")
-    ResponseData<PageInfo<HkAccBalanceVo>> listAccBalance(
-        @CloudFunctionParam(value = "instCode") String instCode,
-        @CloudFunctionParam(value = "acntCode") String acntCode,
-        @CloudFunctionParam(value = "fundId") String fundId,
-        @CloudFunctionParam(value = "pageNo") Integer pageNo,
-        @CloudFunctionParam(value = "pageSize") Integer pageSize);
-}
-```
+| 规则 | 说明 |
+|------|------|
+| **强制** | 采用 OAuth 2.0 体系进行身份认证 |
+| **强制** | 对 API 根据不同身份授予不同访问权限 |
+| **强制** | 敏感数据接口需要对用户进行权限判断 |
+| **强制** | 关键业务接口（资金交易、密码修改、客户信息）需二次认证 |
+| **强制** | 认证需要考虑失效时间（建议不超过 30 分钟） |
 
-### RPC接口强制约束
-- **接口类必须添加**：`@CloudService`
-- **方法必须添加**：`@CloudFunction(functionId = "功能标识")`
-- **参数必须添加**：`@CloudFunctionParam("参数名")`或`@CloudFunctionParam(value = "参数名")`
-- **必须返回**：`ResponseData<T>`或其它自定义响应类型
-- **功能标识必须唯一**：如`moneyOrderReq`、`detailsAccBalance`
-- **接口类名建议**：Service接口以Service结尾，Controller接口以ControllerInterface结尾
+### 输入参数
 
-## 第三部分：响应数据格式约束
+| 规则 | 说明 |
+|------|------|
+| **强制** | 禁止在 URL 直接使用敏感信息（用户账号、密码、手机号、身份证、token、session 等） |
+| **强制** | 输入参数严格长度限制和验证 |
+| **强制** | 使用安全函数处理请求参数，防止 JSON 反序列化漏洞和 XXE 漏洞 |
+| **强制** | 限制报文请求大小为 8M |
 
-### 统一响应格式
-```java
-@Data
-public final class ResponseData<T> implements Serializable {
-    
-    @CloudFunctionParam("return_code")
-    private Integer code;
-    
-    @CloudFunctionParam("biz_code")
-    private Integer bizCode;
-    
-    @CloudFunctionParam("message")
-    private String message;
-    
-    @CloudFunctionParam("data")
-    private T data;
-    
-    // 成功响应
-    public static ResponseData ok(final Object data) {
-        final ResponseData<Object> responseData = new ResponseData<>();
-        responseData.setCode(Status.SUCCESS.getCode());
-        responseData.setMessage(Status.SUCCESS.getReason());
-        responseData.setData(data);
-        return responseData;
-    }
-    
-    // 失败响应
-    public static ResponseData fail(final Integer code, final String reason) {
-        return new ResponseData(code, reason);
-    }
-}
-```
+### 输出参数
 
-### 响应数据强制约束
-- **必须使用**：`ResponseData<T>`作为统一响应格式
-- **成功响应使用**：`ResponseData.ok(data)`
-- **失败响应使用**：`ResponseData.fail(code, message)`
-- **状态码固定**：成功码`200`，错误码`500`等
-- **错误消息使用中文描述**
+| 规则 | 说明 |
+|------|------|
+| **强制** | 用户敏感信息需脱敏处理（手机号、邮箱、身份证等） |
+| **强制** | 禁止通过接口直接返回用户密码、短信验证码、令牌等认证信息 |
 
-## 第四部分：异常处理约束
+### 脱敏示例
 
-### 业务异常示例
-```java
-// 参数校验异常
-if (StringUtils.isBlank(param.getCustodianBankNo())) {
-    throw new ServiceException(CCMResultCodeConstant.getMessage(
-        CCMResultCodeConstant.Status.ERROR_MISS_ORDERPARAMS, "CUSTODIAN_BANK_NO[托管行代码]"));
-}
+| 类型 | 示例 | 脱敏后 |
+|------|------|--------|
+| 手机号 | 15888888888 | 158******88 |
+| 身份证 | 362323198102016910 | 362323*******6910 |
 
-// 统一异常处理示例
-try {
-    // 业务逻辑
-    return ResponseData.ok(result);
-} catch (ServiceException ex) {
-    return ResponseData.fail(500, ex.getError() != null ? 
-        ex.getError().getErrorCode() : null, ex.getMessage());
-} catch (SQLException ex) {
-    return ResponseData.fail(500, "数据库SQL执行异常");
-} catch (IbatisException ex) {
-    return ResponseData.fail(500, "数据库SQL操作异常");
-} catch (Exception ex) {
-    return ResponseData.fail(500, ex.getMessage());
-}
-```
+详见 [OpenAPI 规范 - 安全要求](./OpenAPI的RESTful风格接口规范V0.1.1.md#安全要求)
 
-### 错误码定义示例
-```java
-public enum Status implements StatusType {
-    SUCCESS(200, "成功"),
-    ERROR_MISS_ORDERPARAMS(20002, "划款请求失败，参数{%s}不能为空"),
-    ERROR_UUID_EXIST(20005, "UUID不存在"),
-    ERROR_HKMAIN_EXIST(20006, "该{%s}对应的划款记录不存在"),
-    ERROR_TRANSFER_BEAN(20029, "转化BEAN类型失败");
-}
-```
+## 版本历史
 
-### 异常处理强制约束
-- **必须使用**：`ServiceException`抛出业务异常
-- **必须使用**：`CCMResultCodeConstant.Status`枚举定义错误码
-- **必须分类处理异常**：`ServiceException`、`SQLException`、`IbatisException`等
-- **必须记录异常日志**：`log.error("异常描述", exception)`
-- **必须返回用户友好的错误信息**：避免技术细节泄露
-
-## 第五部分：参数校验约束
-
-### 参数校验示例
-```java
-public ResponseData<String> moneyOrderReq(@RequestBody MoneyOrderStandDTO param) {
-    // 必填参数校验
-    if (StringUtils.isBlank(param.getCustodianBankNo())) {
-        throw new ServiceException(CCMResultCodeConstant.getMessage(
-            CCMResultCodeConstant.Status.ERROR_MISS_ORDERPARAMS, "CUSTODIAN_BANK_NO[托管行代码]"));
-    }
-    
-    // 批量参数校验
-    if (CollectionUtils.isEmpty(param.getSubHkmain())) {
-        throw new ServiceException(CCMResultCodeConstant.getMessage(
-            CCMResultCodeConstant.Status.ERROR_MISS_ORDERPARAMS, "List<SubHkmain>[子参数集合]"));
-    }
-    
-    // 数据校验处理
-    if (StringUtils.isBlank(param.getFundName())) {
-        param.setFundName(param.getFundCode());
-    }
-}
-```
-
-### 参数校验强制约束
-- **POST请求必须使用**：`@RequestBody`接收JSON参数
-- **GET请求必须使用**：`@RequestParam`接收参数
-- **必须进行非空校验**：使用`StringUtils.isBlank()`检查字符串参数
-- **必须进行集合校验**：使用`CollectionUtils.isEmpty()`检查集合参数
-- **必须提供明确的错误提示**：包含参数名称和要求描述
-
-## 第六部分：数据映射约束
-
-### 对象映射示例
-```java
-@Autowired
-private DozerBeanMapper dozerBeanMapper;
-
-public ResponseData<String> processRequest(@RequestBody MoneyOrderStandDTO standDTO) {
-    // DTO转换
-    MoneyOrderReqFindDTO findDTO = new MoneyOrderReqFindDTO();
-    dozerBeanMapper.map(standDTO, findDTO);
-    
-    // 特殊字段处理
-    Map<String, Object> paramMap = getOtherParam(standDTO);
-    findDTO.setOtherParam(JSON.toJSON(paramMap).toString());
-    
-    return ResponseData.ok(service.process(findDTO));
-}
-```
-
-### 数据映射强制约束
-- **必须使用**：`DozerBeanMapper`进行对象映射
-- **必须处理特殊字段**：不能直接映射的字段需单独处理
-- **必须进行JSON序列化**：复杂对象使用`JSON.toJSON()`转换
-- **必须处理空值**：映射前后检查关键字段是否为空
-
-## 强制检查清单
-
-### 控制层接口检查清单
-- [ ] 类名以Controller结尾
-- [ ] 添加`@RestController`注解
-- [ ] 添加`@RequestMapping(value = "/capitalchannelmanager")`类级路径映射
-- [ ] 添加`@Slf4j`日志注解
-- [ ] URL路径使用功能名称命名
-- [ ] POST请求使用`@RequestBody`，GET请求使用`@RequestParam`
-- [ ] 返回`ResponseData<T>`统一格式
-- [ ] 添加完整的异常处理机制
-- [ ] 记录请求参数和处理结果日志
-- [ ] 实现相应的Service接口
-
-### RPC接口检查清单
-- [ ] 接口类添加`@CloudService`注解
-- [ ] 接口类名以Service或ControllerInterface结尾
-- [ ] 方法添加`@CloudFunction(functionId = "功能标识")`注解
-- [ ] 参数添加`@CloudFunctionParam("参数名")`注解
-- [ ] 方法返回`ResponseData<T>`或其它响应类型
-- [ ] 功能标识唯一且有意义
-- [ ] 添加适当的JavaDoc文档注释
-
-### 异常处理检查清单
-- [ ] 使用ServiceException抛出业务异常
-- [ ] 使用CCMResultCodeConstant.Status定义错误码
-- [ ] 分类处理不同类型异常
-- [ ] 记录完整异常堆栈信息
-- [ ] 提供用户友好的错误信息
-- [ ] 避免敏感信息泄露
-
-### 参数校验检查清单
-- [ ] 使用StringUtils.isBlank()检查字符串参数
-- [ ] 使用CollectionUtils.isEmpty()检查集合参数
-- [ ] 提供明确的参数错误提示
-- [ ] 包含参数名称和中文描述
-- [ ] 处理参数默认值设置
-
-### 数据映射检查清单
-- [ ] 使用DozerBeanMapper进行对象映射
-- [ ] 单独处理无法直接映射的特殊字段
-- [ ] 使用JSON.toJSON()处理复杂对象序列化
-- [ ] 检查映射前后关键字段完整性
-- [ ] 处理映射过程中的空值情况
-
-## 附录：常用工具类和方法
-
-### 字符串工具类
-```java
-// 字符串非空校验
-StringUtils.isBlank(str)
-StringUtils.isNotBlank(str)
-
-// 集合非空校验  
-CollectionUtils.isEmpty(collection)
-CollectionUtils.isNotEmpty(collection)
-```
-
-### JSON工具类
-```java
-// 对象转JSON
-JSON.toJSON(object).toString()
-
-// JSON转对象
-JSON.parseObject(jsonString, TargetClass.class)
-```
-
-### 异常工具类
-```java
-// 抛出业务异常
-throw new ServiceException(CCMResultCodeConstant.getMessage(
-    CCMResultCodeConstant.Status.ERROR_CODE, "参数描述"));
-
-// 获取错误信息
-CCMResultCodeConstant.getMessage(Status.ERROR_CODE, params...)
-```
-
-### 日志记录
-```java
-// 信息日志
-log.info("[功能描述] 参数信息");
-
-// 错误日志
-log.error("错误描述", exception);
-```
+| 版本 | 日期 | 修改内容 | 作者 |
+|------|------|----------|------|
+| 1.0.1 | 2025-11-3 | 初始版本，引用 OpenAPI RESTful 规范 | 架构办 |
