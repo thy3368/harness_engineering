@@ -3,7 +3,7 @@ description: "AI Coding Rules - 架构规范"
 globs: *.md,*.java
 alwaysApply: false
 version: 1.0.1
-author: wangxin49245
+author: 架构办
 created: 2025-9-19
 lastUpdated: 2025-11-3
 ---

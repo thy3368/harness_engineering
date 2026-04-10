@@ -3,7 +3,7 @@ description: "AI Coding Rules - 数据库设计规范"
 globs: *.md,*.sql
 alwaysApply: false
 version: 1.0.0
-author: liangzp35600
+author: 架构办
 created: 2025-9-16
 lastUpdated: 2025-9-16
 ---
