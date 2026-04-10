@@ -1,0 +1,252 @@
+# [系统名称] 业务功能树YAML
+# 基于业务功能树模板.yaml生成
+# 版本: 1.0.0
+# 生成日期: YYYY-MM-DD
+
+business_domain: "[业务域名称]"
+
+value_streams:
+  - name: "[价值流1]"
+    description: "[价值流说明：描述该价值流提供的业务价值]"
+    activities:
+      - name: "[活动1]"
+        description: "[活动说明：描述该活动的业务流程]"
+        tasks:
+          - name: "[任务1]"
+            key_field: "[关键字段]"
+            description: "[任务说明]"
+            notes: "[附加说明：补充说明、调用关系等]"
+            design_doc: "[设计文档链接]"
+            constraints:
+              - "[约束1]"
+              - "[约束2]"
+            dfx:
+              performance: "[性能描述]"
+              reliability: "[可靠性描述]"
+              compatibility: "[兼容性描述]"
+              serviceability: "[可服务性描述]"
+            interface: "[接口号/接口名]"
+            modification: "[变更说明]"
+            version: "[版本号]"
+            requirement: "[需求编号]"
+            sub_tasks:
+              - name: "[子任务1]"
+                key_field: "[关键字段]"
+                description: "[子任务说明]"
+                constraints:
+                  - "[约束1]"
+                notes: "[附加说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    key_field: "[关键字段]"
+                    description: "[说明]"
+
+              - name: "[子任务2]"
+                description: "[说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[任务说明]"
+            tasks:
+              - name: "[子任务1]"
+                key_field: "[关键字段]"
+                description: "[说明]"
+                dfx:
+                  performance: "[性能]"
+                  reliability: "[可靠性]"
+                interface: "[接口]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+
+              - name: "[子任务2]"
+                description: "[说明]"
+
+      - name: "[活动2]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            tasks:
+              - name: "[子任务1]"
+                key_field: "[关键字段]"
+                description: "[说明]"
+                default: "[默认值]"
+                modification: "[变更]"
+                version: "[版本]"
+                requirement: "[需求]"
+                constraints:
+                  - "[约束]"
+
+              - name: "[子任务2]"
+                key_field: "[关键字段]"
+                description: "[说明]"
+                constraints:
+                  - "[约束]"
+
+              - name: "[子任务3]"
+                description: "[说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+
+          - name: "[任务3]"
+            description: "[说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务4]"
+            description: "[说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                key_field: "[关键字段]"
+                description: "[说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+                  - name: "[子子任务2]"
+                    description: "[说明]"
+
+              - name: "[子任务2]"
+                description: "[说明]"
+
+  - name: "[价值流2]"
+    description: "[价值流说明]"
+    activities:
+      - name: "[活动1]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+                dfx:
+                  performance: "[性能]"
+                  reliability: "[可靠性]"
+                interface: "[接口]"
+
+              - name: "[子任务2]"
+                description: "[说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+
+      - name: "[活动2]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            tasks:
+              - name: "[子任务1]"
+                key_field: "[关键字段]"
+                description: "[说明]"
+                sub_tasks:
+                  - name: "[子子任务1]"
+                    description: "[说明]"
+
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+              - name: "[子任务3]"
+                description: "[说明]"
+
+          - name: "[任务3]"
+            description: "[说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+      - name: "[活动3]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+  - name: "[价值流3]"
+    description: "[价值流说明]"
+    activities:
+      - name: "[活动1]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            sub_tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+
+      - name: "[活动2]"
+        description: "[活动说明]"
+        tasks:
+          - name: "[任务1]"
+            description: "[任务说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"
+              - name: "[子任务3]"
+                description: "[说明]"
+              - name: "[子任务4]"
+                description: "[说明]"
+
+          - name: "[任务2]"
+            description: "[说明]"
+            tasks:
+              - name: "[子任务1]"
+                description: "[说明]"
+              - name: "[子任务2]"
+                description: "[说明]"

@@ -1,0 +1,991 @@
+# 消息中心3.0 业务功能树YAML
+# 基于业务功能树模板.yaml生成
+# 版本: 1.0.0
+# 生成日期: 2026-04-10
+
+business_domain: "消息中心3.0"
+
+value_streams:
+  - name: "ldp_mcsdk"
+    description: "消息中心SDK，提供客户端消息发布订阅能力"
+    activities:
+      - name: "发布"
+        description: "生产者消息发布流程"
+        tasks:
+          - name: "创建配置对象"
+            key_field: "NewEmptyConfig"
+            description: "该配置对象，主要用于设置生产者相关配置。多进程情况下，创建对象的名字均不一样"
+            notes: "调用生产者管理功能-查看客户端配置信息"
+            design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf"
+            sub_tasks:
+              - name: "创建配置对象"
+                key_field: "NewEmptyConfig"
+                description: "该配置对象，主要用于设置生产者相关配置"
+
+              - name: "设置目标mc地址"
+                key_field: "server_address"
+                description: "mc地址对应服务端broker.json对应的地址，如果有多个用逗号分割"
+                notes: "调用生产者管理功能-获取连接列表信息"
+                constraints:
+                  - "详见DFX-系统容量-服务集群成员个数"
+
+              - name: "设置生产者集群名"
+                key_field: "group_name"
+                description: "生产者集群的名字，加上mac地址和随机数，生成生产者的唯一名字，用以服务端根据该唯一名字判断是否需要协商、补缺和去重。默认值，sdk模式：mcsdk，在plugin模式下：集群名"
+                constraints:
+                  - "发布者名最大32字节，唯一名字（发布者名+mac+随机数）最大58字节"
+                  - "集群名中不支持/ ? @ $ & ( ) \\ | ' ' \" \" : 这些符号"
+                  - "Windows端禁止使用中文，可能导致初始化失败或管理功能乱码"
+
+              - name: "设置生产者实例名"
+                key_field: "instance_name"
+                description: "生产者实例名，用来判断工作路径下，是否存在同名生产者。默认值，在sdk模式下：mcsdk，在plugin模式下：应用名"
+                constraints:
+                  - "最大32字节"
+                  - "实例名中不支持/ ? @ $ & ( ) \\ | ' ' \" \" : 这些符号"
+                  - "Windows端禁止使用中文"
+
+              - name: "设置发布队列长度"
+                key_field: "msg_count"
+                description: "发布队列长度。如果在发布过程中，待发布的消息超过发布队列长度，内存级返回2919错误，文件级返回2918错误。默认200"
+                constraints:
+                  - "最小50，最大300000"
+
+              - name: "设置发布重试次数"
+                key_field: "producer_retry"
+                description: "设置发布重试次数，默认-1，即无限重试。0代表不重试"
+                modification: "新增：增加发布重试次数配置"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202412064383"
+
+          - name: "创建生产者"
+            key_field: "NewProducer"
+            description: "该生产者对象，主要用于提供发布相关功能"
+            notes: "调用生产者管理功能-获取生产者列表 调用生产者管理功能-获取生产者线程列表"
+
+          - name: "初始化生产者"
+            tasks:
+              - name: "绑定配置对象"
+                key_field: "Create"
+                description: "读取到相关配置，并开始初始化，主要包括，建立连接、获取主题信息、加载本地持久化文件、重发生产者未确认消息"
+
+              - name: "连接建立回调"
+                description: "根据配置的mc地址，向mc服务端获取主题列表的同时获取了所有mc节点地址，再建立与每个mc节点连接。连接建立一次回调一次"
+                sub_tasks:
+                  - name: "连接详细信息"
+                    description: "连接建立回调详细信息"
+                  - name: "事件类型"
+                    description: "连接建立事件"
+
+              - name: "连接断开回调"
+                description: "同连接建立回调，连接断开一次回调一次"
+                sub_tasks:
+                  - name: "连接详细信息"
+                    description: "连接断开回调详细信息"
+                  - name: "事件类型"
+                    description: "连接断开事件"
+
+              - name: "获取主题信息"
+                key_field: "主题信息"
+                description: "调用620927功能获取主题信息，里面包括主题名、可靠等级、过滤条件、分区信息，还包括分区对应的mc地址"
+                constraints:
+                  - "主题不许在有消费者运行的时候增加修改或者删除"
+                  - "新增主题只允许追加主题，不允许中间插入，且不能中间删除"
+                  - "主题分区的分布情况必须一样"
+                  - "如果没有清理持久化文件，不允许修改可靠等级"
+
+              - name: "判断同名生产者"
+                key_field: "同名生产者"
+                description: "组装文件锁名: 工作路径/mc30/集群名/Publish+实例名.lock，如果加锁失败代表存在同名节点，反之则没有"
+                notes: "判断重名的前提是在同一个工作路径下，如果不同工作路径，则不生效"
+
+              - name: "加载生产者消息文件"
+                key_field: "生产者消息文件"
+                description: "组装文件目录：工作路径/mc30/集群名/McVersion/实例名，加载并读取消息文件。加载完后，重新整理文件，将未被确认的消息重整到一个Data文件中，删除多余Data文件"
+                dfx:
+                  performance: "消息读取能力：10W tps，取决于IO性能"
+                  reliability: "RTO：等同DFX要求"
+                  compatibility: "无版本控制"
+                  serviceability: "等同DFX要求"
+
+              - name: "重发生产者未确认消息"
+                description: "如果存在未确认的消息，生产者将会进行协商，协商后会调用发布接口重新发布给服务端"
+
+          - name: "同步/异步发布"
+            tasks:
+              - name: "创建消息对象"
+                key_fields:
+                  - "主题名"
+                  - "过滤条件"
+                  - "业务体"
+                description: "消息对象的核心属性"
+                sub_tasks:
+                  - name: "主题名"
+                    key_field: "主题名"
+                    description: "主题：一类消息的总称"
+                    constraints:
+                      - "最大256字节"
+
+                  - name: "过滤条件"
+                    key_field: "过滤条件"
+                    description: "过滤条件：一条消息的关键字段，消费者根据该关键字段进行消息过滤"
+                    constraints:
+                      - "支持int，int64，string类型"
+                      - "最多16个过滤条件，每个过滤条件名最大63字节"
+                      - "填写的发布过滤字段个数需要与主题定义的个数一致"
+
+                  - name: "业务体"
+                    key_field: "业务体"
+                    description: "业务体，对应开源MQ的payload，一般是二进制报文。MC服务端收到后原封不动的转发给消费者"
+                    constraints:
+                      - "ldpmsg单行最大16MB"
+
+              - name: "设置发布超时时间"
+                key_field: "发布超时时间"
+                description: "同步接口需要设置发布超时时间，如果超时时间内，服务端没有返回发布成功应答，则发布接口返回超时"
+
+              - name: "定位主分区"
+                description: "根据主题信息，查找主分区所在的mc地址。如果消息发布后，服务端返回2823错误（主题分区变动），则更换mc连接重新获取主题信息，直到选出正确分区信息"
+                notes: "mcsdk发布接口支持发布消息给指定主题分区，mc3.0只保证分区有序，不保证分区之间有序"
+
+              - name: "序号协商"
+                sub_tasks:
+                  - name: "节点重启协商"
+                    description: "主题分区如果没有协商记录并且有消息要发送，则主动发起序号协商620943功能。内存级，生产者重启后，消息序号从1开始排序，服务端以生产者为准。文件级，发布的消息缓存在持久化文件中，如果生产者和服务端协商完后消息存在缺失，则发起消息补缺功能"
+
+                  - name: "主备切换协商"
+                    description: "服务端如果收到的消息序号与其预期不一致，则返回2808错误（发布序号需要重置）。生产者收到后，发起序号协商620943功能"
+
+              - name: "生产者持久化"
+                sub_tasks:
+                  - name: "消息文件持久化"
+                    description: "若为内存级，则放弃持久化。若为文件级：根据配置的发送队列大小申请空闲索引，如果申请不到，则返回2918错误(缓存文件已满)。组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区_Cache-Message-编号.data"
+                    constraints:
+                      - "一个消息文件最大1GB，最多256个"
+
+                  - name: "索引文件持久化"
+                    description: "组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区_Cache-Messageindex.inx。索引文件中的内容指向消息文件"
+
+                  - name: "消息过期"
+                    description: "遍历消息文件列表，如果消息文件的消息都已经被确认了，则删除该消息文件。保留最新的消息文件"
+
+              - name: "生产者补缺"
+                key_field: "SetConsumeFromWhere"
+                description: "如果在节点重启或主备切换，进行协商后发现消息有所缺失，将会进行生产者补缺"
+                constraints:
+                  - "内存级不支持生产者补缺，最多补缺发送队列（本地持久化文件）和发送窗口总和的数据"
+                  - "如果被新数据覆盖了，则补缺不到"
+                dfx:
+                  performance: "消息吞吐能力：性能总数达到5W tps，单主题不少于3W"
+                  reliability: "RTO：主备切换时间5s，客户端tcp连接切换时间90s"
+                  compatibility: "向下兼容"
+                interface: "620931"
+
+              - name: "消息发布"
+                key_field: "PublishMsg"
+                description: "先写入发送队列，再尝试写入发布窗口，如果发布窗口空闲，则直接调用620924功能进行消息发布，反之则由定时线程重发或者等消息确认后发布下个消息"
+                constraints:
+                  - "发布窗口大小：32个消息"
+                interface: "620924"
+                modification: "入参从ILdpMsgWriter换成IMessage"
+
+              - name: "处理系统事件"
+                key_field: "系统事件类型"
+                description: "包含：系统暂停、系统恢复、流控以及流控解除，目前不会回调"
+                notes: "未实现"
+
+              - name: "处理发布结果"
+                sub_tasks:
+                  - name: "成功与否"
+                    key_field: "成功与否"
+                    description: "同步：PUBLISH_OK：成功，表示mc服务端已经收到消息并处理。非PUBLISH_OK：失败。异步：0表示发送成功，只是表示生产者入持久化队列成功"
+                    notes: "同步发布接口如果返回PUBLISH_OK，只表示mc服务端确认已收到，可能存在消息丢失，需要上层业务做可靠性设计"
+
+                  - name: "详细信息"
+                    description: "主要是主题分区、序号和发布权限控制信息需要关注"
+
+                  - name: "返回方式"
+                    description: "包含：同步返回以及回调返回"
+
+              - name: "发布重试"
+                key_field: "发送窗口"
+                description: "定时线程将发送窗口中未被确认的消息，每隔5秒打上重发标志，重发给服务端。发布重试支持可关闭"
+                modification: "新增：支持设置发布重试次数，以支持mqdb的重试"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202412064383"
+
+          - name: "释放生产者"
+            key_field: "DeleteProducer"
+            description: "先停线程，再释放文件锁，最后解除与配置文件的绑定关系"
+
+          - name: "处理发布回调"
+            sub_tasks:
+              - name: "系统消息回调"
+                key_field: "OnSystemEvent"
+                description: "包含：系统暂停、系统恢复、流控以及流控解除，目前不会回调"
+
+              - name: "发送成功回调"
+                description: "主要包含：主题分区、序号和发布权限控制信息"
+                sub_tasks:
+                  - name: "发布结果详细信息"
+                    description: "除出发布结果外，所有的参数集合"
+                  - name: "用户参数"
+                    description: "初始化生产者送入的用户参数信息"
+
+      - name: "订阅"
+        description: "消费者消息订阅流程"
+        tasks:
+          - name: "初始化配置对象"
+            description: "消费者配置对象初始化"
+            sub_tasks:
+              - name: "设置目标mc地址"
+                key_field: "server_address"
+                description: "mc地址对应服务端broker.json对应的地址，如果有多个用逗号分割"
+                constraints:
+                  - "详见DFX-系统容量-服务集群成员个数"
+
+              - name: "设置消费者集群名字"
+                key_field: "group_name"
+                description: "对应consumer group概念，消费者组名。用以保证消费者消费偏移量，广播消费记录在本地。默认值，sdk模式：mcsdk，在plugin模式下：集群名"
+                constraints:
+                  - "最大32字节"
+                  - "集群名中不支持/ ? @ $ & ( ) \\ | ' ' \" \" 这些符号"
+                  - "Windows端禁止使用中文"
+
+              - name: "设置消费者实例名"
+                key_field: "instance_name"
+                description: "消费者实例名，用以管理功能展示订阅项的所属消费者名。默认值，在sdk模式下：mcsdk，在plugin模式下：应用名"
+                constraints:
+                  - "最大32字节"
+                  - "实例名中不支持/ ? @ $ & ( ) \\ | ' ' \" \" 这些符号"
+
+              - name: "设置消费者消费端快速确认"
+                key_field: "push_quick_ack"
+                description: "快速确认：会话接收窗口中每来一个消息返回一个确认；如果不启用快速确认：每隔16个消息或者每隔1秒向服务端发送确认序号。默认不启用快速确认"
+
+              - name: "设置消费模式"
+                sub_tasks:
+                  - name: "集群消费"
+                    key_field: "集群消费"
+                    description: "集群消费：同一个Consumer Group的每个消费者实例根据负载均衡策略平均分摊消息，且同一条消息不会被一个消费者组内不同的消费者实例消费到。消费偏移量存在服务端"
+                    constraints:
+                      - "一个消费者只能绑定一种消费模式，重启后也不能进行切换"
+                      - "同一个消费者集群不允许存在重复的应用名"
+                      - "需要提前在topic.json中增加文件级主题mc3%%consumer_offset"
+                    design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/202404185306_MC3.0集群消费方案/集群消费概要.pdf"
+
+                  - name: "广播消费"
+                    key_field: "广播消费"
+                    description: "广播消费：同一个Consumer Group的每个消费者实例都接收全量的消息。消费偏移量存在消费者。默认广播消费"
+                    design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf"
+
+              - name: "设置集群消费消息分配策略"
+                sub_tasks:
+                  - name: "PrimaryBackup"
+                    description: "主备模式，所有消息都由主节点进行消费"
+                  - name: "SingleTopicPartition"
+                    description: "单主题分区模式，每个节点的的消息根据每个主题分区数量均匀分配"
+
+              - name: "设置是否支持死信队列"
+                key_field: "dead_letter"
+                description: "支持开启对接死信队列。默认不支持"
+                design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202408067333_MC3.0支持死信队列功能"
+
+              - name: "设置是否消费重试"
+                key_field: "consume_retry"
+                description: "开启了以后，如果回调函数返回LATER或者调用SendNack后，都会根据重试次数配置进行消费重试。默认不重试"
+                design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202406076323_集群消费消息重试和消费偏移量更新详细设计"
+
+              - name: "消费超时时间"
+                key_field: "consume_timeout"
+                description: "用户回调返回CONSUME_CUSTOMER时，多久没有手动ACK被视为超时，单位毫秒，默认60s，范围:＞1s"
+
+              - name: "消费重试间隔"
+                key_field: "reconsume_interval"
+                description: "消费重试间隔，单位毫秒，默认值为2000ms，范围是[1000, 60000]"
+
+              - name: "消费重试次数"
+                key_field: "max_consume_count"
+                description: "消费重试次数，默认5次，范围是[1,INT32_MAX]，如果是-1，表示一直重试"
+
+              - name: "异步偏移量提交偏移量数"
+                key_field: "offset_count"
+                description: "集群消费异步偏移量提交时，可以指定距离上一次偏移量多少个消息就提交，默认100个消息"
+
+              - name: "异步偏移量提交时间间隔"
+                key_field: "commit_offset_interval"
+                description: "集群消费异步偏移量提交时，指定提交的时间间隔，单位为毫秒，默认值为5000毫秒"
+
+              - name: "消费RPO"
+                key_field: "consume_rpo"
+                description: "在非重试场景下，用户回调返回CONSUME_CUSTOMER时会将消息加入RPO队列，默认最大数量为100个"
+
+              - name: "消费流控队列大小"
+                key_field: "callback_queue_limit_size"
+                description: "mcsdk回调队列大小，默认0（表示无上限），如果需要消费流控，最小设置大小10000"
+
+              - name: "超时后是否更新偏移量"
+                key_field: "update_offset_when_timeout"
+                description: "支持非重试场景下，返回CONSUME_CUSTOMER后缓存队列满，超时后是否更新消息偏移量。默认不更新，配置为1时会更新"
+
+              - name: "消费等待时间"
+                key_field: "full_wait_time"
+                description: "在非重试场景下，当消费的RPO队列满时，等待指定时间后退出处理，单位为毫秒，默认值为5000毫秒"
+
+              - name: "设置回调线程个数"
+                key_field: "callback_thread_count"
+                description: "在分区有序的情况下，根据主题分区编号绑定回调线程。默认1个线程"
+
+              - name: "设置会话发送队列长度"
+                key_field: "session_queue_size"
+                description: "设置会话发送队列长度，默认是10w"
+                modification: "新增session_queue_size配置说明"
+                version: "LDP1.0.V202401.08.000"
+                requirement: "#202412303130"
+
+              - name: "设置底层tcp属性"
+                sub_tasks:
+                  - name: "tcp连接心跳间隔"
+                    key_field: "tcp_heartbeat_send_interval_s"
+                    description: "tcp连接心跳配置，心跳间隔，正整数，默认值：-1，表示上层不设置，由底层配置决定"
+
+                  - name: "tcp连接心跳超时次数"
+                    key_field: "tcp_heartbeat_times"
+                    description: "tcp连接心跳配置，心跳超时次数，正整数；默认值-1，表示上层不设置，由底层配置决定"
+
+          - name: "创建消费者"
+            key_field: "NewConsumer"
+            description: "该消费者对象，主要用于提供订阅等相关功能"
+
+          - name: "初始化消费者"
+            tasks:
+              - name: "绑定配置对象"
+                key_field: "Create"
+                description: "读取到相关配置，并开始初始化，主要包括，建立连接、获取主题信息、加载本地持久化文件"
+
+              - name: "连接建立回调"
+                description: "根据配置的mc地址，向mc服务端获取主题列表的同时获取了所有mc节点地址，再建立与每个mc节点连接"
+                sub_tasks:
+                  - name: "连接详细信息"
+                    description: "连接建立回调详细信息"
+                  - name: "事件类型"
+                    description: "连接建立事件，使用了remoter的tcp功能"
+
+              - name: "连接断开回调"
+                sub_tasks:
+                  - name: "连接详细信息"
+                    description: "同连接建立回调"
+                  - name: "事件类型"
+                    description: "连接断开事件"
+
+              - name: "获取主题信息"
+                key_field: "主题信息"
+                description: "调用620927功能获取主题信息，里面包括主题名、可靠等级、过滤条件、分区信息，还包括分区对应的mc地址"
+                constraints:
+                  - "主题不许在有消费者运行的时候增加修改或者删除"
+                  - "主题分区的分布情况必须一样"
+                  - "如果没有清理持久化文件，不允许修改可靠等级"
+
+              - name: "判断同名消费者"
+                key_field: "同名消费者"
+                description: "组装文件锁名: 工作路径/mc30/集群名/Subscribe+集群名.lock，如果加锁失败代表存在同名节点"
+                notes: "判断重名的前提是在同一个工作路径下"
+
+              - name: "加载本地序号文件"
+                key_field: "消费者消息文件"
+                description: "如果是广播消费，则组装文件地址：工作路径/集群名/McVersion/global_map_集群名.dat，加载并读取序号文件"
+
+              - name: "序号文件清理"
+                key_field: "序号文件"
+                description: "清理超过7天没有收到消息的消费者偏移量数据"
+
+              - name: "建立会话"
+                sub_tasks:
+                  - name: "建立会话"
+                    description: "向所有mc节点建立发起建立会话功能（620925），模拟TCP的三次握手。只有建立成功的会话，才可以接受订阅请求"
+                    constraints:
+                      - "会话窗口大小：32个消息"
+                      - "单个消费者最多建立1000个会话"
+
+                  - name: "会话断开重连"
+                    description: "存在多种情况比如会话心跳超时、连接断开等原因会导致会话断开，由定时线程检查并重连"
+
+          - name: "创建订阅参数"
+            key_field: "NewConsumerParam"
+            description: "该订阅参数，主要用于设置主题、过滤条件等订阅信息"
+
+          - name: "设置订阅参数"
+            tasks:
+              - name: "设置主题名字"
+                key_field: "SetTopicName"
+                description: "订阅的主题名"
+                constraints:
+                  - "主题名最大256字节"
+
+              - name: "获取主题名字"
+                key_field: "GetTopicName"
+                description: "订阅的主题名"
+
+              - name: "设置过滤条件"
+                sub_tasks:
+                  - name: "字段编号"
+                    description: "主题配置中过滤条件数组的编号"
+                  - name: "字段值"
+                    description: "要订阅的字段，string模式下，支持集合订阅（\\2分隔）。如果不设置过滤条件，代表全匹配该过滤条件"
+                    constraints:
+                      - "支持int，int64，string类型"
+                      - "同个过滤条件的类型不能更改"
+                      - "最多16个过滤条件"
+                      - "string类型下，过滤字段的值不能包含\"\\2\"字符"
+
+              - name: "获取过滤条件"
+                description: "根据编号和类型返回对应的值"
+
+              - name: "设置订阅补缺方式"
+                sub_tasks:
+                  - name: "补缺方式"
+                    description: "首次订阅包含：根据时间戳补缺、根据特定Key补缺、根据最新补缺以及根据最旧补缺，目前只做了最新补缺和最旧补缺"
+                  - name: "是否重置"
+                    description: "重置后，本地订阅恢复为第一次启动的订阅补缺方式"
+
+              - name: "设置消费重试次数"
+                description: "设置重试消费次数，默认重试次数10次，如果超过重试次数，记录日志，返回NACK给服务端，并写入死信队列"
+
+              - name: "获取消费重试次数"
+                description: "获取重试消费次数"
+
+              - name: "设置订阅项名称"
+                key_field: "SetSubInfoName"
+                description: "设置订阅名称，目前用在消费者本地校验订阅项是否重名"
+
+              - name: "获取订阅项名称"
+                key_field: "GetSubInfoName"
+                description: "获取订阅名称"
+
+          - name: "订阅消息"
+            tasks:
+              - name: "设置订阅超时时间"
+                key_field: "nTimeoutMs"
+                description: "订阅超时时间内，如果没有订阅结果，则返回订阅超时错误（2928）"
+
+              - name: "绑定订阅参数"
+                key_field: "lpParam"
+                description: "检查订阅参数的合法性"
+
+              - name: "设置用户参数"
+                key_field: "lpUser"
+                description: "绑定每次订阅的用户参数，以便后续消费回调的返回"
+
+              - name: "检查重复订阅"
+                key_field: "消费者判断重复订阅"
+                description: "消费者本地判重，先判断主题和附加数据是否一致，再比较过滤条件值"
+
+              - name: "选择节点订阅"
+                sub_tasks:
+                  - name: "负载均衡"
+                    description: "消费者第一次订阅，选择节点是随机的，后续订阅是轮流来"
+                  - name: "同机房优先"
+                    description: "配置了本地机房名，同时mc服务端的broker.json也配置节点所属的机房，同机房优先订阅功能才会生效"
+
+              - name: "维护订阅关系"
+                key_field: "消费者维护"
+                description: "每次订阅新增订阅项，都会新建一个订阅索引号，消费者维护一个map"
+
+              - name: "发起订阅"
+                sub_tasks:
+                  - name: "集群消费"
+                    description: "根据集群名计算出消费者协调器，再发起分区分配请求给消费者协调器，根据分区分配情况再找集群内的主分区订阅消息"
+                  - name: "广播消费"
+                    description: "随机找一个可用的mc节点会话，发起消息订阅"
+
+              - name: "返回订阅结果"
+                sub_tasks:
+                  - name: "订阅索引号"
+                    description: "唯一标识消费者本地订阅项，以便取消订阅"
+                  - name: "成功与否"
+                    description: "返回0代表成功（重复订阅也为成功）。非0代表失败"
+
+              - name: "系统事件回调"
+                description: "暂未规划"
+                notes: "包含：系统暂停、系统恢复"
+
+              - name: "订阅消息结果回调"
+                description: "暂未规划"
+
+              - name: "发起消费者补缺"
+                key_field: "GetConsumeFromWhere"
+                description: "内存级不支持；消费者：订阅后发现有缺口，发起消费者补缺功能（620944）"
+                constraints:
+                  - "缓存队列大小：1000个消息"
+
+              - name: "消费消息"
+                sub_tasks:
+                  - name: "消息推送"
+                    description: "服务端收到发布的消息后，根据维护的订阅关系，找到匹配的消费者，并推送"
+                  - name: "消息拉取"
+                    description: "暂不支持"
+
+          - name: "取消订阅消息"
+            tasks:
+              - name: "订阅索引号"
+                key_field: "lpSubscribeIndex"
+                description: "订阅接口返回的，用来唯一标识消费者本地订阅项"
+
+              - name: "设置取消订阅超时时间"
+                key_field: "nTimeoutMs"
+                description: "不等待取消订阅应答，所以这里的时间是可靠发给服务端的超时时间"
+
+              - name: "绑定订阅参数"
+                key_field: "lpParam"
+                description: "用来查找订阅索引号"
+
+              - name: "删除订阅项"
+                key_field: "消费者"
+                description: "根据订阅索引号查询到订阅项，先发起取消订阅功能（620922），再删除订阅项"
+                notes: "如果消费者取消失败，比如连接断开了，那么消费者本地会删除订阅项，但是服务端可能会残留订阅消息"
+
+              - name: "返回取消订阅结果"
+                key_field: "CancelSubscribeByIndex"
+                description: "返回0代表成功，非0代表失败"
+
+          - name: "处理消费回调"
+            tasks:
+              - name: "收到推送消息的回调"
+                sub_tasks:
+                  - name: "消费成功(更新本地序号文件)"
+                    description: "广播模式下，更新本地序号文件（文件级）。集群消费模式下（文件级），更新偏移量到服务端"
+                    notes: "在主题级别为文件级（至少一次）的场景下，存在重复消息的情况，所以需要业务系统做幂等性处理"
+                    dfx:
+                      performance: "序号写入能力：10W tps，取决于IO性能"
+
+                  - name: "消费失败"
+                    description: "消费失败后会重新发起回调，重试次数由订阅项或者全局配置决定"
+
+                  - name: "自定义消费"
+                    description: "支持手工回复ACK或NACK"
+
+                  - name: "订阅索引号"
+                    description: "用来唯一标识消费者本地订阅项"
+
+                  - name: "消息"
+                    key_field: "消息"
+                    description: "推送过来的消息，功能号是620926"
+                    interface: "620926"
+
+                  - name: "线程号"
+                    description: "对应的回调线程号"
+
+                  - name: "用户参数"
+                    description: "订阅时送的用户参数"
+
+                  - name: "处理结果"
+                    description: "消费成功、消费失败、自定义消费"
+
+              - name: "手工确认/自动确认"
+                sub_tasks:
+                  - name: "手工确认"
+                    description: "在推送回调函数返回Sucess、Later以及Failed时，会进行自动确认。自动确认的时间间隔默认为5s(可配）"
+                    modification: "新增：配置项MsgConsumeLimit控制主题分区队列单次可消费消息数量上限"
+
+                  - name: "自动确认"
+                    description: "当推送回调函数返回Customer时，会进行手工确认。手工确认包含ACK和NACK"
+
+              - name: "消费重试"
+                description: "消费重试的重试次数以及重试时间间隔可配置"
+                constraints:
+                  - "重试次数默认10次"
+                  - "重试时间间隔默认2秒"
+                  - "超时时间默认60秒"
+                modification: "修改：重试模式和非重试模式的队列处理逻辑"
+
+              - name: "死信队列"
+                description: "在消费重试超时、Later/Failed自动确认（已配置死信队列）、Customer回复NACK并未配置消费重试的情况下，消息会进入死信队列"
+
+          - name: "释放消费者"
+            sub_tasks:
+              - name: "断开会话"
+                key_field: "DeleteConsumer"
+                description: "断开会话后，附属在该会话上的订阅项都改为待重新订阅"
+
+              - name: "断开连接"
+                key_field: "DeleteConsumer"
+                description: "断开连接后，断开绑定在该连接上的会话"
+
+          - name: "释放配置对象"
+            key_field: "DeleteConfig"
+            description: "删除配置对象，并将remoter连接还到连接池中"
+
+      - name: "管理"
+        description: "客户端管理功能"
+        tasks:
+          - name: "调用消费者/生产者管理功能"
+            tasks:
+              - name: "查看客户端配置信息"
+                key_field: "GetConfigList"
+                description: "展示所有消费者或者生产者的相关配置，包括集群名、实例名、服务端地址、广播消费还是集群消费、发送队列长度"
+                dfx:
+                  performance: "消息吞吐能力：≤100tps，不影响正常发布和订阅性能"
+
+              - name: "获取连接列表信息"
+                key_field: "GetConnectionList"
+                description: "展示与mc集群所有节点的连接状态，包括地址、backendid、状态、节点名等"
+
+              - name: "获取消费者列表"
+                key_field: "GetConsumerList"
+                description: "展示消费者相关统计信息，包括集群名、会话个数、回调线程数、文件锁等"
+
+              - name: "获取生产者列表"
+                key_field: "GetProducerList"
+                description: "展示生产者相关信息，包括生产者名、发布目录、本地消息文件最大配置、每个主题分区发布进展"
+
+              - name: "获取生产者线程列表"
+                key_field: "GetProducerThreadInfo"
+                description: "展示生产者线程信息，包括定时线程和接收线程"
+
+              - name: "获取消费者线程列表"
+                key_field: "GetConsumerThreadInfo"
+                description: "展示消费者相关的线程列表，主要是回调线程"
+
+              - name: "获取消息池使用信息"
+                key_field: "GetObjFactoryInfo"
+                description: "展示消息池的使用情况，包括初始值，最大值、空闲值、已用值、reader使用、json使用等信息"
+
+              - name: "获取会话列表"
+                key_field: "GetSessionList"
+                description: "展示与mc集群的会话信息，包括会话号、状态、窗口、发送序号、接收序号等信息"
+
+              - name: "获取会话线程列表"
+                key_field: "GetSessionThreadInfo"
+                description: "展示会话线程信息，包括工作线程和定时线程"
+
+              - name: "获取订阅项列表信息"
+                key_field: "GetSubscribeList"
+                description: "展示消费者本地订阅的所有订阅项信息"
+
+              - name: "获取主题列表信息"
+                key_field: "GetTopicList"
+                description: "展示所有主题列表信息"
+
+              - name: "获取主题分区列表信息"
+                key_field: "GetTopicPartitionList"
+                description: "展示所有主题分区列表信息"
+
+              - name: "获取集群消费主题分配情况"
+                key_field: "GetGroupConsumeInfo"
+                description: "展示集群消费主题相关信息"
+
+          - name: "查看日志"
+            key_field: "查看本地文件"
+            description: "目录格式：工作路径/log/日志文件名"
+
+          - name: "查看本地持久化文件"
+            tasks:
+              - name: "发布缓存"
+                sub_tasks:
+                  - name: "消息文件"
+                    description: "同发布消息持久化"
+                  - name: "消息索引"
+                    description: "同发布消息索引持久化"
+
+              - name: "消费者偏移量"
+                sub_tasks:
+                  - name: "主题分区偏移量"
+                    description: "如果是广播消费，则组装文件地址：工作路径/集群名/McVersion/global_map_集群名.dat"
+                  - name: "生产者偏移量"
+                    description: "与主题分区偏移量记录在同一个文件中"
+
+              - name: "集群名称"
+                key_field: "集群文件锁"
+                description: "同判断同名生产者和同名消费者"
+
+          - name: "多实例"
+            description: "mcsdk支持多实例，可以对接多个MC3.0服务端，并进行正常的消息收发"
+            key_field: "mc集群地址为key"
+
+          - name: "连接"
+            description: "mcsdk通过remoter管理和mc之间的tcp连接，连接建立成功后，会通过心跳维持连接"
+            key_fields:
+              - "AddMcServerAddress"
+              - "CreateBackend"
+            notes: "默认心跳间隔时间10s，如果mc服务端hang住之后，心跳10s检测一次，连续3次检测失败后才断开连接，然后重连"
+
+  - name: "ldp_mc"
+    description: "消息中心服务端，提供消息存储转发能力"
+    activities:
+      - name: "发布"
+        description: "服务端消息发布处理流程"
+        tasks:
+          - name: "处理序号协商"
+            sub_tasks:
+              - name: "节点重启协商"
+                description: "主题分区如果没有协商记录并且有消息要发送，则主动发起序号协商620943功能"
+                dfx:
+                  performance: "协商性能总数达到1W tps"
+                  reliability: "RTO：5s"
+                interface: "620943"
+
+              - name: "主备切换协商"
+                description: "服务端如果收到的消息序号与其预期不一致，则返回2808错误（发布序号需要重置）。生产者收到后，发起序号协商"
+
+          - name: "处理消息发布"
+            description: "在收到生产者的发布功能号620924后，如果序号连续性返回序号需要协商，再进行消息持久化-->集群复制-->调用业务组件，最终推送给订阅模块"
+            dfx:
+              performance: "消息吞吐能力：性能总数达到5W tps，单主题不少于3W"
+              reliability: "RTO：主备切换时间5s，客户端tcp连接切换时间90s"
+              compatibility: "向下兼容"
+            interface: "620924"
+
+          - name: "处理生产者补缺"
+            description: "如果在节点重启或主备切换，进行协商后发现消息有所缺失，将会进行生产者补缺。内存级不支持生产者补缺"
+            interface: "620931"
+
+          - name: "发布业务扩展"
+            sub_tasks:
+              - name: "加载业务库"
+                description: "启动的时候，根据publish/biz下配置加载业务库"
+              - name: "调用业务库"
+                description: "在收到消息发布转发订阅模块前，调用业务库做一些消息预处理"
+
+          - name: "消息持久化"
+            sub_tasks:
+              - name: "消息文件持久化"
+                description: "若为内存级，则放弃持久化。若为文件级：根据配置的发送队列大小申请空闲索引"
+              - name: "索引文件持久化"
+                description: "索引文件中的内容指向消息文件"
+              - name: "消息过期"
+                description: "遍历消息文件列表，如果消息文件的消息都已经被确认了，则删除该消息文件"
+
+          - name: "集群复制"
+            sub_tasks:
+              - name: "强一致"
+                description: "未实现"
+              - name: "最终一致"
+                description: "通过异步复制的方式，在默认配置的条件下，实现主备最终一致"
+
+      - name: "订阅"
+        description: "服务端消息订阅处理流程"
+        tasks:
+          - name: "处理消息订阅"
+            sub_tasks:
+              - name: "广播消费"
+                description: "在广播消费模式下，服务端主要做订阅判重工作"
+                dfx:
+                  performance: "推送总数达到5W tps，单主题不少于3W"
+                  reliability: "RTO：会话超时时间30s"
+                interface: "620921"
+
+              - name: "集群消费"
+                description: "消费者协调器根据客户端给的消息分配类型以及当前相同集群名的存量消费者来确定分区分配情况"
+                dfx:
+                  performance: "推送总数达到3W tps，单主题不少于2W"
+                interface: "620953"
+
+          - name: "处理取消订阅"
+            sub_tasks:
+              - name: "广播消费"
+                description: "按照订阅索引ID找到对应的订阅项进行取消"
+                interface: "620922"
+              - name: "集群消费"
+                description: "通知消费者协调器，把分区信息进行删除"
+                interface: "620954"
+
+          - name: "处理订阅补缺"
+            description: "根据消费者提供的主题分区消费偏移量范围，返回符合过滤条件的消息给消费者"
+            dfx:
+              performance: "补缺总数达到5W tps"
+            interface: "620944"
+
+          - name: "消息过滤"
+            sub_tasks:
+              - name: "服务端过滤"
+                description: "若在生产者使用了非string类型，目前都会在服务端转换为string类型"
+              - name: "消费者过滤"
+                description: "消费者根据该关键字段进行消息过滤"
+
+          - name: "会话管理"
+            sub_tasks:
+              - name: "建立会话"
+                description: "接收消费者的建立会话功能（620925）请求，模拟TCP的三次握手"
+                constraints:
+                  - "会话窗口大小：32个消息"
+                dfx:
+                  performance: "建立会话速度≤1000个/s"
+                interface: "620925"
+
+              - name: "会话断开取消订阅"
+                description: "在会话断开后，服务端会取消绑定在该会话上所有的订阅"
+
+          - name: "处理消息拉取"
+            description: "未实现"
+
+          - name: "死信队列"
+            description: "在消费重试超时、Later/Failed自动确认（已配置死信队列）、Customer回复NACK并未配置消费重试的情况下，消息会进入死信队列"
+
+          - name: "推模式"
+            description: "在推模式下，服务端会维护一个或多个订阅者列表。当生产者发送一条消息时，服务端会将这条消息主动推送给所有已经订阅该主题的消费者"
+
+      - name: "管理"
+        description: "服务端管理功能"
+        tasks:
+          - name: "调用管理功能"
+            # 管理功能任务较多，列出核心任务
+            tasks:
+              - name: "获取会话年龄箱信息"
+                key_field: "GetAgeBinInfo"
+                description: "展示当前会话箱的大小、其中的会话个数以及年龄"
+
+              - name: "获取所有消费者的所有订阅项信息"
+                key_field: "GetAllSubscribeInfo"
+                description: "展示消费者名称、所属推送线程编号、会话号、订阅主题名、过滤条件等订阅项信息"
+                modification: "新增：支持根据主题名过滤"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202411194859"
+
+              - name: "获取所有消费者信息"
+                key_field: "GetAllSubscribers"
+                description: "展示消费者名称、会话号以及引用数"
+
+              - name: "获取所有broker列表信息"
+                key_field: "GetBrokerInfo"
+                description: "展示所有broker的节点编号以及host信息"
+
+              - name: "获取主题信息"
+                key_field: "GetTopicInfo"
+                description: "展示主题编号、主题名称、描述、可靠性等级、有效期等级、过滤条件、分区数以及分区分布等信息"
+
+              - name: "获取会话信息"
+                key_field: "GetSessionInfo"
+                description: "展示会话编号、会话对方逻辑编号、会话状态、会话所属消费者等信息"
+
+              - name: "获取消费者内存使用信息"
+                key_field: "GetMemCost"
+                description: "展示订阅使用内存统计、订阅项构建推送使用内存统计以及消费者与订阅项内存统计"
+
+              - name: "获取发布序号信息"
+                key_field: "GetPubMsgNo"
+                description: "展示发布线程编号、主题编号与分区编号组合、生产者名称、生产者总共发布消息数量等信息"
+                modification: "新增：支持根据主题名过滤"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202411194859"
+
+              - name: "获取集群间补缺状态"
+                key_field: "GetRebuildStatus"
+                description: "展示补缺进度、处理集群间补缺协商请求执行次数、发布补缺消息的总次数等信息"
+
+              - name: "获取死信消息统计信息列表"
+                key_field: "GetDeadLetterQueueList"
+                description: "展示死信队列相关信息"
+
+              - name: "清理死信消息"
+                key_field: "ClearDeadLetterQueueData"
+                description: "展示清理死信消息是否成功"
+
+              - name: "消息回溯接口"
+                key_field: "QueryMsgList"
+                description: "展示分区号、消息ID、发布者名称、发布时间、主题名以及过滤条件等信息"
+
+              - name: "获取集群消费内容"
+                key_field: "GetGroupConsumeInfo"
+                description: "展示线程个数、循环次数、消费者组、队列大小、以及消费者组的信息"
+
+              - name: "获取消费偏移量信息"
+                key_field: "GetAllConsumeOffset"
+                description: "展示主题分区信息，包含偏移量数组信息"
+
+              - name: "清理内存碎片"
+                key_field: "ClearMemory"
+                description: "支持手工清理内存碎片"
+                modification: "新增：管理功能支持手工清理内存碎片"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202412165207"
+
+          - name: "消息抓包"
+            key_field: "ldpadmin/tcpdump"
+            description: "提供发布和订阅相关请求应答消息抓包功能"
+
+          - name: "内存管理"
+            tasks:
+              - name: "配置消息池大小"
+                sub_tasks:
+                  - name: "初始化个数"
+                    key_field: "InitSize"
+                    description: "初始化个数（只影响writer）"
+                    default: "10000"
+                  - name: "最多允许消息数"
+                    key_field: "MaxSize"
+                    description: "最多允许消息数（只影响writer、reader）"
+                    default: "1000000"
+                  - name: "池里面最多存放消息数"
+                    key_field: "MaxIdleMsgs"
+                    description: "池里面最多存放消息数，超过释放"
+                    default: "100000"
+                  - name: "最大消息长度"
+                    key_field: "MaxMsgLen"
+                    description: "如果消息大小超过配置值时，释放消息时不会放回消息池中"
+                    default: "16777216（16MB）"
+                    modification: "新增"
+                    version: "LDP1.0V202401.07.000"
+                    requirement: "#202412165207"
+
+              - name: "配置加载持久化文件最大数"
+                key_field: "CommitLogFileMmapLimit"
+                description: "commitlog mmap限制个数，如果超过这个配置，则unmap掉原来的commitlog文件"
+                default: "16"
+
+              - name: "定时清理内存碎片"
+                key_field: "EnableClearMemory"
+                description: "在清理持久化文件同时，使用malloc_trim接口清理内存碎片"
+                modification: "新增"
+                version: "LDP1.0V202401.07.000"
+                requirement: "#202412165207"
+
+          - name: "集中仲裁"
+            sub_tasks:
+              - name: "双机房"
+                description: "目前具备双机房集中仲裁方案，在主备机房切换时会优先选择同机房的节点"
+                design_doc: "https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP3/mc3.0双机房集中仲裁方案.md"
+              - name: "单集群"
+                description: "实现在平台仲裁基础上，完成对MC3.0节点的集中仲裁"
+
+          - name: "处理获取主题"
+            description: "返回主题信息给生产者和消费者，功能号是620927"
+            dfx:
+              performance: "获取主题列表总数达到1W tps"
+            interface: "620927"
+
+          - name: "查看日志"
+            key_field: "本地文件"
+            description: "目录格式：工作路径/log/日志文件名"
+
+          - name: "主题变更"
+            tasks:
+              - name: "主题生命周期"
+                description: "不支持静态生命周期修改，修改后需要重启mc服务端"
+              - name: "主题可靠等级"
+                description: "支持动态可靠级别的修改"
+              - name: "主题过滤条件"
+                description: "支持静态生过滤条件修改"
+              - name: "主题动态新增"
+                description: "目前主题动态新增，只能通过mc3proxy触发"
+
+          - name: "查看持久化文件"
+            tasks:
+              - name: "发布缓存"
+                sub_tasks:
+                  - name: "消息文件"
+                    description: "同服务端消息文件持久化"
+                  - name: "消息索引"
+                    description: "同服务端消息索引文件持久化"
+
+              - name: "消费者偏移量"
+                description: "工作路径/集群名/McVersion/global_map_集群名.dat"
+
+              - name: "服务端消息文件"
+                sub_tasks:
+                  - name: "CommitLog"
+                    description: "同服务端消息文件持久化"
+                  - name: "主题分区索引"
+                    description: "同服务端消息索引文件持久化"
+
+          - name: "多实例"
+            description: "当前暂不支持"

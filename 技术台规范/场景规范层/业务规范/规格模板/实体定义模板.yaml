@@ -1,0 +1,149 @@
+# 实体定义YAML模板
+# 基于实体定义模板.yaml生成
+# 版本: 1.0.0
+# 生成日期: YYYY-MM-DD
+
+business_domain: "[业务域名称]"
+
+entities:
+  # 一、接口实体
+  - category: "[分类1名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[字段说明]"
+            required: [true/false]
+            predefined: [true/false]
+            predefined_values:
+              - value: "[值1]"
+                description: "[说明]"
+              - value: "[值2]"
+                description: "[说明]"
+        notes: "[附加说明]"
+
+  # 二、配置实体
+  - category: "[分类2名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+
+  # 三、协议实体
+  - category: "[分类3名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[协议名称]"
+        description: "[协议说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[字段说明]"
+            required: [true/false]
+            predefined: [true/false]
+
+  # 四、核心实体
+  - category: "[分类4名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段1]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+          - field: "[字段2]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+            predefined: [true/false]
+            predefined_values:
+              - value: "[值1]"
+                description: "[说明]"
+              - value: "[值2]"
+                description: "[说明]"
+
+  # 五、集群与分组实体
+  - category: "[分类5名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+
+  # 六、角色实体
+  - category: "[分类6名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+
+  # 七、关系实体
+  - category: "[分类7名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[关系名称]"
+        description: "[关系说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+            predefined: [true/false]
+            predefined_values:
+              - value: "[模式1]"
+                description: "[说明]"
+              - value: "[模式2]"
+                description: "[说明]"
+        notes: "[附加说明]"
+
+  # 八、存储实体
+  - category: "[分类8名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+
+  # 九、版本与状态实体
+  - category: "[分类9名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+        notes: "[附加说明]"
+
+  # 十、缓存实体
+  - category: "[分类10名称]"
+    description: "[分类描述]"
+    items:
+      - name: "[实体名称]"
+        description: "[实体说明]"
+        key_fields:
+          - field: "[字段名]"
+            type: "[类型]"
+            description: "[说明]"
+            required: [true/false]
+        notes: "[附加说明]"

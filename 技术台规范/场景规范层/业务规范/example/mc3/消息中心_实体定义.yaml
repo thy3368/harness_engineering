@@ -1,0 +1,398 @@
+# 消息中心3.0 实体定义YAML
+# 基于实体定义模板.yaml生成
+# 版本: 1.0.0
+# 生成日期: 2026-04-10
+
+business_domain: "通讯域（消息中心3.0-MC3.0）"
+
+entities:
+  - category: "适配接口"
+    description: "MC3.0适配不同客户端的接口"
+    items:
+      - name: "kafka-sdk"
+        description: "Kafka协议适配SDK"
+      - name: "mqapi"
+        description: "MQ API适配接口"
+      - name: "mqsdk"
+        description: "MQ SDK适配接口"
+      - name: "wss"
+        description: "WebSocket适配接口"
+
+  - category: "发布订阅接口"
+    description: "消息发布和订阅的接口"
+    items:
+      - name: "发布接口"
+        description: "生产者的发布接口"
+        key_fields:
+          - field: "发布接口"
+            type: "interface"
+            description: "用于生产者发布消息到主题"
+            required: true
+      - name: "订阅接口"
+        description: "消费者的订阅接口"
+        key_fields:
+          - field: "订阅接口"
+            type: "interface"
+            description: "用于消费者订阅主题消息"
+            required: true
+
+  - category: "管理接口"
+    description: "调用MC3.0所有管理功能的接口"
+    items:
+      - name: "管理接口"
+        description: "调用MC3.0所有管理功能的接口"
+
+  - category: "适配配置"
+    description: "MC3.0适配不同客户端的配置文件"
+    items:
+      - name: "客户端配置文件"
+        description: "MC3.0适配不同客户端的配置文件"
+
+  - category: "MC配置"
+    description: "MC3.0的配置文件"
+    items:
+      - name: "消息中心配置文件"
+        description: "MC3.0的配置文件"
+        key_fields:
+          - field: "MC配置"
+            type: "string"
+            description: "消息中心配置文件"
+            required: true
+
+  - category: "协议"
+    description: "消息中心支持的协议类型"
+    items:
+      - name: "AMQP协议"
+        description: "提供统一消息服务的应用层标准高级消息队列协议"
+        key_fields:
+          - field: "协议类型"
+            type: "string"
+            description: "AMQP高级消息队列协议"
+            required: true
+            predefined: true
+      - name: "T2/T3协议"
+        description: "提供与T2/T3对接的协议"
+        key_fields:
+          - field: "协议类型"
+            type: "string"
+            description: "T2/T3对接协议"
+            required: true
+            predefined: true
+      - name: "LDP协议"
+        description: "提供与LDP对接的协议"
+        key_fields:
+          - field: "协议类型"
+            type: "string"
+            description: "LDP对接协议"
+            required: true
+            predefined: true
+
+  - category: "主题"
+    description: "消息主题相关实体"
+    items:
+      - name: "主题"
+        description: "同一主题下有多个分区，这些分区的主题名相同"
+        key_fields:
+          - field: "主题名"
+            type: "string"
+            description: "同一主题下有多个分区，这些分区的主题名相同"
+            required: true
+
+      - name: "队列"
+        description: "通过队列名去区分死信队列、重试队列以及定时队列"
+        key_fields:
+          - field: "队列名"
+            type: "string"
+            description: "通过队列名去区分死信队列、重试队列以及定时队列"
+            required: true
+          - field: "队列类型"
+            type: "string"
+            description: "死信队列、重试队列、定时队列"
+            predefined: true
+            predefined_values:
+              - value: "死信队列"
+                description: "存储无法正常消费的消息"
+              - value: "重试队列"
+                description: "存储需要重试消费的消息"
+              - value: "定时队列"
+                description: "存储需要定时投递的消息"
+
+      - name: "分区"
+        description: "分区是主题的物理分片"
+        key_fields:
+          - field: "分区号"
+            type: "int"
+            description: "同一主题下唯一，与同主题的其他分区不可重复"
+            required: true
+          - field: "主题分区编号"
+            type: "int"
+            description: "同一份配置里唯一，与其他主题分区不可重复"
+            required: true
+          - field: "通讯地址"
+            type: "string"
+            description: "该主题分区的发布端与订阅端通讯使用的地址"
+            required: true
+          - field: "通讯端口"
+            type: "int"
+            description: "该主题分区的发布端与订阅端通讯使用的端口"
+            required: true
+
+      - name: "过滤条件"
+        description: "通过设置过滤条件（16个）来进行消息过滤，并支持集合订阅"
+        key_fields:
+          - field: "过滤条件"
+            type: "string"
+            description: "通过设置过滤条件（最多16个）来进行消息过滤，并支持集合订阅"
+            required: false
+            predefined: false
+
+      - name: "可靠等级"
+        description: "支持主题的配置文件中配置主题为内存级（至多一次）或文件级（至少一次）"
+        key_fields:
+          - field: "可靠等级"
+            type: "string"
+            description: "支持主题的配置文件中配置主题为内存级（至多一次）或文件级（至少一次）"
+            required: true
+            predefined: true
+            predefined_values:
+              - value: "内存级"
+                description: "至多一次投递，可能丢失消息"
+              - value: "文件级"
+                description: "至少一次投递，不会丢失消息"
+
+      - name: "消息有效期"
+        description: "支持消息（包含内存级以及文件级）有效期管理，删除已过期失效消息，释放资源"
+        key_fields:
+          - field: "消息有效期"
+            type: "string"
+            description: "消息有效期等级"
+            required: true
+            predefined: true
+            predefined_values:
+              - value: "0"
+                description: "一天"
+              - value: "1"
+                description: "二天"
+              - value: "2"
+                description: "三天"
+              - value: "3"
+                description: "一星期"
+              - value: "4"
+                description: "二星期"
+              - value: "5"
+                description: "一个月"
+              - value: "6"
+                description: "三个月"
+              - value: "7"
+                description: "六个月"
+              - value: "8"
+                description: "一年"
+        notes: "有效期控制机制不应受发送方、接收方时钟不一致影响。持久化文件会进行分片管理，便于过期消息更好的清理"
+
+      - name: "顺序消息"
+        description: "包含全局有序、分区有序以及无序消费"
+        key_fields:
+          - field: "顺序类型"
+            type: "string"
+            description: "包含全局有序、分区有序以及无序消费"
+            required: true
+            predefined: true
+            predefined_values:
+              - value: "全局有序"
+                description: "所有消息按发布顺序全局有序"
+              - value: "分区有序"
+                description: "同一分区内的消息有序"
+              - value: "无序"
+                description: "不保证消息顺序"
+
+      - name: "强一致"
+        description: "包含集群RPO以及机房RPO"
+        key_fields:
+          - field: "强一致类型"
+            type: "string"
+            description: "包含集群RPO以及机房RPO"
+            required: true
+            predefined: true
+            predefined_values:
+              - value: "集群RPO"
+                description: "集群级别零数据丢失"
+              - value: "机房RPO"
+                description: "机房级别零数据丢失"
+
+  - category: "主题消息"
+    description: "消息内容相关实体"
+    items:
+      - name: "主题消息"
+        description: "实际传递的业务数据"
+        key_fields:
+          - field: "主题分区"
+            type: "string/int"
+            description: "该消息所属的主题分区，可使用主题分区编号或主题名+分区号标识"
+            required: true
+          - field: "消息序号"
+            type: "int64"
+            description: "由发布者为该消息生成的序号"
+            required: true
+
+  - category: "集群"
+    description: "客户端集群相关实体"
+    items:
+      - name: "集群"
+        description: "客户端集群"
+        key_fields:
+          - field: "集群名"
+            type: "string"
+            description: "客户端集群名称"
+            required: true
+
+  - category: "分区"
+    description: "主题分区相关实体"
+    items:
+      - name: "分区"
+        description: "主题的物理分片"
+        key_fields:
+          - field: "分区号"
+            type: "int"
+            description: "同一主题下唯一，与同主题的其他分区不可重复"
+            required: true
+          - field: "主题分区编号"
+            type: "int"
+            description: "同一份配置里唯一，与其他主题分区不可重复"
+            required: true
+          - field: "通讯地址"
+            type: "string"
+            description: "该主题分区的发布端与订阅端通讯使用的地址"
+            required: true
+          - field: "通讯端口"
+            type: "int"
+            description: "该主题分区的发布端与订阅端通讯使用的端口"
+            required: true
+
+  - category: "消费者"
+    description: "消息消费者相关实体"
+    items:
+      - name: "消费者"
+        description: "消息消费者实体"
+        key_fields:
+          - field: "消费者名"
+            type: "string"
+            description: "消费者的名称"
+            required: true
+
+  - category: "生产者"
+    description: "消息生产者相关实体"
+    items:
+      - name: "生产者"
+        description: "消息生产者实体"
+        key_fields:
+          - field: "生产者名"
+            type: "string"
+            description: "生产者的名称"
+            required: true
+
+  - category: "订阅关系"
+    description: "消费者与主题的订阅关系"
+    items:
+      - name: "订阅关系"
+        description: "包含广播消费模式以及集群消费模式"
+        key_fields:
+          - field: "消费模式"
+            type: "string"
+            description: "包含广播消费模式以及集群消费模式"
+            required: true
+            predefined: true
+            predefined_values:
+              - value: "广播消费"
+                description: "任意一条消息都会被集群内所有消费者消费"
+              - value: "集群消费"
+                description: "任意一条消息只需要被集群内的任意一个消费者处理即可，同一个消费组下的各个消费端，会使用负载均衡的方式进行消费"
+        notes: "广播消费：任意一条消息都会被集群内所有消费者消费。集群消费：任意一条消息只需要被集群内的任意一个消费者处理即可"
+
+  - category: "消息落地"
+    description: "消息持久化相关实体"
+    items:
+      - name: "消息落地"
+        description: "消息持久化相关实体"
+        key_fields:
+          - field: "事物状态表"
+            type: "int64"
+            description: "针对事物消息为preparedType和rollbackType的存储的是事物状态表的索引偏移量"
+            required: false
+
+  - category: "消息索引"
+    description: "消息索引相关实体"
+    items:
+      - name: "订阅索引项"
+        description: "消费者所订阅消息的索引项"
+        key_fields:
+          - field: "订阅索引项"
+            type: "object"
+            description: "消费者所订阅消息的索引项"
+            required: true
+
+      - name: "消息索引文件"
+        description: "持久化分区中所有消息的索引文件"
+        key_fields:
+          - field: "消息索引文件"
+            type: "file"
+            description: "持久化分区中所有消息的索引文件"
+            required: true
+
+      - name: "特征值索引文件"
+        description: "持久化分区中所有消息特征值的索引文件"
+        key_fields:
+          - field: "特征值索引文件"
+            type: "file"
+            description: "持久化分区中所有消息特征值的索引文件"
+            required: true
+
+      - name: "时间索引文件"
+        description: "持久化分区中所有消息时间戳的索引文件"
+        key_fields:
+          - field: "时间索引文件"
+            type: "file"
+            description: "持久化分区中所有消息时间戳的索引文件"
+            required: true
+
+  - category: "消费偏移"
+    description: "消费者消费进度相关实体"
+    items:
+      - name: "集群消费偏移文件"
+        description: "记录集群消费模式下消费者的消费进度"
+        key_fields:
+          - field: "消费偏移"
+            type: "int64"
+            description: "记录集群消费模式下消费者的消费进度"
+            required: true
+
+      - name: "广播消费偏移文件"
+        description: "记录广播消费模式下消费者的消费进度"
+        key_fields:
+          - field: "消费偏移"
+            type: "int64"
+            description: "记录广播消费模式下消费者的消费进度"
+            required: true
+
+  - category: "MC版本"
+    description: "MC服务端版本相关实体"
+    items:
+      - name: "McVersion"
+        description: "每次mc服务端被清理后，由主节点产生的mc版本号，用以保证生产者和消费者的序号的一致性"
+        key_fields:
+          - field: "版本号"
+            type: "int"
+            description: "每次mc服务端被清理后，由主节点产生的mc版本号，用以保证生产者和消费者的序号的一致性"
+            required: true
+        notes: "版本号确保生产者和消费者之间的一致性"
+
+  - category: "发布缓存"
+    description: "客户端消息缓存相关实体"
+    items:
+      - name: "本地缓存文件"
+        description: "客户端的发布缓存，当收到确认后才会将缓存中的消息进行清理"
+        key_fields:
+          - field: "缓存文件"
+            type: "file"
+            description: "客户端的发布缓存"
+            required: true
+        notes: "用于消息重发和可靠性保证"
