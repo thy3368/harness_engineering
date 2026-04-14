@@ -1,0 +1,645 @@
+## 封面
+| Unnamed: 0 | Unnamed: 1 |
+| --- | --- |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | LDP平台 |
+| NaN | NaN |
+| NaN | MC3.0 |
+| NaN | 产品规格书 |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | NaN |
+| NaN | <技术平台总部-低时延PDT> |
+| NaN | NaN |
+| NaN | 2024 年 1 月 |
+| NaN | NaN |
+| NaN | 说明：业务功能树作为产品需求规格清单，是产品规划、研发的依据，后续需持续进行更新，每个RP-TR5做交付件检查。 |
+
+## 版本页
+| Unnamed: 0 | 文档修改记录 | Unnamed: 2 | Unnamed: 3 | Unnamed: 4 | Unnamed: 5 |
+| --- | --- | --- | --- | --- | --- |
+| NaN | 版本 | 修订人 | 参编人 | 修订说明 | 修订日期 |
+| NaN | 1.0.0 | 高旻戈 | NaN | 根据讨论及前期评审，完成L1-L5的分层分级 | 20240517 |
+| NaN | 1.1.0 | 董攀峰、高旻戈 | NaN | 根据初评，对结构进行调整，增加每个功能的描述，以及DFX页面 | 20240530 |
+| NaN | 1.2.0 | 董攀峰、高旻戈 | NaN | 根据第二次评审，对结构、功能描述以及DFX页面进行调整 | 20240531 |
+| NaN | 1.6.0 | 董攀峰、高旻戈 | NaN | 根据第三次评审，对结构、功能描述以及DFX页面重新调整 | 20240712 |
+| NaN | 1.6.1 | 高旻戈 | NaN | 调整发布队列长度，将10W修改为30W | 20241211 |
+| NaN | 1.6.2 | 黄韬、沈国治、董攀峰 | NaN | #202412064383【软件需求】【MC3.0】mcsdk支持关闭发布重试功能，以便支持mqdb的消息重试\n#202412123293【软件需求】【MC3.0】SEE包上开放消费超时时间的配置，用于用户自由配置\n#202411194859【软件需求】【MC3.0】MC3.0运维监控易用性\n#202412165207【软件需求】【MC3.0】SEE包上开放消息池、加载持久化文件最大数的配置，用于解决内存占用问题 | 20241216 |
+| NaN | 1.6.3 | 高旻戈 | NaN | #202408204790 【MC3.0】ZK需要支持用户认证 | 20241226 |
+| NaN | 1.6.4 | 张嘉佳 | NaN | #202411203737 【mc3proxy】 支持pool\_size配置大于1 | 20250107 |
+| NaN | 1.6.5 | 李超杰 | NaN | #202501035715 【mc3proxy】增加管理功能GetProxySessionIDPoolInfo 、GetRebuildAgeBinInfo | 20250109 |
+| NaN | 1.6.6 | 董攀峰 | NaN | #202412303130 【mcsdk】会话发送队列大小支持可配置 | 20250118 |
+| NaN | 1.6.7 | 高旻戈 | NaN | 增加ldp\_mcsdk\_jna结构，并增加发布订阅结构 | 20250120 |
+| NaN | 1.6.8 | 黄韬 | NaN | mc3.0限制说明增加内容 | 20250211 |
+| NaN | 1.6.9 | 黄韬 | NaN | mc3tool 增加三基线说明 | 20250214 |
+| NaN | 1.6.10 | 黄韬 | NaN | 修改sdk 发布者和消费者的非法名称，现在包含#认为是合法的名字 | 20250313 |
+| NaN | 1.6.11 | 黄韬 | NaN | mc3tool，修改部分规格 | 20250321 |
+| NaN | 1.6.12 | 黄韬 | NaN | 增加在Windows场景下，不推荐使用中文作为生产者消费名名的限制 | 20250322 |
+| NaN | 1.6.13 | 黄韬 | NaN | 增加mc3agent内容 | 20250421 |
+| NaN | 1.6.13 | 高旻戈 | NaN | 增加ldp\_mc3stomp内容 | 20250611 |
+| NaN | 1.6.14 | 高旻戈 | NaN | 增加ldp\_mcsdk——>管理——>多实例 行 | 20250902 |
+| NaN | 1.6.15 | 高旻戈 | NaN | 增加mcbiz——>管理——>字段转换 | 20250908 |
+| NaN | 1.6.16 | 高旻戈 | NaN | 增加mcbiz——>订阅——>订阅关系——>集群消费 | 20251014 |
+| NaN | 1.6.17 | 高旻戈 | NaN | 增加mccs | 20251017 |
+| NaN | 1.6.18 | 高旻戈 | NaN | 增加DFX——>可靠性——>高可用要求——>多网卡 | 20251107 |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | 说 明 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | 本文档中所包含的信息属于商业机密信息，如无恒生电子股份有限公司的书面许可，任何人都无权复制或利用。 | NaN | NaN | NaN | NaN |
+
+## 实体定义汇总
+| 业务领域 | 实体 | 关键字段 | 描述 | 预定义 | 必填 | 备注 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 通讯域（消息中心3.0-MC3.0） | 适配接口 | NaN | MC3.0适配不同客户端的接口。包含：kafka-sdk、mqapi、mqsdk以及wss等 | NaN | NaN | NaN |
+| NaN | 发布订阅接口 | 发布接口 | 生产者的发布接口 | NaN | NaN | NaN |
+| NaN | NaN | 订阅接口 | 消费者的订阅接口 | NaN | NaN | NaN |
+| NaN | 管理接口 | NaN | 调用MC3.0所有管理功能的接口。 | NaN | NaN | NaN |
+| NaN | 适配配置 | 客户端配置文件 | MC3.0适配不同客户端的配置文件。 | NaN | NaN | NaN |
+| NaN | MC配置 | 消息中心配置文件 | MC3.0的配置文件。 | NaN | NaN | NaN |
+| NaN | AMQP协议 | NaN | 提供统一消息服务的应用层标准高级消息队列协议。 | NaN | NaN | NaN |
+| NaN | T2/T3协议 | NaN | 提供与T2/T3对接的协议。 | NaN | NaN | NaN |
+| NaN | LDP协议 | NaN | 提供与LDP对接的协议。 | NaN | NaN | NaN |
+| NaN | 主题 | 主题名 | 同一主题下有多个分区，这些分区的主题名相同 | NaN | NaN | NaN |
+| NaN | NaN | 队列 | 通过队列名去区分死信队列、重试队列以及定时队列 | NaN | NaN | NaN |
+| NaN | NaN | 分区 | 分区描述如“分区”实体描述 | NaN | NaN | NaN |
+| NaN | NaN | 过滤条件 | 通过设置过滤条件（16个）来进行消息过滤，并支持集合订阅 | NaN | NaN | NaN |
+| NaN | NaN | 可靠等级 | 支持主题的配置文件中配置主题为内存级（至多一次）或文件级（至少一次） | NaN | NaN | NaN |
+| NaN | NaN | 消息有效期 | 支持消息（包含内存级以及文件级）有效期管理，删除已过期失效消息，释放资源。有效期控制机制不应受发送方、接收方时钟不一致影响。持久化文件会进行分片管理，便于过期消息更好的清理。消息有效期等级0;一天;1;二天;2;三天;3;一星期;4;二星期;5;一个月;6;三个月;7;六个月;8;一年 | NaN | NaN | NaN |
+| NaN | NaN | 顺序消息 | 包含全局有序、分区有序以及无序消费 | NaN | NaN | NaN |
+| NaN | NaN | 强一致 | 包含集群RPO以及机房RPO | NaN | NaN | NaN |
+| NaN | 主题消息 | 主题分区 | 该消息所属的主题分区，可使用主题分区编号或主题名+分区号标识 | NaN | NaN | NaN |
+| NaN | NaN | 消息序号 | 由发布者为该消息生成的序号 | NaN | NaN | NaN |
+| NaN | 集群 | 集群名 | 客户端集群名称 | NaN | NaN | NaN |
+| NaN | 分区 | 分区号 | 同一主题下唯一，与同主题的其他分区不可重复 | NaN | NaN | NaN |
+| NaN | NaN | 主题分区编号 | 同一份配置里唯一，与其他主题分区不可重复 | NaN | NaN | NaN |
+| NaN | NaN | 通讯地址 | 该主题分区的发布端与订阅端通讯使用的地址 | NaN | NaN | NaN |
+| NaN | NaN | 通讯端口 | 该主题分区的发布端与订阅端通讯使用的端口 | NaN | NaN | NaN |
+| NaN | 消费者 | 消费者名 | 消费者的名称 | NaN | NaN | NaN |
+| NaN | 生产者 | 生产者名 | 生产者的名称 | NaN | NaN | NaN |
+| NaN | 订阅关系 | NaN | 包含广播消费模式以及集群消费模式。\n广播消费：任意一条消息都会被集群内所有消费者消费。\n集群消费：任意一条消息只需要被集群内的任意一个消费者处理即可，同一个消费组下的各个消费端，会使用负载均衡的方式进行消费。 | NaN | NaN | NaN |
+| NaN | 消息落地 | 事物状态表 | 针对事物消息为preparedType和rollbackType的存储的是事物状态表的索引偏移量 | NaN | NaN | NaN |
+| NaN | 消息索引 | 订阅索引项 | 消费者所订阅消息的索引项 | NaN | NaN | NaN |
+| NaN | NaN | 消息索引文件 | 持久化分区中所有消息的索引文件 | NaN | NaN | NaN |
+| NaN | NaN | 特征值索引文件 | 持久化分区中所有消息特征值的索引文件 | NaN | NaN | NaN |
+| NaN | NaN | 时间索引文件 | 持久化分区中所有消息时间戳的索引文件 | NaN | NaN | NaN |
+| NaN | 消费偏移 | 集群消费偏移文件 | 记录集群消费模式下消费者的消费进度。 | NaN | NaN | NaN |
+| NaN | NaN | 广播消费偏移文件 | 记录广播消费模式下消费者的消费进度。 | NaN | NaN | NaN |
+| NaN | MC版本 | McVersion | 每次mc服务端被清理后，由主节点产生的mc版本号，用以保证生产者和消费者的序号的一致性。 | NaN | NaN | NaN |
+| NaN | 发布缓存 | 本地缓存文件 | 客户端的发布缓存，当收到确认后才会将缓存中的消息进行清理。 | NaN | NaN | NaN |
+
+## 消息中心3.0
+| 业务领域(一级) | 价值流（二级） | 活动（三级） | 任务（四级） | 任务（五级） | 关键字段（六级） | 描述 | 备注（是否多选，前置依赖，限制要求等）均为强依赖 | DFX | 接口 | 设计文档 | 修改说明（新增、修改、移除） | 修改版本（效能版本） | 关联需求（需求编号） | ldp1.1差异说明 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 消息中心3.0 | ldp\_mcsdk | 发布 | 创建配置对象 | 创建配置对象 | NewEmptyConfig | 该配置对象，主要用于设置生产者相关配置。多进程情况下，创建对象的名字均不一样@调用生产者管理功能-查看客户端配置信息 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 初始化配置对象 | 设置目标mc地址 | server\_address | mc地址对应服务端broker.json对应的地址，如果有多个用逗号分割。@调用生产者管理功能-获取连接列表信息 | 详见DFX-系统容量-服务集群成员个数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置生产者集群名 | group\_name | 生产者集群的名字，加上mac地址和随机数，生成生产者的唯一名字，用以服务端根据该唯一名字判断是否需要协商、补缺和去重。默认值，sdk模式：mcsdk，在plugin模式下：集群名 | 发布者名最大32字节，唯一名字（发布者名+mac+随机数）最大58字节。集群名中不支持/ ? @ $ & ( ) \\ \ | ' ' " " : 这些符号。Windows端禁止使用中文，可能导致初始化失败或管理功能乱码 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置生产者实例名 | instance\_name | 生产者实例名，用来判断工作路径下，是否存在同名生产者。默认值，在sdk模式下：mcsdk，在plugin模式下：应用名 | 最大32字节。实例名中不支持/ ? @ $ & ( ) \\ \ | ' ' " " : 这些符号。Windows端禁止使用中文，可能导致初始化失败或管理功能乱码 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置发布队列长度 | msg\_count | 发布队列长度。如果在发布过程中，待发布的消息超过发布队列长度，内存级返回2919错误，文件级返回2918错误。默认200 | 最小50，最大300000 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置发布重试次数 | producer\_retry | 设置发布重试次数，默认-1，即无限重试。0代表不重试 | NaN | NaN | NaN | NaN | 新增：增加发布重试次数配置 | LDP1.0V202401.07.000 | #202412064383 | NaN |
+| NaN | NaN | NaN | 创建生产者 | 创建生产者 | NewProducer | 该生产者对象，主要用于提供发布相关功能。@调用生产者管理功能-获取生产者列表 @调用生产者管理功能-获取生产者线程列表 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 初始化生产者 | 绑定配置对象 | Create | 读取到相关配置，并开始初始化，主要包括，建立连接、获取主题信息、加载本地持久化文件、重发生产者未确认消息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 连接建立回调 | 连接详细信息 | 根据配置的mc地址，向mc服务端获取主题列表的同时获取了所有mc节点地址，再建立与每个mc节点连接。连接建立一次回调一次。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 事件类型 | 连接建立事件 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 连接断开回调 | 连接详细信息 | 同连接建立回调，连接断开一次回调一次。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 事件类型 | 连接断开事件 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题信息 | 主题信息 | 调用620927功能获取主题信息，里面包括主题名、可靠等级、过滤条件、分区信息，还包括分区对应的mc地址。@调用生产者管理功能-获取主题列表信息 | 1、主题不许在有消费者运行的时候增加修改或者删除。新增主题只允许追加主题，不允许中间插入，且不能中间删除。如果需要，则所有mc服务端和消费者重启。\n2、主题分区的分布情况必须一样，不允许出现A主题分区在0节点有但1节点没有的情况。\n3、如果没有清理持久化文件，不允许修改可靠等级，比如从文件级降级为内存级。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 判断同名生产者 | 同名生产者 | 组装文件锁名: 工作路径/mc30/集群名/Publish+实例名.lock，如果加锁失败代表存在同名节点，反之则没有。 | 判断重名的前提是在同一个工作路径下，如果不同工作路径，则不生效。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 加载生产者消息文件 | 生产者消息文件 | 组装文件目录：工作路径/mc30/集群名/McVersion/实例名，加载并读取消息文件。可通过命令“mc3analysis 文件目录”查看。\n加载完后，重新整理文件，将未被确认的消息重整到一个Data文件中，删除多余Data文件。 | NaN | 性能：\n消息读取能力：10W tps，取决于IO性能\n测试场景：1000个主题分区，1000个生产者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：等同DFX要求\n兼容性：无版本控制\n可服务性：等同DFX要求\n安全性：无控制 | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 重发生产者未确认消息 | NaN | 如果存在未确认的消息，生产者将会进行协商，协商后会调用发布接口重新发布给服务端。可通过命令“mc3analysis 文件目录”查看未确认情况。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 同步/异步发布 | 创建消息对象 | 主题名 | 主题：一类消息的总称 | 最大256字节 | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 过滤条件 | 过滤条件：一条消息的关键字段，消费者根据该关键字段进行消息过滤。\n备注：若在生产者使用了非string类型，目前都会在服务端转换为string类型。 | 1、支持int，int64，string类型，暂不支持其他类型。\n2、最多16个过滤条件，每个过滤条件名最大63字节。\n3、填写的发布过滤字段个数需要与主题定义的个数一致。 | NaN | NaN | NaN | NaN | NaN | NaN | 消息获取转而用ILdpMcsdk里面的NewMessage |
+| NaN | NaN | NaN | NaN | NaN | 业务体 | 业务体，对应开源MQ的payload，一般是二进制报文。MC服务端收到后原封不动的转发给消费者，不做任何的转换。 | ldpmsg单行最大16MB | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置发布超时时间 | 发布超时时间 | 同步接口需要设置发布超时时间，如果超时时间内，服务端没有返回发布成功应答，则发布接口返回超时。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 定位主分区 | NaN | 根据主题信息，查找主分区所在的mc地址。如果消息发布后，服务端返回2823错误（主题分区变动），则更换mc连接重新获取主题信息，直到选出正确分区信息。@调用生产者管理功能-获取主题分区列表信息 | mcsdk发布接口支持发布消息给指定主题分区，mc3.0只保证分区有序，不保证分区之间有序。如果用户有消息全局顺序的要求，需要自行配置主题属性为全局有序。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 序号协商 | 节点重启协商 | 主题分区如果没有协商记录并且有消息要发送，则主动发起序号协商620943功能。内存级，生产者重启后，消息序号从1开始排序，服务端以生产者为准。文件级，发布的消息缓存在持久化文件中，如果生产者和服务端协商完后消息存在缺失，则发起消息补缺功能。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 主备切换协商 | 服务端如果收到的消息序号与其预期不一致，则返回2808错误（发布序号需要重置）。生产者收到后，发起序号协商620943功能。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 生产者持久化 | 消息文件持久化 | 若为内存级，则放弃持久化。\n若为文件级：\n1、根据配置的发送队列大小申请空闲索引，如果申请不到，则返回2918错误(缓存文件已满)。\n2、组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区\_Cache-Message-编号.data。\n3、如果写入消息文件过程中，消息大小超过1GB，该消息将不被写入，将会更换为下一个消息文件写入。 | 一个消息文件最大1GB，最多256个。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 索引文件持久化 | 组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区\_Cache-Messageindex.inx。索引文件中的内容指向消息文件。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 消息过期 | 遍历消息文件列表，如果消息文件的消息都已经被确认了，则删除该消息文件。保留最新的消息文件。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 生产者补缺 | SetConsumeFromWhere | 如果在节点重启或主备切换，进行协商后发现消息有所缺失，将会进行生产者补缺。\n1、内存级不支持生产者补缺，最多补缺发送队列（本地持久化文件）和发送窗口总和的数据。\n2、如果被新数据覆盖了，则补缺不到。\n3、发送消息补缺620931功能给服务端，如果持久化文件中消息恢复失败，则发送空消息给服务端。 | NaN | 性能：\n消息吞吐能力：性能总数达到5W tps，单主题不少于3W\n测试场景：1000个主题分区，1000个生产者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：主备切换时间：5s \n 客户端tcp连接切换时间：90s (可配置)\nRPO: 如果磁盘坏掉或者机器启动失败，单个主题分区数据丢失最多发布队列+窗口大小。\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620931\n（内部接口） | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消息发布 | PublishMsg | 先写入发送队列，再尝试写入发布窗口，如果发布窗口空闲，则直接调用620924功能进行消息发布，反之则由定时线程重发或者等消息确认后发布下个消息。 | 发布窗口大小：32个消息 | NaN | 620924\n（内部接口） | NaN | NaN | NaN | NaN | 入参从ILdpMsgWriter换成IMessage |
+| NaN | NaN | NaN | NaN | 处理系统事件 | 系统事件类型 | 包含：系统暂停、系统恢复、流控以及流控解除，目前不会回调 | 未实现 | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 处理发布结果 | 成功与否 | 同步：PUBLISH\_OK：成功，表示mc服务端已经收到消息并处理。非PUBLISH\_OK：失败，可能的错误有：连接不存在（PUBLISH\_NO\_CONNECTION）、超时（PUBLISH\_TIMEOUT）、流控（PUBLISH\_FLOW\_CONTROL）等等。\n异步：0：发送成功，只是表示生产者入持久化队列成功，mc服务端处理结果会在发布回调OnSuccess或者OnFailure返回。非0：发送失败。可能的错误有：主题不存在（2914）、过滤条件非法（2916）、写入本地缓存失败（2918）、连接不存在（2908）等等。 | 同步发布接口如果返回PUBLISH\_OK，只表示mc服务端确认已收到，但是在主题属性为：内存级/文件级非强一致/文件级强一致RPO不等于0场景下，可能存在消息丢失。需要上层业务做可靠性设计，比如消费重试 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 详细信息 | 主要是主题分区、序号和发布权限控制信息需要关注。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 返回方式 | 包含：同步返回以及回调返回 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 发布重试 | 发送窗口 | 定时线程将发送窗口中未被确认的消息，每隔5秒打上重发标志，重发给服务端。发布重试支持可关闭，当关闭发布重试后，发布端的mcsdk将不具备发布重试功能，此时发布端的消息的可靠性需要由上下游的相关依赖组件进行保证 | NaN | NaN | NaN | NaN | 新增：支持设置发布重试次数，以支持mqdb的重试 | LDP1.0V202401.07.000 | #202412064383 | NaN |
+| NaN | NaN | NaN | 释放生产者 | 断开连接 | DeleteProducer | 先停线程，再释放文件锁，最后解除与配置文件的绑定关系 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理发布回调 | 系统消息回调 | OnSystemEvent | 包含：系统暂停、系统恢复、流控以及流控解除，目前不会回调。流控功能暂未实现 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 发送成功回调 | 发布结果详细信息\n（除出发布结果外，所有的参数集合） | 主要包含：主题分区、序号和发布权限控制信息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 用户参数 | 初始化生产者送入的用户参数信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 订阅 | 初始化配置对象\n（补充配置清单） | 设置目标mc地址 | server\_address | mc地址对应服务端broker.json对应的地址，如果有多个用逗号分割。 | 详见DFX-系统容量-服务集群成员个数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置消费者集群名字 | group\_name | 对应consumer group概念，消费者组名。用以保证消费者消费偏移量，广播消费记录在本地：工作路径/集群名/McVersion/global\_map\_集群名.dat。集群消费记录保存在服务端。默认值，sdk模式：mcsdk，在plugin模式下：集群名 | 最大32字节。集群名中不支持/ ? @ $ & ( ) \ | ' ' " " 这些符号。Windows端禁止使用中文，可能导致初始化失败或管理功能乱码 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置消费者实例名 | instance\_name | 消费者实例名，用以管理功能展示订阅项的所属消费者名。默认值，在sdk模式下：mcsdk，在plugin模式下：应用名 | 最大32字节。实例名中不支持/ ? @ $ & ( ) \ | ' ' " " 这些符号。Windows端禁止使用中文，可能导致初始化失败或管理功能乱码 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置消费者消费端快速确认 | push\_quick\_ack | 快速确认：会话接收窗口中每来一个消息返回一个确认；如果不启用快速确认：每隔16个消息（半个会话窗口大小）或者每隔1秒（假如有待确认的消息）向服务端发送确认序号。默认不启用快速确认。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置消费模式 | 集群消费 | 集群消费：同一个 Consumer Group 的每个 消费者实例根据负载均衡策略平均分摊消息，且同一条消息不会被一个消费者组内不同的消费者实例消费到。消费偏移量存在服务端 | 1、一个消费者只能绑定一种消费模式, 重启后也不能进行切换。\n2、集群消费情况下，同一个消费者集群（GroupName）不允许存在重复的应用名（InstanceName）\n3、集群消费依赖mc3.0内部主题（mc3%%consumer\_offset），目的是选择消费者协调器和存放集群消费偏移量，所以需要提前在topic.json中增加一个文件级主题mc3%%consumer\_offset，分区个数必须是16个，无过滤条件，其他与正常主题无异。 | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/202404185306\_MC3.0集群消费方案/集群消费概要.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 广播消费 | 广播消费：同一个 Consumer Group 的每个 消费者实例都接收全量的消息。消费偏移量存在消费者。默认广播消费。 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置集群消费消息分配策略 | PrimaryBackup | 主备模式，所有消息都由主节点进行消费。 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/202404185306\_MC3.0集群消费方案/集群消费概要.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | SingleTopicPartition | 单主题分区模式，每个节点的的消息根据每个主题分区数量均匀分配。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置是否支持死信队列 | dead\_letter | 支持开启对接死信队列 @死信队列。默认不支持 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202408067333\_MC3.0支持死信队列功能 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置是否消费重试 | consume\_retry | 开启了以后，如果回调函数返回LATER或者调用SendNack后，都会根据重试次数配置就行消费重试。默认不重试 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202406076323\_集群消费消息重试和消费偏移量更新详细设计 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费超时时间 | consume\_timeout | 用户回调返回 CONSUME\_CUSTOMER 时，多久没有手动 ACK 被视为超时，单位毫秒，默认 60s，范围:＞1s | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费重试间隔 | reconsume\_interval | 消费重试间隔，单位毫秒，默认值为 2000 ms，范围是[1000, 60000] | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费重试次数 | max\_consume\_count | 消费重试次数，默认 5 次，范围是[1,INT32\_MAX]，如果是-1，表示一直重试 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 异步偏移量提交偏移量数 | offset\_count | 集群消费异步偏移量提交时，可以指定距离上一次偏移量多少个消息就提交，默认 100 个消息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 异步偏移量提交时间间隔 | commit\_offset\_interval | 集群消费异步偏移量提交时，指定提交的时间间隔，单位为毫秒，默认值为 5000 毫秒。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费RPO | consume\_rpo | 在非重试场景下，用户回调返回 CONSUME\_CUSTOMER 时会将消息加入 RPO 队列，默认最大数量为 100 个。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费流控队列大小 | callback\_queue\_limit\_size | mcsdk 回调队列大小，默认 0（表示无上限），如果需要消费流控，最小设置大小 10000 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 超时后是否更新偏移量 | update\_offset\_when\_timeout | 支持非重试场景下，返回CONSUME\_CUSTOMER后缓存队列满，超时后是否更新消息偏移量。默认不更新，配置为1时会更新 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费等待时间 | full\_wait\_time | 在非重试场景下，当消费的 RPO 队列满时，等待指定时间后退出处理，单位为毫秒，默认值为 5000 毫秒。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置回调线程个数 | callback\_thread\_count | 在分区有序的情况下，根据主题分区编号绑定回调线程。默认1个线程。@调用消费者管理功能-获取消费者线程列表 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置会话发送队列长度 | session\_queue\_size | 设置会话发送队列长度，默认是10w | NaN | NaN | NaN | NaN | 新增session\_queue\_size配置说明 | LDP1.0.V202401.08.000 | #202412303130 | NaN |
+| NaN | NaN | NaN | NaN | 设置底层tcp属性 | tcp\_heartbeat\_send\_interval\_s | tcp连接心跳配置，心跳间隔，正整数，默认值：-1，表示上层不设置，由底层配置决定 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | tcp\_heartbeat\_times | tcp连接心跳配置，心跳超时次数，正整数；默认值-1，表示上层不设置，由底层配置决定 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 创建消费者 | 创建消费者 | NewConsumer | 该消费者对象，主要用于提供订阅等相关功能。@调用消费者管理功能-获取消费者列表 @调用消费者管理功能-获取消费者线程列表 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 初始化消费者 | 绑定配置对象 | Create | 读取到相关配置，并开始初始化，主要包括，建立连接、获取主题信息、加载本地持久化文件 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 连接建立回调 | 连接详细信息 | 根据配置的mc地址，向mc服务端获取主题列表的同时获取了所有mc节点地址，再建立与每个mc节点连接。连接建立一次回调一次。@调用消费者管理功能-获取连接列表信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 事件类型 | 连接建立事件，使用了remoter的tcp功能。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 连接断开回调 | 连接详细信息 | 同连接建立回调，连接断开一次回调一次。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 事件类型 | 连接断开事件 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题信息 | 主题信息 | 调用620927功能获取主题信息，里面包括主题名、可靠等级、过滤条件、分区信息，还包括分区对应的mc地址。@调用消费者管理功能-获取主题列表信息 @调用管理功能-获取主题信息 | 1、主题不许在有消费者运行的时候增加修改或者删除。新增主题只允许追加主题，不允许中间插入，且不能中间删除。如果需要，则所有mc服务端和消费者重启。\n2、主题分区的分布情况必须一样，不允许出现A主题分区在0节点有但1节点没有的情况。\n3、如果没有清理持久化文件，不允许修改可靠等级，比如从文件级降级为内存级。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 判断同名消费者 | 同名消费者 | 组装文件锁名: 工作路径/mc30/集群名/Subscribe+集群名.lock，如果加锁失败代表存在同名节点，反之则没有。 | 判断重名的前提是在同一个工作路径下，如果不同工作路径，则不生效。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 加载本地序号文件 | 消费者消息文件 | 如果是广播消费，则组装文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat，加载并读取序号文件。可通过命令“mc3analysis 文件目录 1”查看。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 序号文件清理 | 序号文件 | 清理超过7天没有收到消息的消费者偏移量数据，文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 建立会话 | 建立会话 | 向所有mc节点建立发起建立会话功能（620925），模拟TCP的三次握手。只有建立成功的会话，才可以接受订阅请求。@调用消费者管理功能-获取会话列表 | 会话窗口大小：32个消息\n单个消费者最多建立1000个会话 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 会话断开重连 | 存在多种情况比如会话心跳超时、连接断开等原因会导致会话断开，由定时线程检查并重连。如果会话断开后，都会把原有的订阅项设置为需要重订，等会话重新建立后再按照要求重订。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 创建订阅参数 | 创建订阅参数 | NewConsumerParam | 该订阅参数，主要用于设置主题、过滤条件等订阅信息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 设置订阅参数 | 设置主题名字 | SetTopicName | 订阅的主题名 | 主题名最大256字节 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题名字 | GetTopicName | 订阅的主题名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置过滤条件 | 字段编号 | 主题配置中过滤条件数组的编号。\n目前过滤条件为index，是由于当前发布接口的入参是LdpMsgWriter。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 字段值 | 要订阅的字段，string模式下，支持集合订阅（\2分隔）。\n如果不设置过滤条件，代表全匹配该过滤条件。\n若在消费者使用了非string类型，目前都会在服务端转换为string类型。\n | 1、支持int，int64，string类型，暂不支持其他类型。\n2、同个过滤条件的类型不能更改（string和非string），比如前一次订阅时是int类型，下一次换成string。\n3、最多16个过滤条件。\n4、string类型下，过滤字段的值不能包含“\2”字符。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取过滤条件 | 字段编号 | 主题配置中过滤条件数组的编号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 字段值 | 根据编号和类型返回对应的值 | 同个过滤条件的设置和获取类型不一致（string和非string），则返回默认值 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置订阅补缺方式 | 补缺方式 | 首次订阅包含：根据时间戳补缺、根据特定Key补缺、根据最新补缺以及根据最旧补缺，目前只做了最新补缺和最旧补缺\n最新补缺：一个新的订阅组第一次启动从队列的最前位置开始消费，后续再启动接着上次消费的进度开始消费\n最旧补缺：一个新的订阅组第一次启动从队列的最后位置开始消费，后续再启动接着上次消费的进度开始消费 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 是否重置 | 重置后，本地订阅恢复为第一次启动的订阅补缺方式 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置消费重试次数 | 消费重试次数 | 设置重试消费次数，默认重试次数10次，如果超过重试次数，记录日志，返回NACK给服务端，并写入死信队列 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/mc3.0其他方案/统一MQ概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费重试次数 | 消费重试次数 | 获取重试消费次数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置订阅项名称 | SetSubInfoName | 设置订阅名称，目前用在消费者本地校验订阅项是否重名 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取订阅项名称 | GetSubInfoName | 获取订阅名称 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 订阅消息 | 设置订阅超时时间 | nTimeoutMs | 订阅超时时间内，如果没有订阅结果，则返回订阅超时错误（2928），\n当超过设置的订阅超时时间，消费者就会将该消息丢弃。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 绑定订阅参数 | lpParam | 检查订阅参数的合法性，非法的参数包含：订阅项名称不合法（2924）、订阅项名重复（2923）、主题不存在（2914）、过滤条件非法（2916）等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置用户参数 | lpUser | 绑定每次订阅的用户参数，以便后续消费回调的返回 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 检查重复订阅 | 消费者判断重复订阅 | 消费者本地判重，先判断主题和附加数据是否一致，再比较过滤条件值，int/int64直接比较值，string只比较值或者值是不是在前一个的集合订阅范围内。但是不涉及过滤条件大小范围的判断（前后订阅过滤条件个数不一致，或者存在订阅过滤条件有跳空情况，都认为不是重复）。重复订阅返回订阅成功；过滤条件类型不一致，返回过滤条件非法（2916） | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 选择节点订阅 | 负载均衡 | 消费者第一次订阅，选择节点是随机的，后续订阅是轮流来。前提是与该mc节点会话是建立状态（如果该mc是非ready状态，会话建立失败）。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 同机房优先 | 配置了本地机房名，同时mc服务端的broker.json也配置节点所属的机房，同机房优先订阅功能才会生效，否则还是负载均衡订阅。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 维护订阅关系 | 消费者维护 | 每次订阅新增订阅项，都会新建一个订阅索引号，消费者维护一个map，key是订阅索引号，value是订阅项。在维护好订阅关系后，发起订阅功能（620921）@调用消费者管理功能-获取订阅项列表 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 发起订阅 | 集群消费 | 根据集群名计算出消费者协调器，再发起分区分配请求给消费者协调器，根据分区分配情况再找集群内的主分区订阅消息 | 如上：集群消费限制 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 广播消费 | 随机找一个可用的mc节点会话，发起消息订阅。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 返回订阅结果 | 订阅索引号 | 唯一标识消费者本地订阅项，以便取消订阅。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 成功与否 | 返回0代表成功（重复订阅也为成功）。非0代表失败，失败结果一般包含：订阅项名称不合法（2924）、订阅项名重复（2923）、主题不存在（2914）、过滤条件非法（2916）等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 系统事件回调 | 系统消息详细信息 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 系统暂停 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 系统恢复 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 订阅消息结果回调 | 消息详细信息 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 订阅特定值不存在 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 订阅特定值不匹配 | 暂未规划 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 发起消费者补缺 | GetConsumeFromWhere | 内存级不支持；消费者：订阅后发现有缺口，发起消费者补缺功能（620944）；每个订阅项一个缓存队列，一边补历史消息，一边将收到的主推消息缓存在缓存队列中，等历史消息消费完了，再消费缓存队列的消息。如果缓存队列超了，则替换最老的消息，并设置新的补缺范围。\n服务端：如果连续2次从持久化中获取消息失败，这2次获取消息失败会记日志，则返回空消息。 | 缓存队列大小：1000个消息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费消息 | 消息推送 | 服务端收到发布的消息后，根据维护的订阅关系，找到匹配的消费者，并推送。消费者需要处理消息消费回调。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 消息拉取 | 暂不支持 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 取消订阅消息 | 订阅索引号 | lpSubscribeIndex | 订阅接口返回的，用来唯一标识消费者本地订阅项 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 设置取消订阅超时时间 | nTimeoutMs | 不等待取消订阅应答，所以这里的时间是可靠发给服务端的超时时间。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 绑定订阅参数 | lpParam | 用来查找订阅索引号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 删除订阅项 | 消费者 | 根据订阅索引号查询到订阅项，先发起取消订阅功能（620922），再删除订阅项。 | 如果消费者取消失败，比如连接断开了，那么消费者本地会删除订阅项，但是服务端可能会残留订阅消息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 返回取消订阅结果 | CancelSubscribeByIndex | 返回0代表成功，非0代表失败，失败结果一般包含：无此订阅索引号（2925）、正在删除过程中（2926）、无空闲消息（2915）、主题不存在（2914）等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理消费回调 | 收到推送消息的回调 | 消费成功(更新本地序号文件) | 广播模式下，更新本地序号文件（文件级）：工作路径/集群名/McVersion/global\_map\_集群名.dat，里面包含主题分区偏移，生产者发布的消息序号。集群消费模式下（文件级），更新偏移量到服务端。 | 在主题级别为文件级（至少一次）的场景下，存在重复消息的情况，所以需要业务系统做幂等性处理 | 性能：\n序号写入能力：10W tps，取决于IO性能\n测试场景：1000个主题分区，1000个生产者\n 1000w消息，每个消息1KB\n核心数据容量：等同DFX要求\n可靠性：\nRTO：等同DFX要求\n兼容性：消息文件头有版本控制，向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | NaN | NaN | NaN | NaN | NaN | 回调函数参数Msg从ILdpMsgReader换成IMessage |
+| NaN | NaN | NaN | NaN | NaN | 消费失败 | 消费失败后会重新发起回调，重试次数由订阅项或者全局配置决定，如果重试次数到了还失败，发送到死信队列（待实现），然后更新消费偏移量。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 自定义消费 | 支持手工回复ACK或NACK，在这个过程中，支持回调其他主题分区。如果返回ACK，则按消费成功处理。如果返回NACK，当消费失败处理。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 订阅索引号 | 用来唯一标识消费者本地订阅项 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 消息 | 推送过来的消息，功能号是620926 | NaN | NaN | 620926\n（内部接口） | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 线程号 | 对应的回调线程号，在分区有序的情况下，根据主题分区编号绑定回调线程。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 用户参数 | 订阅时送的用户参数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 处理结果 | 消费成功、消费失败、自定义消费 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 手工确认/自动确认 | 手工确认 | 在推送回调函数返回Sucess、Later以及Failed时，会进行自动确认。自动确认的逻辑为消费者接搜到消息后，等待消息处理结束，自动回送一个确认回执，自动确认的时间间隔默认为5s(可配） | NaN | NaN | NaN | NaN | 新增：配置项MsgConsumeLimit控制主题分区队列单次可消费消息数量上限，防止长时间只消费单一主题分区队列\n修改：SendAck/SendNAck接口实现进行修改，根据MsgID查找对应的回调消息，更新bAckFlag状态 | NaN | NaN | 入参Msg从ILdpMsgReader换成IMessage |
+| NaN | NaN | NaN | NaN | NaN | 自动确认 | 当推送回调函数返回Customer时，会进行手工确认。手工确认包含ACK和NACK。当返回NACK时，会更具是否配置了死信队列、消费重试以及是否开启消费重试进行相应的消息处理。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费重试 | NaN | 消费重试的重试次数以及重试时间间隔可配置。\n重试次数默认10次，如果超过重试次数，记录日志，返回NACK给服务端，并写入死信队列\n重试时间间隔默认2秒\n超时时间默认60秒，如果返回值是COMSUME\_CUSTOMER，并且等待ACK或NACK超时，则发起重试 | NaN | NaN | NaN | NaN | 修改：\n重试模式：将原来从回调队列取数据放入重试回调队列，修改为 从主题分区队列取数据放入重试队列\n非重试模式：session推数据过来后，根据主题和分区号，找到对应主题分区回调队列，入队列 | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 死信队列 | NaN | 在消费重试超时、Later/Failed自动确认（已配置死信队列）、Customer回复NACK并未配置消费重试的情况下，消息会进入死信队列 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 释放消费者 | 断开会话 | DeleteConsumer | 断开会话后，附属在该会话上的订阅项都改为待重新订阅。服务端在收到断开会话事件后，取消所有附属在该会话上的订阅项。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 断开连接 | DeleteConsumer | 断开连接后，断开绑定在该连接上的会话。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 释放配置对象 | 删除配置对象 | DeleteConfig | 删除配置对象，并将remoter连接还到连接池中 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用消费者/生产者管理功能 | 查看客户端配置信息 | GetConfigList | 展示所有消费者或者生产者的相关配置，包括集群名、实例名、服务端地址、广播消费还是集群消费、发送队列长度 | NaN | 性能：\n消息吞吐能力：≤100tps，不影响正常发布和订阅性能\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制\n\n | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取连接列表信息 | GetConnectionList | 展示与mc集群所有节点的连接状态，包括地址、backendid、状态、节点名等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费者列表 | GetConsumerList | 展示消费者相关统计信息，包括集群名、会话个数、回调线程数、文件锁等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取生产者列表 | GetProducerList | 展示生产者相关信息，包括生产者名、发布目录、本地消息文件最大配置、每个主题分区发布进展 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取生产者线程列表 | GetProducerThreadInfo | 展示生产者线程信息，包括定时线程和接收线程。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费者线程列表 | GetConsumerThreadInfo | 展示消费者相关的线程列表，主要是回调线程 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消息池使用信息 | GetObjFactoryInfo | 展示消息池的使用情况，包括初始值，最大值、空闲值、已用值、reader使用、json使用等信息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话列表 | GetSessionList | 展示与mc集群的会话信息，包括会话号、状态、窗口、发送序号、接收序号等信息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话线程列表 | GetSessionThreadInfo | 展示会话线程信息，包括工作线程和定时线程。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取订阅项列表信息 | GetSubscribeList | 展示消费者本地订阅的所有订阅项信息，包括消费者组名、订阅索引号、订阅状态、主题、过滤条件等等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题列表信息 | GetTopicList | 展示所有主题列表信息，包括主题名、过滤条件、等级、分区信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题分区列表信息 | GetTopicPartitionList | 展示所有主题分区列表信息，包括主题名、主分区所在节点的backendid、版本号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群消费主题分配情况 | GetGroupConsumeInfo | 展示集群消费主题相关信息，包括该消费者组协调器确认的主题名、该消费者协调器选择分区、主题信息等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看日志 | 查看本地文件 | 本地文件 | 目录格式：工作路径/log/日志文件名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看本地持久化文件 | 发布缓存 | 消息文件 | 同@发布消息持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 消息索引 | 同@发布消息索引持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费者偏移量 | 主题分区偏移量 | 如果是广播消费，则组装文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat，可通过命令“mc3analysis 文件目录 1”查看。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 生产者偏移量 | 与主题分区偏移量记录在同一个文件中，组装文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat，可通过命令“mc3analysis 文件目录 1”查看。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群名称 | 集群文件锁 | 同@判断同名生产者和同名消费者 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 多实例 | mc集群地址为key | 死信消息发布者、主题缓存需要根据mc集群地址作区分 | mcsdk支持多实例，可以对接多个MC3.0服务端，并进行正常的消息收发 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 连接 | 通过remoter管理和mc服务端之间的连接 | AddMcServerAddress\nCreateBackend | mcsdk通过remoter管理和mc之间的tcp连接，连接建立成功后，会通过心跳维持连接（默认心跳间隔时间10s）。如果mc服务端hang住之后，心跳10s检测一次，连续3次检测失败后才断开连接，然后重连。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mc | 发布 | 处理序号协商 | 节点重启协商 | NaN | 主题分区如果没有协商记录并且有消息要发送，则主动发起序号协商620943功能。内存级，生产者重启后，消息序号从1开始排序，服务端以生产者为准。文件级，发布的消息缓存在持久化文件中，如果生产者和服务端协商完后消息存在缺失，则发起消息补缺功能。 | NaN | 性能：\n消息吞吐能力：协商性能总数达到1W tps\n测试场景：1000个主题分区，1000个生产者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：5s\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620943\n（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主备切换协商 | NaN | 服务端如果收到的消息序号与其预期不一致，则返回2808错误（发布序号需要重置）。生产者收到后，发起序号协商620943功能。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理消息发布 | NaN | NaN | 在收到生产者的发布功能号620924后，如果序号连续性返回序号需要协商，再进行消息持久化-->集群复制-->调用业务组件，最终推送给订阅模块。 | NaN | 性能：\n消息吞吐能力：性能总数达到5W tps，单主题不少于3W\n测试场景：1000个主题分区，1000个生产者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：主备切换时间：5s \n 客户端tcp连接切换时间：90s (可配置)\nRPO: 如果磁盘坏掉或者机器启动失败，单个主题分区数据丢失最多发布队列+窗口大小。\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620924\n（内部接口） | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理生产者补缺 | NaN | NaN | 如果在节点重启或主备切换，进行协商后发现消息有所缺失，将会进行生产者补缺。内存级不支持生产者补缺 | NaN | NaN | 620931\n（内部接口） | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布业务扩展 | 加载业务库 | NaN | 启动的时候，根据publish/biz下配置加载业务库，一般是publish\_to\_mc2，支持加载多个业务库 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 调用业务库 | NaN | 在收到消息发布转发订阅模块前，类似java的拦截器一样，调用业务库做一些消息预处理。这里业务库目前只支持publish\_to\_mc2 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息持久化 | 消息文件持久化 | NaN | 若为内存级，则放弃持久化。\n若为文件级：\n1、根据配置的发送队列大小申请空闲索引，如果申请不到，则返回2918错误(缓存文件已满)。\n2、组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区\_Cache-Message-编号.data。\n3、如果写入消息文件过程中，消息大小超过1GB，该消息将不被写入，将会更换为下一个消息文件写入。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 索引文件持久化 | NaN | 组装文件地址：工作路径/mc30/集群名/McVersion/实例名/主题分区\_Cache-Messageindex.inx。索引文件中的内容指向消息文件。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消息过期 | NaN | 遍历消息文件列表，如果消息文件的消息都已经被确认了，则删除该消息文件。保留最新的消息文件。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 集群复制 | 强一致 | NaN | 未实现 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 最终一致 | NaN | 通过异步复制的方式，在默认配置的条件下，实现主备最终一致。默认网络、性能以及配置参见DFX各标准指标 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 订阅 | 处理消息订阅 | 广播消费 | NaN | 在广播消费模式下，服务端主要做订阅判重工作，在会话号（消费者）、主题和附加数据一致的前提下，判断过滤条件大小范围，不涉及值类型比较（已经转换为string）和集合订阅重复判断。大小范围比较规则是，如果新的订阅与历史订阅项相等或者新的订阅范围小（被包含），则返回重复订阅给消费者，如果新的订阅范围大，则删除老的订阅项，替换为新的订阅项。如果所有信息都不重复，则返回订阅成功。对于两个订阅项，订阅项1：filter1不设置过滤条件，filter2设置为b与订阅项2：filter1为a，filter2不设置过滤条件，判断不出来范围大小，认为不重复。 | NaN | 性能：\n服务端收到发布到推送单笔延时：＜1ms\n消息吞吐能力：推送总数达到5W tps，单主题不少于3W\n测试场景：1000个主题分区 1000个消费者\n服务端订阅性能：单消费者存量订阅项数≤ 1w个 2000笔/s\n 单消费者存量订阅项数≤ 10w个 200笔/s\n核心数据容量：等同DFX要求\n可靠性：\nRTO：会话超时时间：30s \n 客户端tcp连接切换时间：90s (可配置)\n 重新订阅时间：存量订阅项 / 服务端性能\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620921\n（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群消费 | NaN | 消费者协调器根据客户端给的消息分配类型以及当前相同集群名的存量消费者来确定分区分配情况，并将分配结果以及每个分区的消费偏移量一并通知给发生变更的消费者节点。以便其发起下一次的分区订阅。 | 如上：集群消费限制 | 性能：\n服务端收到发布到推送单笔延时：＜1ms\n消息吞吐能力：推送总数达到3W tps，单主题不少于2W\n测试场景：1000个主题分区 200个消费者集群\n服务端订阅性能：单消费者存量订阅项数≤ 1w个 2000笔/s\n 单消费者存量订阅项数≤ 10w个 200笔/s\n核心数据容量： ≤1000个消费者集群（消费者）其他等同DFX要求\n可靠性：\nRTO：会话超时时间：30s \n 客户端tcp连接切换时间：90s (可配置)\n 重新订阅时间：存量订阅项 / 服务端性能\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620953\n（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/202404185306\_MC3.0集群消费方案 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理取消订阅 | 广播消费 | NaN | 按照订阅索引ID找到对应的订阅项进行取消。 | NaN | 性能：\n测试场景：1000个主题分区 1000个消费者\n核心数据容量：等同DFX要求\n取消订阅性能：存量订阅项数 ≤ 1w个 2000笔/s\n 存量订阅项数 ≤ 10w个 200笔/s\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620922\n（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群消费 | NaN | 通知消费者协调器，把分区信息进行删除，然后根据客户端给的消息分配类型以及当前相同集群名的存量消费者来确定分区分配情况，并将分配结果以及每个分区的消费偏移量一并通知给发生变更的消费者节点。以便其发起下一次的分区订阅。 | NaN | 性能：\n测试场景：1000个主题分区 1000个消费者\n核心数据容量：等同DFX要求\n取消订阅性能：存量订阅项数 ≤ 1w个 2000笔/s\n 存量订阅项数 ≤ 10w个 200笔/s\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620954（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/202404185306\_MC3.0集群消费方案 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理订阅补缺 | NaN | NaN | 根据消费者提供的主题分区消费偏移量范围，返回符合过滤条件的消息给消费者。 | NaN | 性能：\n消息吞吐能力：补缺总数达到5W tps，单主题不少于3W\n测试场景：1000个主题分区 1000个消费者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620944\n（内部接口） | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息过滤 | 服务端过滤 | NaN | 若在生产者使用了非string类型，目前都会在服务端转换为string类型。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费者过滤 | NaN | 消费者根据该关键字段进行消息过滤。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 会话管理 | 建立会话 | NaN | 接收消费者的建立会话功能（620925）请求，模拟TCP的三次握手。只有建立成功的会话，才可以接受订阅请求。 @管理功能-获取会话线程列表 | 会话窗口大小：32个消息 | 性能：\n建立会话速度≤1000个/s\n测试场景：10W个会话数\n会话收发报文总数≤10W tps\n核心数据容量：等同DFX要求\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620925\n（内部接口） | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 会话断开取消订阅 | NaN | 在会话断开后，服务端会取消绑定在该会话上所有的订阅。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理消息拉取 | NaN | NaN | 未实现 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 死信队列 | NaN | NaN | 在消费重试超时、Later/Failed自动确认（已配置死信队列）、Customer回复NACK并未配置消费重试的情况下，消息会进入死信队列 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202408067333\_MC3.0支持死信队列功能 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 推模式 | NaN | NaN | 在推模式下，服务端会维护一个或多个订阅者列表。当生产者发送一条消息时，服务端会将这条消息主动推送给所有已经订阅该主题的消费者 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | 获取会话年龄箱信息 | GetAgeBinInfo | 展示当前会话箱的大小、其中的会话个数以及年龄 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取所有消费者的所有订阅项信息 | GetAllSubscribeInfo | 展示消费者名称、所属推送线程编号、会话号、订阅主题名、过滤条件等订阅项信息 | 该接口可以通过传入TopicName用来进行过滤 | NaN | NaN | NaN | 新增：支持根据主题名过滤 | LDP1.0V202401.07.000 | #202411194859 | NaN |
+| NaN | NaN | NaN | NaN | 获取所有消费者信息 | GetAllSubscribers | 展示消费者名称、会话号以及引用数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取所有broker列表信息 | GetBrokerInfo | 展示所有broker的节点编号以及host信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取commitlog信息 | GetCommitLogInfo | 展示Commitlog文件名、有效期级别、当前写入文件偏移量以及当前写入文件总偏移量等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取索引文件信息 | GetIndexInfo | 展示当前有效期级别、主题编号与分区号组合、当前索引写入位置、当前索引刷新位置等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消息池使用信息 | GetLdpObjectFactory | 展示消息池初始化大小、最大可申请消息数、当前使用writer消息个数以及使用reader消息个数等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话管理信息 | GetManagerInfo | 展示会话管理池大小、当前会话个数、当前空闲会话个数、会话线程数、心跳接收超时时间、心跳间隔时间等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取全局数据加载主题信息 | GetMcGdTopicInfo | 展示主题编号、主题名称、可靠等级、有效期等级、过滤字段、分区情况等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群服务状态信息 | GetMcStatus | 展示服务端状态、当前仲裁版本号、本地节点编号以及存放本地配置的zk地址等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费者内存使用信息 | GetMemCost | 展示订阅使用内存统计、订阅项构建推送使用内存统计以及消费者与订阅项内存统计 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布索引偏移使用信息 | GetPubIndexOffset | 展示发布线程编号、主题编号与分区编号组合以及Index文件偏移量 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布序号信息 | GetPubMsgNo | 展示发布线程编号、主题编号与分区编号组合、生产者名称、生产者总共发布消息数量、过滤掉的空包数量、以及生产者下一个序号 | 该接口可以通过传入TopicName用来进行过滤 | NaN | NaN | NaN | 新增：支持根据主题名过滤 | LDP1.0V202401.07.000 | \n#202411194859 | NaN |
+| NaN | NaN | NaN | NaN | 获取发布主题分区线程信息 | GetPubTopicDistribute | 展示主题编号与分区号组合以及发布线程编号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布线程信息 | GetPublishQue | 展示发布线程编号、队列积压个数、队列历史积压最大个数以及发布线程处理总数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群间补缺队列状态 | GetRebuildQueueStatus | 展示主题编号与分区号组合、当前主题分区集群间补缺已缓存的消息数、处于rebuilding状态的主题分区收到集群间同步消息的缓存队列大小、队列中第一个消息序号以及期望下一个消息序号。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群间补缺状态 | GetRebuildStatus | 展示补缺进度、处理集群间补缺协商请求执行次数、发布补缺消息的总次数、下次补缺消息的窗口大小、正在协商的主题分区范围、正在补缺的主题分区范围以及最后一次补缺的主题分区范围等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取补缺模块服务端处理线程队列状态 | GetRebuildQue | 展示服务端补缺线程编号、现成类型、队列中消息个数、队列历史积压最大个数和该补缺线程处理的消息数量 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群间组播状态 | GetRmSendStatus | 展示本地节点号、当前集群的节点个数、当前集群名、当前产品名以及集群间发布消息的backendId、发布仲裁质量的backendId和单薄消息的BackendId | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话信息 | GetSessionInfo | 展示会话编号、会话对方逻辑编号、会话状态、会话所属消费者、会话所属消费者实例名、会话连接号、会话创建时间以及会话链接host等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话线程信息 | GetSessionThreadInfo | 展示会话线程编号、现成循环次数、线程处理消息个数、队列处理个数、心跳处理线程以及重传处理线程等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话传输信息 | GetSessionTransferInfo | 展示会话编号、发送窗口信息、发送队列信息、发送成功以及失败个数、接收正常以及异常消息个数、心跳信息等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取订阅与推送线程信息 | GetSubPushThreadInfo | 展示订阅线程、线程循环次数、处理消息个数、队列处理个数、处理推送/订阅消息个数等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取某消费者订阅项信息 | GetSubscribeInfo | 展示消费者名称、所属推送线程编号、订阅时间、消费者会话号、订阅索引、订阅主题数以及过滤条件等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费者个数信息 | GetSubscribersCount | 展示消费者总数以及订阅项总数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取TinyMalloc使用信息 | GetTinyMallocInfo | 展示内存块大小、使用个数、单元使用个数、单元总数以及总内存大小 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题信息 | GetTopicInfo | 展示主题编号、主题名称、描述、可靠性等级、有效期等级、过滤条件、分区数以及分区分布等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题字符串长度信息 | GetTopicJsonStrInfo | 展示所加载的主题长度、主题信息等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题与主题编号信息 | GetTopicNoMapInfo | 展示主题名称和主题数组序号等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题上订阅发布消息信息 | GetTopicSubPubInfo | 展示主题编号、主题名称、订阅总数、取消订阅总数、已处理订阅总数、发布/推送以及订阅项总数等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获订主题上消费者信息 | GetTopicSubscribers | 暂未实现 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题线程队列信息 | GetTopicSvrQue | 展示线程循环次数、队列当前个数、队列历史最大个数以及处理个数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取Brokers列表信息 | GetBrokersInfo | 展示Brokers信息包含节点编号、对应节点ip地址、端口号、节点id、系统号以及对应节点名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集中仲裁结果 | GetCentralArbResult | 展示主题名、主题描述字段、可靠级别、过滤条件以及分区分布情况等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群信息 | GetClasserInfo | 展示集群名、集群中主机名、集群仲裁期间编号、集群成员信息等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群主节点信息 | GetMasterInfo | 展示平台仲裁的rcm集群名、主节点名、仲裁周期、成员信息等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取仲裁上下文信息 | GetContextInfo | 展示上次仲裁角色、集中仲裁状态、集中仲裁类型、集中仲裁线程运行状态、上次集中仲裁时存活的节点以及上次集中仲裁有变动的节点等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 发布过滤器线程信息 | GetPublishFilterThreadInfo | 展示发布过滤器线程变化、发布过滤器对应的线程循环次数、发布过滤器队列积压情况、历史记录最大值统计以及处理次数统计。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布过滤器信息 | GetPublishFilterInfo | 展示的结果集内容包含：配置名称、MC2的地址、app名、T2链接状态、版本号、生产者指针、全局目标版本号、全局编码转换以及主题映射信息等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取MC2.0的会话信息 | GetMC20SessionInfo | 展示会话编号、会话己方逻辑编号、会话对方逻辑编号、会话状态、会话所属消费者、会话连接号以及会话host信息等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取MC2.0的重组队列信息 | GetMC20RebuiltQueueInfo | 展示key值、生产者名称、队列最大长度、当前队列总长、当前队列中消息数、真实发布的消息数、丢失消息数等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取持久化模块文件定时清理的相关信息 | GetExpiredClearInfo | 展示设置的清理时间、上一次清理时间、持久化模块工作线程循环次数以及持久化模块刷新磁盘循环次数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取运行时集群间补缺信息 | GetClusterRebuildInfo | 展示集群间补缺服务端的流量控制具体信息以及集群间补缺客户端补缺具体信息（详情见MC3.0使用指南4.1.43章节） | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取强一致场景下主题分区的数据结构信息 | GetPubTPInfo | 展示主题编号与分区号组合、当前节点是否是主分区节点、具体强一致信息等（详情见MC3.0使用指南4.1.44章节） | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取各主题配置的机房信息 | GetTopicZoneInfo | 展示主题名称、机房具体信息以及跨机房具体信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集中仲裁广播信息 | GetBroadcastInfo | 展示主机的仲裁版本广播次数/备机仲裁版本接收次数以及最近一次仲裁版本号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取死信消息统计信息列表 | GetDeadLetterQueueList | 展示死信队列相关信息，包含死信主题、消费者集群名、源消息主题、最后一条死信消息接收时间、最近一条死信消息产生原因等信息。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 清理死信消息 | ClearDeadLetterQueueData | 展示清理死信消息是否成功，0为成功，非0为失败 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消息回溯接口 | QueryMsgList | 展示分区号、消息ID、发布者名称、发布时间、主题名以及过滤条件等信息。 | 在APM上已做消息回溯功能，用户可以通过APM来对消息进行查询，并且进行回溯 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取集群消费内容 | GetGroupConsumeInfo | 展示线程个数、循环次数、消费者组、队列大小、以及消费者组的信息（包含主题信息以及消费者实例等）。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群消费获取订阅端消息积压情况 | GetConsumeOffset | 包含集群消费组名、集群消费实例名、主题名、主题分区积压时间、主题分区队列中的最小/最大/平均时间、消费最小/最大/平均时间、回调最小/最大/平均时间等信息。 | 在APM上存在消息积压查询，用户可以通过APM对积压的消息进行查询，并进行相应的处理 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群消费获取消费偏移量信息 | GetAllConsumeOffset | 展示主题分区信息，包含偏移量数组信息（消费者组名、消息偏移量）等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | MC20兼容场景下，获取MC20主题信息超时时间 | GetTimeoutOfGetMC20Topic | 获取MC2.0主题信息超时时间（单位：秒） | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | MC20兼容场景下，查询mc3proxy插件的注册信息 | GetMc3proxyInfo | 获取连接编号以及mc3proxy插件地址信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 清理内存碎片 | ClearMemory | 支持手工清理内存碎片，为了防止在生产过程中随意清理影响性能，有Force入参保护 | NaN | NaN | NaN | NaN | 新增：管理功能支持手工清理内存碎片，为了防止在生产过程中随意清理影响性能，有Force入参保护 | LDP1.0V202401.07.000 | #202412165207 | NaN |
+| NaN | NaN | NaN | 消息抓包 | 获取与mc服务端交互的网络通信包信息 | ldpadmin/tcpdump | 提供发布和订阅相关请求应答消息抓包功能。以便问题排查使用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 内存管理 | 配置消息池大小 | InitSize | 初始化个数（只影响writer） | 默认值：10000 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | MaxSize | 最多允许消息数（只影响writer、reader），有些场景不受这个配置控制。 | 配置值需满足：大于 所有主题的分区个数总和\*1024(发布模块队列大小)，默认值：1000000 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | MaxIdleMsgs | 池里面最多存放消息数，超过释放（只影响writer、reader） | 默认值：100000 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | MaxMsgLen | 如果消息大小超过配置值时，释放消息时不会放回消息池中，而是直接删除 | 默认值：16777216（16MB） | NaN | NaN | NaN | 新增：如果消息大小超过配置值时，释放消息时不会放回消息池中，而是直接删除 | LDP1.0V202401.07.000 | #202412165207 | NaN |
+| NaN | NaN | NaN | NaN | 配置加载持久化文件最大数 | CommitLogFileMmapLimit | commitlog mmap限制个数，如果超过这个配置，则unmap掉原来的commitlog文件。如果配置过小，影响订阅补缺的性能 | 默认值16，配置范围[2,-)，如果当前限制值小于启用的主题生命周期种类的2倍，以启用的主题生命周期种类的二倍为准 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 定时清理内存碎片 | EnableClearMemory | 在清理持久化文件同时，使用malloc\_trim接口清理内存碎片 | NaN | NaN | NaN | NaN | 新增：在清理持久化文件同时，使用malloc\_trim接口清理内存碎片 | LDP1.0V202401.07.000 | #202412165207 | NaN |
+| NaN | NaN | NaN | 集中仲裁 | 双机房 | NaN | 目前具备双机房集中仲裁方案，在主备机房切换时会优先选择同机房的节点，主要表现在：\n1、主备机房进行切换时，主题分区的主节点优先使用主机房的MC节点\n2、客户端订阅时，优先订阅同机房上的MC节点，只有本机房没有可用分区的情况下才会调整到订阅其他机房\n3、集中仲裁期间如果发生切主，优先切到同机房的其他节点，只有同机房没有可用节点的情况下才会切换到其他机房的主机 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP3/mc3.0双机房集中仲裁方案.md | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 单集群 | NaN | 实现在平台仲裁基础上，完成对MC3.0节点的集中仲裁，MC3.0主节点完成对备节点主题分区的分配。 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP2/MC3.0集群和双机房方案.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理获取主题 | NaN | NaN | 返回主题信息给生产者和消费者，功能号是620927 | 性能：\n消息吞吐能力：获取主题列表总数达到1W tps\n测试场景：1000个主题分区，1000个生产者\n核心数据容量：等同DFX要求\n可靠性：\nRTO：等同DFX要求\n兼容性：向下兼容\n可服务性：等同DFX要求\n安全性：无控制 | 620927\n（内部接口） | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看日志 | 查看本地文件 | 本地文件 | 目录格式：工作路径/log/日志文件名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 主题变更 | 主题生命周期 | NaN | 不支持静态生命周期修改，修改后需要重启mc服务端，mcsdk可以不用修改 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题可靠等级 | NaN | 支持动态可靠级别的修改 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题过滤条件 | NaN | 支持静态生过滤条件修改\n- 若过滤条件的个数经过修改，需用户修改代码后重启后可以恢复对原有主题的正常订阅。\n- 若过滤条件个数不变只是过滤条件字段名的修改，无需重启即可改变。\n- 若客户端未订阅该修改主题，主题修改后对发布端和订阅端无影响。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题动态新增 | FUNC\_MC20\_DYN\_ADD\_TOPIC\nFUNC\_DYN\_ADD\_TOPIC\nDealTopicUpdate | 目前主题动态新增，只能通过mc3proxy触发，触发的条件如下：\n- t2sdk通过mc3proxy订阅或者发布，主题不存在时触发\n- mcsdk订阅一个不存在的主题时触发\n- mc服务端调用管理功能UpdateTopicInfo，然后mc会到mc3proxy节点去重新加载主题，并将新增的主题添加到内存 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看持久化文件 | 发布缓存 | 消息文件 | 同@发布消息持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 消息索引 | 同@发布消息索引持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 消费者偏移量 | 主题分区偏移量 | 如果是广播消费，则组装文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat，可通过命令“mc3analysis 文件目录 1”查看。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 生产者偏移量 | 与主题分区偏移量记录在同一个文件中，组装文件地址：工作路径/集群名/McVersion/global\_map\_集群名.dat，可通过命令“mc3analysis 文件目录 1”查看。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 集群名称 | 集群文件锁 | 同@判断同名生产者和同名消费者 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 服务端消息文件 | CommitLog | 同@服务端消息文件持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 主题分区索引 | 同@服务端消息索引文件持久化 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 多实例 | NaN | NaN | 当前暂不支持 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | SEE包部署 | NaN | NaN | NaN | MC3.0支持SEE包的部署，包含：\n1、提供基础的配置页面（包含各类端口信息）\n2、提供启动和停止的基本功能\n3、可以上传bizex库\n4、支持根据操作系统自适应选择arm或者x64安装包\n5、增加本地数据源配置开关，以解决重新部署时的主题乱序问题。\n6、提供oracle的配置界面，以支持从oracle数据库中获取主题。\n7、提供发送队列大小、补缺线程个数、消费超时时间（默认180s）等参数的设置\n8、增加消息池、缓存持久化文件数、是否定时清理内存碎片配置\n9、SEE包支持zk的用户密码认证，并同时对认证信息进行加密处理\n10、主题列表500个为一页进行分页。 | see包在支持主题通过数据库获取场景，首次部署以本地主题为准，后续再次部署或者升级，都是以zk上的主题为准。如果数据库主题有新增，mc会追加主题到zk上，但是修改了主题属性或者删除主题，必须删除zk的主题并重新部署see包。 | NaN | NaN | NaN | 增加：消息池、缓存持久化文件数、是否定时清理内存碎片配置，以支持内存限制\n新增：SEE包上开放消费超时时间的配置，用于用户自由配置 | LDP1.0V202401.07.000 | #202412165207\n#202411194859 | NaN |
+| NaN | ldp\_mcbiz | 发布 | 启动注册自己 | NaN | NaN | 启动时候，向ldp\_mc发布一条消息，包括产品名和应用名，以便管理节点获取新节点已经上线。启动的时候，可以根据配置的不同来决定是通过zk查找ldp\_mc地址，还是直接使用固定的ldp\_mc地址。\n在McBiz中。有两个方法配置ldp\_mc地址：\n1. ServerAddress直接配置\n2. McProductName， McAppName | McBiz会优先使用ServerAddress的地址。\n当使用第二种配置，mcBiz会在启动mcbiz的zk中查找对应的ldp\_mc地址，并且当有活动的节点时，把所有broker的address作为serveraddress | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息发布 | 消息发布（带持久化） | NaN | 对外暴露mcsdk原生的异步发布接口 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP1/业务框架对接MC3.0方案.pdf | NaN | NaN | NaN | 入参从ILdpMsgWriter换成IMessage |
+| NaN | NaN | NaN | NaN | 异步发布 | NaN | 为了降低mcsdk异步发布接口（持久化）带来的延时影响，对外提供了带线程和队列的纯异步接口，收到发布请求后只是入异步队列而已，再由异步线程调用mcsdk异步发布接口。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 同步发布 | NaN | 为解决可靠发布的场景，对外暴露mcsdk同步发布接口，如果返回0，则意味着发布成功，由mc保证可靠推送给消费者。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 数据网格指定systemno | 设置lpHead->SystemNo | 数据网格专用，当配置非-1时，经过mcbiz发布后，lpHead->SystemNo = 255 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 订阅 | 主题转功能号 | NaN | NaN | 1、根据主题和过滤条件信息向mc进行订阅。2、在收到该主题的推送消息后，转换为功能号，并调用配置的目标插件，比如bizproc | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 错误重试 | NaN | NaN | 和业务相关性较强，用户可以配置间隔时间和重试次数，用来对业务产生的错误进行重试。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布消费结果 | NaN | NaN | 目标插件返回消费成功、重试次数超过限制数或者不需要重试的错误，带上产品名和应用名，发布reply主题给mc | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息订阅 | 集群消费 | NaN | 集群消费支持主备模式，以及单主题均分模式。在mcbiz配置文件中，有配置项ForceTransfer（默认配置为false）。当配置为false，且supportClusterConsumer（默认值为true）配置为true时为集群消费主备模式 | 如上：集群消费限制 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 广播消费 | 强制转发 | 在mcbiz配置文件中，有配置项ForceTransfer（默认配置为false）。当配置为true时，为广播消费 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | 主备消费 | 在mcbiz配置文件中，有配置项ForceTransfer（默认配置为false）。当配置为false，且supportClusterConsumer（默认值为true）配置为false时为主备消费 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | 获取异步发送线程信息 | GetAsynPublishInfo | 获取异步发送线程信息，包含异步发送接口调用次数、异步发送线程信息等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取主题转功能号列表信息 | GetTopicFunctionList | 获取主题转功能号列表信息，包含主题名、转换的功能号、总共调用次数、重试次数、发送队列最大长度、过滤条件集合、错误信息等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取配置信息 | GetMcBizConfig | 获取mcbiz配置信息，包含mcbiz状态、服务端地址、应用节点名、产品名、消费超时信息以及错误信息等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 字段转换 | mcbiz根据主题配置进行数据字典转换 | Trans | 1、业务自行配置数据字典，转换插件根据配置进行转换，数据为整体转换，关于嵌套字段的转换，希望和biztrans一致，即对pack包进行遍历和打包。（pack包为Jres发出，为packerV4格式）\n2、提供二次开发的能力，在后期业务需要自己对包内数据进行操作时，可以给与“提供包体-业务修改包体-包体返回”功能。\n注意：开启数据字典转换后，3个嵌套包7个字段转换场景下，packv2、packv3性能减少20-30%，packv4性能减少30-40% | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息抓包 | NaN | NaN | 支持对接ldp平台的抓包功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | mc3\_publish\_to\_mc2 | 发布 | 建立mc2.0的连接 | NaN | NaN | MC3.0通过该插件与MC2.0建立连接状态 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP2/mc3.0兼容mc1.0和2.0迁移方案.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 编码转换 | NaN | NaN | utf-8转换GBK | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 打包版本转换 | NaN | NaN | pack版本号互转 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息发布 | NaN | NaN | 调用t2sdk的发布接口，来将MC3.0的消息推送给MC2.0 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息防重复 | NaN | NaN | 当收到的消息带有重发标志，将进行去重处理 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | 获取发布过滤器信息 | GetPublishFilterInfo | 展示的结果集内容包含：配置名称、MC2的地址、app名、T2链接状态、版本号、生产者指针、全局目标版本号、全局编码转换以及主题映射信息等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布过滤器线程信息 | GetPublishFilterThreadInfo | 展示发布过滤器线程变化、发布过滤器对应的线程循环次数、发布过滤器队列积压情况、历史记录最大值统计以及处理次数统计。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mc3stomp | 订阅 | NaN | NaN | NaN | MCSDK上新增的mc3stomp插件主要作用为：\n1、订阅代理，接收hsiar的mqstomp组件的订阅，并通过MCSDK向MC3.0发起订阅，订阅方式为集群消费；\n2、将MC3.0推送的消息转化为mqstomp协议，转给hsiar的mqstomp组件；\n3、如果mqstomp组件与mc3stomp的tcp断开连接，则由mc3stomp取消与MC3.0的订阅。\n4、支持MC3.0在hsiar权限变更场景下，对主题名称进行配置，不再为固定的mc3%%common | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/mc3.0其他方案/统一MQ概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | 获取连接信息 | GetConnectionList | 获取mc3stomp上的连接信息，包含消息推送册数、上次消息发送时间、连接状态、地址以及端口等。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取订阅信息 | GetSubscribeList | 获取mc3stomp上的订阅信息，包含推送次数、上一次推送时间、连接号、订阅主题名以及索引号等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | fsc\_mc3api | 兼容发布接口 | 兼容PubMsgByEsbMsgPlugin | NaN | NaN | 调用mcsdk底层发布接口，来模拟PubMsgByEsbMsgPlugin的效果 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 兼容PubMsgPlugin接口 | NaN | NaN | 调用mcsdk底层发布接口，来模拟PubMsgPlugin的效果 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 兼容订阅接口 | 兼容SubscribeTopicPlugin | NaN | NaN | 调用mcsdk底层订阅接口，来模拟SubscribeTopicPlugin的效果 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 兼容CancelSubscribeTopicPlugin | NaN | NaN | 调用mcsdk底层订阅接口，来模拟CancelSubscribeTopicPlugin的效果 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | NaN | NaN | fsc\_mc3api管理功能暴露的是mcsdk的管理功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | fsc\_mc3proxy | 发布 | 处理消息发布 | 保存路由 | SavePublishMsg | NaN | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2024/RP2/T202404185415\_mc2.0兼容3.0概要设计\mc2.0兼容3.0概要设计.md | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 协议转换 | TransPublishToLdpMsg\nTransPublishToEsbMsg | 1、t2sdk发布消息到mc3proxy，mc3proxy需要做将esbmsg转换成ldpmsg，再调用t3sdk接口将消息发送到mc3.0\n2、mc3proxy收到mc3.0的发布ack，也是协议转换，再恢复路由，并将ack消息应答给t2sdk | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题转换 | GetMcTopic20T30\nGetMcTopic30T20 | 1、收到t2sdk消息后，获取主题并将主题转换成3.0主题\n2、收到mc3.0ack应答，需要将主题转换成2.0主题 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布者补缺 | 协议转换 | TransPublishToEsbMsg | 将mc3.0的发布补缺信息有ldpmsg转换成esbmsg | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 透传给t2sdk | TransferMsg | 将补缺 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布权限控制 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 订阅 | 处理消息订阅 | 查询mc3.0节点 | FindClientRouterInfoFromEsbMsg\nRestoreSenderRouteInfo | 1、通过esbmsg查找clientInfo时用的key改成用t2sdk产生的会话号和mc3proxy自己编的唯一会话号\n2、收到应答后，根据t2sdk会话号、mc3.0会话号和对应的mc3.0地址查找lpclient，然后从lpClient中还需要恢复路由信息 | NaN | NaN | NaN | NaN | 修改 | LDP1.0.V202401.07.001 | #202411203737 | NaN |
+| NaN | NaN | NaN | NaN | 协议转换 | GeneralTransToLdp\nGeneralTransToMsg | esbmsg和ldpmsg协议转换 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 打包偏移量信息 | SubscribePackToJson | 打包订阅请求各发布者偏移量信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理取消订阅 | 取消订阅 | DealCancelSubscribeMsg | 收到t2sdk取消订阅请求，寻找mc3.0节点，协议转换和将消息转发给mc3.0 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理批量订阅 | 请求和应答协议转换 | GeneralTransToLdp\nGeneralTransToMsg | esbmsg和ldpmsg协议转换 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 整理批量订阅应答包体 | ProcessBatchSubAns | 处理批量订阅应答包体中关键字段信息，比如订阅索引、推送状态等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 补缺 | BatchCheckAndSendRebuildRequest | 如果需要补缺，则发送逐个对每个主题进行补缺 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 订阅权限控制 | 权限控制 | CheckSub | 根据配置和自定义库对订阅进行权限控制 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 订阅补缺 | 补缺请求 | SubRebuildMsg | 收到订阅应答，初次发起补缺请求 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 检查是否需要再次补缺 | CheckAndSendRebuildRequest | 推送收到补缺结束标记后，确认是否真正补缺完毕，如果没有补完，需要再次发起补缺 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 通知补缺结束 | NotifyStatusPublish | 补缺结束后，mc3proxy需要主动告诉t2sdk，将补缺状态修改成推送状态 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 会话管理 | 处理SYN | FindSdkServerBySessionCount | 找到一个mc节点，该mc节点目前会话数最少 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | SaveSenderRouteInfo | 保存6元组和mc3.0节点的关系 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 处理SYN-ACK | DealMC30ReciveSessionMsg | 处理3.0会话应答，保存本地会话号、mc3.0服务端会话号和地址信息和会话的映射 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 处理SYN-ACK-ACK | DealSessionConnect | 主要是协议转换和透传给mc3.0 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 调用管理功能 | 获取服务状态 | GetServerStatus | 获取mc3proxy运行状态 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取会话信息 | GetSessionInfo | 获取会话信息，通过t2sdk创建的会话信息，每个会话对应两个key，分别是6元组和会话号、ip地址信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取线程处理信息 | GetThreadInfo | 获取线程编号和处理消息的统计 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取消费者信息 | GetSubscribeInfo | 获取订阅信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取发布者信息 | GetPublisherInfo | 统计每个发布者相关的信息，包括主题、发布消息个数等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取mc30连接信息 | GetSdkProxyInfo | 获取和mc3.0集群的连接信息，连接状态、更新主题状态等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取mc3.0的主题信息 | GetMc30TopicInfo | 获取3.0的主题信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取2.0的主题信息 | GetMc20TopicInfo | 获取2.0的主题信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 获取补缺年龄箱信息 | GetRebuildAgeBinInfo | 获取补缺年龄箱信息 | NaN | NaN | NaN | NaN | 新增：GetRebuildAgeBinInfo可查看补缺年龄箱信息 | LDP1.0.V202401.08.000 | T202501035715 | NaN |
+| NaN | NaN | NaN | NaN | 获取会话序号池信息 | GetProxySessionIDPoolInfo | 获取会话序号池信息 | NaN | NaN | NaN | NaN | 新增：GetProxySessionIDPoolInfo可查看会话序号池信息 | LDP1.0.V202401.08.000 | T202501035715 | NaN |
+| NaN | NaN | NaN | 消息抓包 | cres流水线抓包 | NaN | 支持对接cres平台的抓包功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理获取主题 | NaN | NaN | 提供获取主题的功能号调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 主题变更 | 主题生命周期 | NaN | 支持静态生命周期修改 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题可靠等级 | NaN | 支持动态可靠级别的修改 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 主题过滤条件 | NaN | 支持静态生过滤条件修改\n- 若过滤条件的个数经过修改，需用户修改代码后重启后可以恢复对原有主题的正常订阅。\n- 若过滤条件个数不变只是过滤条件字段名的修改，无需重启即可改变。\n- 若客户端未订阅该修改主题，主题修改后对发布端和订阅端无影响。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 兼容MC2.0组件 | 加载biz组件 | NaN | 取主题列表动态库、发布权限校验动态库、订阅权限校验动态库、获得先天订阅者动态库 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 加载bizex组件 | mc3.0支持获取mc2.0主题 | 业务组件，将“取主题列表动态库、发布权限校验动态库、订阅权限校验动态库、获得先天订阅者动态库”合并为一个 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看日志 | 查看本地文件 | 本地文件 | 目录格式：工作路径/log/日志文件名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 代理注册 | 注册功能号等服务信息到zk | 依赖cres微服务插件配置功能号范围 | 查看zk上面是否有mc3proxy的功能号和其他路由信息 | 微服务注册规范 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_minimc | NaN | 消息流控 | NaN | NaN | 沿用minimc原有流控方案，采用漏桶算法，限流线程每个轮询时间片计算可主推数量。 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/OBP2023/RP3/MC3.0收编 miniMC 方案-改进.md | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息订阅 | NaN | NaN | 根据过滤条件进行消息订阅 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消息取消订阅 | NaN | NaN | 取消请阅消息后，会将服务端上的订阅信息删除。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布消息 | NaN | NaN | 消息发布 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理功能 | 获取所有消费者的所有订阅项信息 | NaN | GetAllSubscribeInfo | 获取到所有订阅者的所有订阅项信息，包含订阅时间、订阅连接号、订阅索引、订阅主题名以及过滤条件等信息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取所有消费者信息 | NaN | GetAllSubscribers | 获取订阅者连接号 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取流控线程信息 | NaN | GetLimitThread | 获取所有订阅者信息，包含主题编号、主题名称、线程执行次数以及流控相关信息等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取消费者个数信息 | NaN | GetSubscribersCount | 获取订阅者总数以及订阅项总数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取推送线程信息 | NaN | GetThreadStatus | 获取推送线程信息，包含线程类型、独占情况的主题名、线程循环次数、处理消息个数、队列历史消息最大数等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取主题上订阅发布消息信息 | NaN | GetTopicSubPubInfo | 获取主题上订阅发布信息，包含主题编号、主题名称、订阅总数、处理订阅总数、发布总数等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取主题信息 | NaN | GetTopicsInfo | 获取主题信息，包含主题标号、主题名称、主题描述、回报、过滤条件、线程信息、流控信息等内容 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | front\_mc | NaN | 主题级别的消息快照 | NaN | NaN | 沿用原来minimc原有的主题级别消息快照功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 交易所状态的降频 | NaN | NaN | 沿用原来minimc原有的交易所状态的降频功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | mc3analysis | NaN | 解析生产者持久化文件 | NaN | NaN | MC3.0的解析工具，用于解析生产者名字、待发布消息，索引值，消息序号以及是否被确认等信息。 | NaN | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents/D2.Designs/product/mc3.0设计/MC3.0一期概要设计.pdf | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 解析消费者持久化文件 | NaN | NaN | MC3.0的解析工具，用于解析消费者名字、当前已消费的主题分区序号（偏移量）及其对应的生产者名字、appdata、主题分区及序号。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 解析服务端持久化文件 | NaN | NaN | MC3.0的解析工具，用于解析commitlog持久化文件，包含主题分区序号、各个生产者的名字、序号以及个数统计。还用于解析consumerOffset持久化文件，包含主题名字、分区序号、消费者组名字、消费偏移量以及更新时间。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mcsdk\_jna | 兼容发布接口 | NaN | NaN | NaN | 暴露底层mcsdk所有的发布接口，供Jres调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 兼容订阅接口 | NaN | NaN | NaN | 暴露底层mcsdk所有的订阅接口，供Jres调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | mc3\_tool | 订阅 | 初始化连接 | 连接MC服务器 | NaN | 调用底层mcsdk的init接口，建立连接。同时断开上一次的连接 | 只能输入一个地址和端口，无法同时设置多个地址和端口。\n当断开上一次连接后，之前的资源会自动释放\n（备注：当前323版本客户端的连接状态不做展示，连接成功时会在日志栏展示连接成功信息，当连接断开发送信息会报错。所以当前版本当报错时重新连接即可） | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 获取主题列表 | 获取mc的所有主题信息 | NaN | 通过调用调用mc服务器的主题列表管理功能获取主题列表 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 创建订阅者 | 创建mc3的订阅者 | NaN | 调用底层mcsdk的newConsumer创建订阅者，提供订阅功能 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 订阅主题 | 订阅者订阅特定的mc3主题 | NaN | 调用mcsdk的subscribe，订阅特定的主题，可以设置过滤条件与是否需要补缺。目前支持广播消费 | 单个订阅者最多订阅10个主题 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 订阅回调 | 订阅者回调收到的消息 | NaN | 通过onConsumer接口，把收到的消息打印到工具的日志空间中 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看已订阅主题 | 查看订阅者已订阅主题 | NaN | 查看特定consumer已经订阅上的主题名 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 取消订阅 | 取消特定consumer的订阅主题 | NaN | 取消consumer订阅的主题。支持按主题名取消与取消所有订阅项。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看所有订阅者 | 查看目前的所有订阅者 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 发布 | 创建发布者 | 创建mc3发布者 | NaN | 调用mcsdk的newProducer创建发布者，提供发布功能 | 最多不超过5个发布者 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 发布消息 | 发布mc3消息 | NaN | 发布MC3的消息，可以指定消息数量，消息内容。需要提供主题名与过滤条件 | 一次发布最多不超过1w条。消息内容长度不超过255字节 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看所有发布者 | 查看所有发布者 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 清空日志 | 清空日志 | NaN | 清空日志框 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看mc地址 | 查看已经连接的mc服务器地址 | NaN | 调用管理功能，查看已连接的地址 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mcapi | NaN | NaN | NaN | NaN | 功能与原来部署在核心上的mcsdk功能一致：\n1、mcapi部署在核心上。链路为核心—mcbiz—mcapi—mc3服务端\n2、mcsdk部署在客户端上。与原来保持一致。\n不带LDP框架的客户端，使用mcsdk\n带LDP框架的节点（如核心），使用mcapi | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | fsc\_mc3mqagent | 发布 | 处理mc发布消息 | 转换成rabbit消息 | NaN | 1. 启动mc3agent.设置对应的connname，routingkey\n2. 发布mc3消息到conn指定的mc节点，同时带上topicprefix = conn设置的exchange name。\n3. 消息+过滤条件符合设置的routingkey（具体匹配逻辑见设计文档）\n4. 消息转发到conn中配置的对应conn的rabbitMQ节点，对应routingkey和exchange都为配置中设置的 | 当前版本只支持mc3文件级主题转换。不支持转成单个\*或者#的情况。支持topic.\*的情况。\n需要保证启动的节点名+connname长度小于31字节。不然会导致mc发布者/消费者启动的时候名字被截断导致未定义行为 | NaN | NaN | https://192.168.84.41/head-develop/LDP1.0/trunk/Documents\D2.Designs\OBP2025\RP1\T202503073952\_mq代理概要设计 | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 处理rabbit发布消息 | 转换成mc消息 | NaN | 1. 启动mc3agent.设置对应的connname，routingkey\n2. 发布rabbitMQ消息到conn中指定的mq节点，附带的exchange name和routingkey和mqapi中设置的符合\n3. 消息会根据mqapi对routingkey的解释逻辑，转发给对应的mc3节点（具体规则见设计文档+mqapi兼容mc3的cres文档） | 当前版本只支持mc3文件级主题转换。不支持转成单个\*或者#的情况。支持topic.\*的情况。\n需要保证启动的节点名+connname长度小于31字节。不然会导致mc发布者/消费者启动的时候名字被截断导致未定义行为 | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 查看所有发布者信息 | 查看所有发布者信息 | mf\_AllPublisher | 获取发布者信息，包括了发布者名，发布者对应的connname，发布者状态，发布消息个数，发布失败个数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看所有订阅者信息 | 查看所有订阅者信息 | mf\_AllSubscriber | 获取订阅者信息，包括订阅者名，订阅者对应的connname，绑定的发布者名，收到的消息总数和过滤掉的消息个数 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看所有线程信息 | 查看所有线程信息 | mf\_AllThreadInfo | 可以查看线程个数，当前线程里面的队列大小。当前线程发布数量，发布失败数量 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看服务状态 | 查看服务状态 | mf\_GetStatus | 获取当前服务状态，是否可用等等 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 查看订阅项信息 | 查看订阅项信息 | mf\_AllSubItem | 查看订阅项信息，包裹routingkey，对应的消费者名（queue\_name) | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | mc3\_reorder | 订阅 | 消息处理 | 业务逻辑处理中 | OnProcess | 对消息进行业务逻辑处理 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 持久化成功 | OnSucess | 在MC持久化成功后执行业务数据处理 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 持久化失败 | OnFailure | 在持久化失败是执行回滚操作 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | NaN | NaN | NaN | 提供OnProcess、OnSuccess和OnFailure调用次数\n提供所有插件自身的管理功能暴露给mc的功能管理器 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mcsdkEx | 发布 | NaN | NaN | NaN | 暴露底层mcsdk所有的发布接口，转换成C#，供PB调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 订阅 | NaN | NaN | NaN | 暴露底层mcsdk所有的订阅接口，转换成C#，供PB调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | NaN | NaN | NaN | 暴露底层mcsdk所有的管理接口，转换成C#，供PB调用 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | ldp\_mccs | 发布 | 顺序消息同步推送 | mcsdk发布者新增同步发布接口 | PublishSyncConsumer | 推送客户端将顺序消息发送至MC3.0，订阅客户端根据主题从MC3.0服务端订阅消息，如果消息序号小于等于之前消息，则进行丢弃；大于则进行该消息对应的微服务调用，且需把微服务执行结果是否成功返回至推送客户端。 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | 管理 | 消费进度查询 | 查询消费者消费情况 | GetClusterConsumProcess | 可以查询各个消费节点的消费进度和积压情况 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 死信消息管理 | 死信消息查询 | GetDeadLetterInfo\nGetDeadLetterGroupInfo\nGetDeadLetterOrigData | 可以查询到死信队列中的消息 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 死信消息重发 | ResendDeadLetter | 将死信队列中的消息进行重发 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 消费者集群管理 | 消费者集群在线查询 | GetClusterConsumeOnline | 查询在线的消费者集群 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | 删除消费者集群 | CleanClusterConsume | 删除不需要推送的消费者集群 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+
+## MC3.0限制说明
+| RPO非0 | 内存级 | - 生产者与主分区所在的mc节点连接断开，连接断开期间的消息丢弃。 - 消费者与mc节点的会话断开，会话断开期间的消息丢弃。 - 主分区所在的mc节点与备分区之间的网络断开，网络断开期间的集群间同步的消息丢弃。 |
+| --- | --- | --- |
+| NaN | 文件级 | - 生产者崩溃起不来，切换为新的机器上，原来的生产者未确认的消息丢失。\n- 主分区所在的mc节点崩溃，备分区切为新主，以下场景，可能丢失消息：\n ​1). 该主题分区，有且只有一个生产者，在发布缓存中，刚好需要补缺的消息被新发布的消息覆盖了导致发布补缺失败。\n​ 2). 该主题分区有两个以上生产者，那么刚好发布补缺过来后重排的时序与原主分区排的时序不一致，导致消费者消费消息可能有丢失。\n 3). 发布者向主题主分区发送 n 条数据，主分区回复 ACK，但一条都未同步至备分区。若此时主备切换，发布补缺无法触发，导致消息丢失。 |
+| NaN | 发布给mc2.0（publish\_to\_mc2) | - mc节点主备切换，考虑到原来的mc2.0是至多一次，所以由新主节点丢弃重试消息，一般是生产者的32个消息\n- 如果调用t2sdk发布给mc2.0失败，则记录日志并丢弃，无重试功能。 |
+| 资源限制 | 磁盘 | 生产者磁盘空间不足:\n- 发布缓存文件创建失败，生产者的发布接口返回发布消息失败，在mcbiz的异步发布场景下，继续做重试，但是可能会导致异步队列溢出。\n- 再次启动，清理发布缓存文件失败，使用老的发布缓存。 |
+| NaN | NaN | mc节点磁盘空间不足:\n- 消息文件创建失败，返回给生产者发布失败，由mcsdk自动重试。\n- 索引文件生成失败，对外表现，补缺订阅一直失败\n- 集群消费场景下，新的集群偏移量写失败，对外表现消费偏移量保存失败，再次订阅后，可能重复消费历史消息。 |
+| NaN | NaN | 消费者磁盘空间不足:\n消费偏移量文件创建失败，对外表现，再次订阅后，可能重复消费历史消息。 |
+| NaN | 消息池 | 生产者空闲消息不足:\n- 异步/同步发布接口，因为获取消息MsgWriter失败，则发布失败，由调用者自己重试。\n- 同步发布接口，因为获取消息MsgReader失败，发布可能返回发布超时错误。 |
+| NaN | NaN | mc节点空闲消息不足:\n- 处理发布功能，因为获取消息MsgReader失败，丢失发布给mc2.0的消息，无重试。\n- 处理会话断开事件，因为获取消息MsgWriter失败，会话断开失败，需要等重试次数到了再断开会话。\n- 处理消息推送，因为获取消息MsgWriter失败，断开会话，并取消在该会话上的订阅项。 |
+| NaN | NaN | 消费者空闲消息不足:\n处理消费偏移量提交，因为获取消息MsgWriter失败，导致提交消费偏移量失败。 |
+| NaN | 内存 | 服务端内存不足：\n如果消息池没有达到上限，则因为获取消息MsgReader失败或者MsgWriter失败，类似消息池端中，mc节点空闲消息不足的处理方法。 |
+| NaN | 数据库支持版本 | https://iknow.hs.net/portal/docView/sharing/120069 |
+| 节点扩展 | 消费者 | 地址不能只填部分\n- mc集群地址不能只填部分，需要配置全部mc集群节点，有多个mc节点，节点间以逗号分隔\n- mc集群扩展时，消费者集群地址需要更新并补全，然后重启\n否则可能会丢失消息，比如新增的mc节点上面有主分区，那么消费者订阅会一直失败，如果除了新增的节点其他节点都停止，消费者不能和该节点创建会话和订阅消费\nmcsdk不能运行过程中清理磁盘\n- mcsdk订阅或者发布进程存在，mc服务端停止和清理持久化信息，暂时不支持，否则可能出现消费或者发布序号异常 |
+
+## 组件限制
+| 组件名称 | 限制说明 |
+| --- | --- |
+| ldp\_mc | 功能：\n1、mc主题分区负载均衡模糊目前开关默认是关闭状态。如果打开，存在消息丢失风险。该缺陷计划202501版本修复。 |
+| ldp\_mcsdk | 功能\n1、mc3.0服务端持久化清理后，mcsdk也必须停止和同步清理持久化。否则会导致mcsdk重启失败。重启失败后，需要清理mcsdk持久化数据后再次重启。\n2、mcsdk集群消费，服务端主备切换后，可能存在崩溃风险。该缺陷原因是主分区所在的会话没有空指针保护，计划在202501版本修改。\n3、mcsdk一个消费者订阅多个主题分区，当mc服务端消息池耗尽场景下，可能存在消息丢失风险，该缺陷计划在202501版本修复。 |
+| ldp\_mccs | 功能：\n1、mccs需要将消费进度更新到数据库，但是为了提升性能，采用异步落数据库。但是如果停止时，落库队列中有积压，会导致部分进度数据或者死信消息或者进度信息丢失。但是不影响发布功能。\n2、正常订阅和消费的主题，目前只允许一个分区。\n3、由于dbclient不支持字节流，目前死信消息只能base64后落地成字符串，base64后的字符串不能超过32767字节。超过后，死信消息不能落库和重发。\n4、推送平台需要的主题目前需要事先在mc服务端配置好\n性能：\n1、单个消费者场景3000tps以上，如果没有消费者10000以上 |
+| ldp\_mcbiz | 性能：\n1、开启数据字典转换后，3个嵌套包7个字段转换场景下，packv2、packv3性能减少20-30%，packv4性能减少30-40%。（不经过核心的场景下，如果经过核心处理，性能损耗可能会控制在较低的范围） |
+
+## DFX
+| Unnamed: 0 | 性能 | 核心数据容量 | 性能标准容量 | 1、压测的配置要求（使用发布包里面的标准配置） 2、标准场景  1000个主题（单分区），100个生产者 100个消费者（一对一，不交叉订阅）  1KB报文 3、典型部署结构 1主1备 |
+| --- | --- | --- | --- | --- |
+| NaN | NaN | 系统响应时间 | 单笔延时 | 穿透时延＜1ms |
+| NaN | NaN | 核心业务并发要求 | 系统吞吐 | 消息吞吐能力：推送总数达到5W tps，单主题不少于3W\n 客户端吐能力：单生产者不少于3W，单消费者不少于3W |
+| NaN | NaN | 可观测项 | 资源消耗的观测项 | CPU，内存（内存计算公式），磁盘，句柄1000个，端口等 |
+| NaN | NaN | 用户容量 | 主题数量 | ≤4096个 |
+| NaN | NaN | NaN | 生产者数量 | 1000个 |
+| NaN | NaN | NaN | 消费者数量 | 10W个 |
+| NaN | NaN | NaN | 单个生产者或者消费者建立连接数 | ≤1024个 |
+| NaN | NaN | NaN | 单个消费者建立会话数 | ≤1024个 |
+| NaN | NaN | NaN | 订阅项数量 | 20W个（单节点） |
+| NaN | NaN | NaN | 单个消息大小上限 | 1GB(一般建议1KB左右性能最佳) |
+| NaN | NaN | NaN | 消息容量 | 不限，取决于磁盘大小 |
+| NaN | NaN | NaN | 单个主题分区个数 | ≤1024个，至少有一个 |
+| NaN | NaN | NaN | 单个主题分区副本个数 | ≤16个 |
+| NaN | NaN | NaN | 主题名长度 | ≤256字节（不包含结尾'\0'） |
+| NaN | NaN | NaN | 过滤条件数 | ≤16 |
+| NaN | NaN | NaN | 过滤条件名 | ≤63（不包含结尾'\0'） |
+| NaN | NaN | NaN | 单个主题分区生产者持久化文件数 | ≤256 |
+| NaN | NaN | NaN | 服务集群名长度 | ≤64字节（包含结尾'\0'） |
+| NaN | NaN | NaN | 服务集群成员个数 | ≤64个（实际个数依赖RCM的集群成员个数） |
+| NaN | NaN | 性能横向扩展 | 发布性能 | 引入主题分区来提高发布性能横向扩展能力，使用约束：\n1、需要提前预估 mc3.0单分区发布性能是否满足成交回报的性能要求。如果满足，则不需要设置多分区；如果不满足，则需要提前预设分区个数，比如2个。\n2、如果用户有消息全局顺序的要求，需要自行配置主题属性为全局有序，在这种情况下单分区的发布性能是当前主题的上限。\n3、设置多分区后，需要业务发布者设置分区路由规则，比如设置默认规则：业务账号hash值 % 分区数为目标分区号。但是该规则的问题是，不能盘中修改主题分区数，否则无法保证分区有序。当然业务发布者也可以指定主题分区发布消息，同样在遇到修改主题分区数的情况下，业务需要保证相同的业务账号绑定到同一个主题分区，否则无法保证分区有序。 |
+| NaN | NaN | NaN | 订阅推送性能 | 引入推送线程和分区副本，用以提升订阅推送横向扩展能力，其使用约束：\n1、单个推送线程的性能决定了单个消费者订阅某个主题分区的推送性能，增加推送线程只能提升总体推送性能。同理分区副本也是一样。\n2、副本数（最多16个）越多越影响发布性能，所以副本数不是越多越好，需要在发布和推送性能做取舍。\n3、如果消费者的订阅项（一次订阅产生一个订阅项）总数巨量（50W+），需要业务配合设置主题分区级订阅，业务账号绑定主题分区规则与发布路由规则保证一致。（未实现） |
+| NaN | NaN | NaN | 分区重分配 | 各个节点按照消息索引＞同机房＞优先级＞负载均衡的维度进行分区重分配，目前支持在启动时会进行一次分区重分配，可配置关闭这个特性 |
+| NaN | NaN | 超过性能上限后的风险 | 订阅项数量 | 当单节点的订阅项数量超过上限后，可能会触发订阅爆慢的问题，极端情况下，客户端发起订阅速度超过服务端处理速度，导致恶性循环，消息积压。有这种场景诉求的，建议横向扩展mc的集群节点。 |
+| NaN | NaN | NaN | 系统吞吐 | 当单节点的订阅推送总吞吐量超过上限后，可能会触发服务端消息积压，极端情况下，消息积压数超过消息池消息总数（100w），存在丢失推送消息的风险，建议监控系统及时监控推送队列情况，如果存在消息积压（>1000）情况，那么就要考虑横向扩展mc的集群节点。 |
+| NaN | 可靠性 | 接口容错要求 | ldp消息容错 | 消息格式错误，断开连接 |
+| NaN | NaN | NaN | 发布接口容错 | 1、分区备不接受发布，返回报错\n2、无发布权限，返回报错（未实现）\n3、发布必填字段校验（主题）。 |
+| NaN | NaN | NaN | 订阅接口容错 | 1、未建立会话，返回报错\n2、mc版本号不一致，返回报错\n3、无订阅权限，返回报错（未实现）\n4、发布必填字段校验（主题）。 |
+| NaN | NaN | 强弱依赖要求 | 集群选举 | 独立服务、可靠、持久化、事件通知。选择zk或者etcd -- 强依赖，如果不存在，则启动失败。运行间退出，则分区不切换 |
+| NaN | NaN | NaN | 配置中心 | 独立服务、可靠、持久化、事件通知、与集群选举相同、避免引入过多的三方组件，选择zk或者etcd -- 强依赖，如果不存在，则启动失败。运行间退出，则不影响 |
+| NaN | NaN | NaN | 主框架 | 低延时组件tcp\rcm、低延时消息ldpmsg、便捷的日志服务和管理功能服务，选择ldp框架 -- 强依赖，同一个进程 |
+| NaN | NaN | NaN | 兼容框架 | 兼容原来的功能（比如mc1.0、mc2.0），提供基础消息、日志、管理功能服务，选择cres框架 -- 强依赖，同一个进程 |
+| NaN | NaN | NaN | 运维监控 | 提供图形化监控管理页面、安装部署功能、全链路业务日志展示功能，选择SEEAPM+日志中心 -- 弱依赖，如果不存在，不影响使用 |
+| NaN | NaN | NaN | 基础运维 | 轻量部署、提供基础的管理页面，避免引入过多的中间件组件，选择轻量管控台 -- 弱依赖，如果不存在，不影响使用 |
+| NaN | NaN | NaN | 异构MQ对接 | 依赖各MQ sdk。选择各MQ sdk（未实现） -- 强依赖，同一个进程 |
+| NaN | NaN | 高可用要求 | RTO | 5s |
+| NaN | NaN | NaN | RPO | 0 未实现 |
+| NaN | NaN | NaN | 基础要求 | 1、网络延时<= 30ms;网络丢包率小于1%，消息收发正常，超过时可能会发生消息超时；网络恢复后，消息收发恢复。\n2、客户端与服务端断开连接，期间对应客户端消息不能收发；客户端自动重连，直至与服务端重新建立连接。（客户端间隔10S与服务端重连；在服务端/网络可用时，20s内自动重连成功；如需要心跳才能识别的场景下（如网络故障），则在90s内与新的节点完成连接）\n3、data目录数据、日志目录、插件文件、配置文件损坏时，在启动时，除日志文件目录可自我恢复，其他都会导致MC3.0启动失败，可能需删除数据重启或者重新安装；但在运行时，任一损坏都会导致服务端进程崩溃。\n4、在内存、磁盘超过配置水位时或者CPU不足恢复后，服务端在30S内恢复正常，mcsdk整体消息收发正常。 \n5、集群节点重新加入时，该节点需要在数据同步完成以后，再进入集群提供正常收发服务，期间该节点不可用。\n6、启动阶段，服务端节点同步完成变成ServerReady后，消费者和生产者可与服务端建立连接并进行正常的消息收发。\n7、CPU利用率<90%;内存利用率<90%；IO读写负载<90%;磁盘利用率<90%，超过上限时，启动时可能会出现启动时间过长或者失败；运行时会出现连接限流、响应超时现象；且在停止时，可能会因为停止过慢，从而引发操作系统会kill进程。 |
+| NaN | NaN | NaN | 单机房多节点强一致\n未实现 | 1、在网络中断或者网卡故障时，检测到发生故障之前，该集群不可用；发生故障后，出现问题的节点将自动设置为孤岛（目前不可用），连接的客户端将断开，并切换到其他节点；网络故障解除后，队列完成数据同步前，原故障节点不可用。\n2、如果节点宕机/停止，只要集群可用节点大于1时，该节点所连客户端会自动重连至集群中其他节点；否则整个集群不可用，消息收发异常\n3、在默认的异步刷盘模式下，操作系统掉电会导致重启后数据存在一部分丢失，丢失的数据量为RPO定义的大小数值。 |
+| NaN | NaN | NaN | 单机房多节点最终一致 | 1、在网络中断或者网卡故障后，出现问题的节点将自动设置为孤岛（目前不可用），连接的客户端将断开，并切换到其他节点；网络故障解除后，直接恢复正常。\n2、如果节点宕机/停止，该节点所连客户端会自动重连至集群中其他节点，集群有节点运行时，整体集群不受影响。\n3、在默认的异步刷盘模式下，操作系统掉电会导致重启后数据存在一部分丢失。 |
+| NaN | NaN | NaN | 多网卡 | MC3.0支持配置2个以上的网段，生产者和消费者可以在不同网段进行消息的发布和订阅 |
+| NaN | NaN | NaN | 仲裁 | 目前具备双机房集中仲裁方案，在主备机房切换时会优先选择同机房的节点，主要表现在：\n1、主备机房进行切换时，主题分区的主节点优先使用主机房的MC节点\n2、客户端订阅时，优先订阅同机房上的MC节点，只有本机房没有可用分区的情况下才会调整到订阅其他机房\n3、集中仲裁期间如果发生切主，优先切到同机房的其他节点，只有同机房没有可用节点的情况下才会切换到其他机房的主机 |
+| NaN | NaN | 资源异常 | CPU使用率 | NaN |
+| NaN | NaN | NaN | 内存占用 | 主要是消息池，每个消息占用20KB，1W消息200MB。服务端占用还有mmap文件带来内存占用。内存不足，可能会被操作系统kill掉 |
+| NaN | NaN | NaN | 磁盘占用 | 同@生产者持久化-消息文件持久化，如果磁盘空间不足，则发布接口返回发布失败\n同@生产者持久化-索引文件持久化，如果磁盘空间不足，则发布接口返回发布失败\n同@消息持久化-消息文件持久化，如果磁盘空间不足，则返回发布失败错误\n同@消息持久化-服务端消息索引文件持久化，如果磁盘空间不足，则返回发布失败错误\n同@消费者-消费成功(更新本地序号文件)，如果磁盘空间不足，则保存序号失败，下次启动的时候，可能会全量拉取消息。 |
+| NaN | NaN | NaN | 磁盘I/O | 主题文件级，会写磁盘文件，具体行为有：\n（1）生产者发布消息同步写磁盘，如果磁盘IO性能下降，生产者队列积压\n（2）服务端收到消息后异步刷盘写消息文件，异步更新索引文件。如果磁盘IO性能下降，服务端发布队列积压，处理发布性能下降；如果系统重启，有丢失消息的风险\n（3）服务端收到集群复制的消息异步刷盘写消息文件，异步更新索引文件。如果磁盘IO性能下降，服务端复制队列积压，处理发布性能下降；如果系统重启，有丢失消息的风险。\n（4）消费者消费成功后同步更新序号文件，如果磁盘IO性能下降，消费者队列积压，消费性能下降。 |
+| NaN | NaN | NaN | 网络I/O | 生产者发布消息到服务端走tcp。\n服务端集群内指令分发走组播（rcm）。如果该组播出现网络故障，则仲裁相关功能发送失败，影响主题分区切换。如果网络恢复，则上次仲裁结果同步给所有节点。\n服务端集群内消息复制走组播（rcm）。如果该组播出现网络故障，则集群复制、集群间补缺相关功能发送失败，影响数据一致性。如果网络恢复，则重新开始补缺，达到最终一致。\n服务端集开机补缺、集群应答走单播（rcm）。如果单播出现网络故障，则仲裁、集群间补缺、开机补缺都会失败，影响数据一致性。如果网络恢复，则重新开始补缺，达到最终一致。\n服务端推送消息给消费者走tcp。如果消费者与服务端网络断开20秒以上，则会话断开，所有的订阅项均取消。如果网络恢复，订阅项慢慢恢复，并开始订阅补缺。 |
+| NaN | NaN | NaN | 文件句柄 | 消息文件、索引文件、socket句柄\n文件描述符最低值时：\n1、服务端会拒绝新的连接，连接会创建失败。\n2、消息文件和索引文件，都会创建失败，对外体现为发布失败。 |
+| NaN | NaN | NaN | 线程数量（默认） | 服务端：主题服务线程数1、监控线程数1、仲裁线程1、发布线程数4、补缺线程数5、订阅线程数4、推送线程4、会话心跳线程数1、会话重传线程数1、会话线程数4、订阅补缺线程数1；rcm上下文4个，每个3线程；remoter线程数2；框架主线程1；如果线程启动失败，需要退出（暂未实现）\n单个生产者：定时线程数1、接收线程数1；remoter线程数1；框架主线程1；如果线程启动失败，在create的时候返回错误（暂未实现）\n单个消费者：会话工作线程数1、回调线程数1、会话监控线程数1；remoter线程数1；框架主线程1；如果线程启动失败，在create的时候返回错误（暂未实现） |
+| NaN | NaN | NaN | 连接数 | 最多消费者个数+生产者数+集群节点 |
+| NaN | NaN | NaN | 端口号 | 端口使用数量：\n对外发布和订阅端口1个、管理端口1、rcm的组播/单播组3个，每个组播组2个端口 |
+| NaN | NaN | 系统备份恢复机制 | 生产者 | 备份目录：工作路径/mc30/集群名/McVersion/实例名，恢复的时候，只需要恢复该目录即可。当然如果mc服务端被清理过，那么恢复会失败，因为mc版本号对不上。 |
+| NaN | NaN | NaN | 消费者 | 备份文件：工作路径/集群名/McVersion/global\_map\_集群名.dat。恢复的时候，只需要恢复该文件即可。当然如果mc服务端被清理过，那么恢复会失败，因为mc版本号对不上 |
+| NaN | NaN | NaN | 服务端 | 备份目录：工作目录/mcstore/default。恢复的时候，只需要恢复该目录即可。当然如果mc服务端被清理过，那么恢复会失败，因为mc版本号对不上。 |
+| NaN | NaN | 系统稳定性要求 | NaN | 目前无法完全达到7\*24。服务端支持过期消息清理可达到7\*24要求，而客户端由于还不支持消息序号文件清理所以暂时无法达到要求。 |
+| NaN | NaN | 应急处置以及监控设计 | NaN | 1、当发生磁盘空间不够或应用节点一直无法启动时，支持将主题等级设置为内存级。未实现\n2、当MC3.0的节点不可用时，支持消费者直接对生产者发起端对端消费，可能会存在集群消费、客户端过滤等部分功能不可用的情况。未实现\n3、当消费者消息存在缺失时，支持将特定消费者设置为强制消费历史消息，以保证消费者的数据的完整性。未实现\n4、当服务端数据存在缺失时，支持将特点生产者设置为再次发起消息发布，以保证服务端上的数据完整性。未实现\n5、当服务端某些节点一直无法启动时，支持迁移数据文件至另外一个新节点。未实现\n6、监控功能支持实时检查各个节点的数据的最终一致性，如出现5分钟之内数据未变化，将进行告警。未实现 |
+| NaN | NaN | 数据保护要求（消息可靠） | 消息正确率100% | 开机补缺：MC3.0在启动时会对本地持久化数据进行校验，并尝试从其他节点同步最新数据，如果发现本地数据发生破坏会尝试修复数据，并从其他节点拉取数据更新。暂不支持强一致功能\n集群间补缺：主题分区发布时，如果RCM同步过来的数据发现不连续，尝试从其他节点拉取数据进行更新。\n\n |
+| NaN | NaN | NaN | 消息乱序率0 | NaN |
+| NaN | NaN | NaN | 消息丢失率0 | NaN |
+| NaN | 可维护性 | 配置管理 | 白屏操作 | 提供简单直观的方式配置各项参数，支持在不重启系统的情况下动态修改配置（未实现） |
+| NaN | NaN | 可观测 | 性能观测 | 提供了发布、订阅、推送数量统计；提供了各个线程和队列的统计信息；提供全链路日志（未实现） |
+| NaN | NaN | NaN | 运行状态 | 可通过服务端的管理功能进行查看具体信息包含服务端状态、消费者状态、 |
+| NaN | NaN | NaN | 资源占用 | 可以通过管理功能查看部分内存的占用情况 |
+| NaN | NaN | 日志记录 | 详细日志 | 记录详细的系统日志和消息处理日志，包括错误日志、事务日志等，便于故障排查和系统分析 |
+| NaN | NaN | NaN | 日志等级 | 支持配置不同的日志等级，以满足不同的调试和监控需求 |
+| NaN | NaN | NaN | 消息抓包 | 记录详细的发布和订阅相关的消息报文，便于故障排查和系统分析 |
+| NaN | NaN | NaN | 日志轮转和存储 | 自动进行日志文件的轮转和压缩存储，避免日志文件占用过多存储空间 |
+| NaN | NaN | NaN | 全链路日志 | 包含ldp\_mcsdk、ldp\_mc以及ldp\_mcbiz等模块的打点信息。打点信息包含：traceid、spanid、depotid以及时间戳等内容 |
+| NaN | 安全性 | 权限设计 | 访问控制 | 兼容mc2.0场景下支持控制发布权限和订阅权限，mc3.0标准场景待补 |
+| NaN | NaN | 安全性要求 | 消息加密 | 对传输的数据进行加密处理，即使数据被截获也无法被未授权的第三方所破解 |
+| NaN | NaN | NaN | 消息校验 | 对消息的合法性进行校验，防止非法格式消息的接收，保证通讯中间件的稳定性和可用性 |
+| NaN | NaN | NaN | 持久化文件加密 | （未实现） |
+| NaN | NaN | NaN | 身份认证 | 提供认证机制，确保只有拥有足够权限系统才能发送或接收特定的数据（未实现） |
+| NaN | 兼容性 | 系统向下兼容要求 | 开发接口 | 向下兼容，接口只增加不修改 |
+| NaN | NaN | NaN | 管理功能接口 | 向下兼容，字段只增加不修改 |
+| NaN | NaN | NaN | 配置信息 | 向下兼容，字段只增加不修改。但是对于broker.json老版本，一旦程序升级过以后，就覆盖原来配置。 |
+| NaN | NaN | NaN | 通用兼容要求 | 向下兼容 |
+| NaN | NaN | 文件兼容（数据兼容） | 持久化文件 | 向下兼容。服务端持久化文件和消费者序号文件都带有版本号，比如V1。每个命名空间也带有集群版本号（McVersion）。 |
+| NaN | NaN | 系统兼容 | 操作系统兼容 | 同芯片同系统向下兼容，目前提供ARM、X86两个版本 |
+| NaN | NaN | 能力兼容 | 兼容MC1.0 | 用mcsdk的各个接口模拟mcapi的接口，以便mctransfer插件依赖，并对外提供mc1.0的功能 |
+| NaN | NaN | NaN | 兼容MC2.0 | 通过调用mqapi，来通过MC3.0对接MC2.0 |
+| NaN | NaN | NaN | 兼容WSS | 未实现 |
+| NaN | NaN | NaN | 兼容miniMC | NaN |
+| NaN | 可服务性 | 环境要求 | 硬件环境 | 标准配置：16核，3.0GHz主频，128G内存，500G SSD，万兆网卡；\n最高配置：\n最低配置： |
+| NaN | NaN | NaN | 部署方式（详见部署方式Sheet页） | 支持单点部署、集群部署（一主两备+ZK）、双机房多活部署（需要ZK）、跨地域部署（网络代理+ZK，未实现）\n在单点部署下：通过在生产者和消费者上部署mcsdk，通过mcsdk进行直连，性能最佳，延时＜10微秒\n在集群部署模式下：生产者通过mcsdk和MC3.0服务端进行消息交互\n1、在无强一致，单机房，单分区情况下，延时：10~20微秒\n2、在强一致、主备部署、多分区情况下，延时＜100微秒\n\nmcproxy、mc3\_publish\_to\_mc2、mc3stomp的部署方式和mcsdk一致\nminimc依赖于front\_mc，所以部署在一起，可独立于mc服务端 |
+| NaN | NaN | 版本升级/迁移要求 | NaN | 版本向下兼容\n如MC3.0用于兼容替换异构系统，用户需按照MC3.0的规则根据现有业务要求进行重新配置。历史数据存于文件中，所以一般不会影响历史数据。\n如MC3.0只是版本升级迭代，根据修改点具体评估是否需要重新配置。历史数据存于文件中，所以一般不会影响历史数据。 |
+
+## 业务流程
+| 用户 | 业务场景描述 | Unnamed: 2 |
+| --- | --- | --- |
+| 资管O45 | https://iknow.hs.net/console/teamManage/knowledgeBase/907/docManage/library/4528/document/115366 | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| NaN | NaN | NaN |
+| MC3.0典型场景 | 场景描述 | 用户群体 |
+| 系统解耦 | 在一个综合性的业务系统中，各个子系统之间通常需要进行频繁的消息传递，甚至需要将消息通知给一些异构系统。在这种场景下，每个子系统希望相互之间可以解耦，无论其他子系统怎么变化，都不影响其使用。使用MQ可以将这些子系统之间的直接依赖解耦，从而提高系统的可扩展性和灵活性。\n譬如，综合系统修改了某个账户的费率，通过MQ同步给了零售柜台的证券核心。如果新部署了一套机构柜台系统，其交易核心也希望接收这些信息。这个时候，只需要让机构柜台的交易核心向MQ订阅相应的主题即可，而不需要调整系统架构。同理撤掉了机构柜台的交易核心，也不影响架构。 | 资管、经纪、机构 |
+| 巨量订阅 | 在金融领域，通常在回报推送、成交推送、行情主推等业务场景，需要将消息推送给千级别的客户端，这类常见于私募接入情况。随着手机技术的发展，给十万甚至百万数量级的终端App进行推送这些消息，也逐渐成为必然趋势。MC3.0支持巨量客户端推送的功能有上下级和读写分离。\n 上下级设计，是指多个MC3.0串联在一起，构成一个完整的消息转发系统。其解决的场景是：1、读多写少的场景，一般在金融领域，会有成千上万的终端用户访问交易系统获取成交回报或行情信息，会给直连的MC3.0带来极大的压力。通过增加下级节点，可以给上级节点分担这些终端用户的读压力，提高整个系统的消息推送能力。2、网络隔离的场景，上级和下级处在的网络可能是不一样的，比如上级MC3.0在总部网络，消费者在营业部网络。通过增加下级MC3.0，可以直接打通消费者与上级MC3.0的消息转发链路，增加系统的可用性。\n 读写分离，与常见的MQ不同的是，MC3.0支持将读操作和写操作分离到不同的节点上，写操作只在主节点上进行，读操作可以在多个从节点上进行。这样可以提高消息的处理能力和可用性。 | 资管、经纪、机构 |
+| 大数据处理 | MQ可以用于实现复杂的数据流处理，包括实时数据处理，批量数据处理和流式计算这些场景。\n实时数据处理：MQ可以作为实时数据流的中间通道，将数据从生产者发送到消费者进行实时处理。典型的场景是日志中心，通过将日志信息发送到MQ中，日志中心系统可以实时地对数据进行分析、计算和监控。\n批量数据处理：MQ可以用于批量处理大量的数据。生产者将数据发送到MQ中，然后由消费者从队列中获取并进行批量处理。这种方式可以提高数据处理的效率和吞吐量。典型的场景是估值的跑账场景，按照产品、天数、步骤维度、以及步骤下细粒度拆解任务并到导入到MQ中，估值服务可以批量估值核算，再批量做账。\n流式计算：通过将数据流发送到MQ中，可以实现流式计算。消费者可以从队列中接收数据，并根据流式计算的算法进行计算和分析。这对于实时的指标计算、实时推荐和离线计算等场景非常有用。典型场景是大数据平台。 | 资管、经纪、机构 |
+| 低延时发布（推模式） | 在金融极速领域场景，成交回报和行情推送给客户端的端对端单笔延时都是要求百微秒级别的，甚至在机构场景下是20微秒以内。这种情况下，通常需要配合MQ的Push模式一起支持这种实时性要求高的场景。Push模式是指生产者将消息推送给MQ，由MQ直接将消息分发给消费者。Push模式的局限性在于，如果消费者处理消息的速度跟不上生产者的消息推送速度，就会导致消息积压，影响系统的稳定性和性能，所以不太适合用于削峰填谷场景。 | 资管、经纪、机构 |
+
+## 部署方式
+| Unnamed: 0 | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 | Unnamed: 4 | Unnamed: 5 | Unnamed: 6 | Unnamed: 7 | Unnamed: 8 | Unnamed: 9 | Unnamed: 10 | Unnamed: 11 | Unnamed: 12 | Unnamed: 13 | Unnamed: 14 | Unnamed: 15 | Unnamed: 16 | Unnamed: 17 | Unnamed: 18 | Unnamed: 19 | Unnamed: 20 | Unnamed: 21 | Unnamed: 22 | Unnamed: 23 | Unnamed: 24 | Unnamed: 25 | Unnamed: 26 | Unnamed: 27 | Unnamed: 28 | Unnamed: 29 | Unnamed: 30 | Unnamed: 31 | Unnamed: 32 | Unnamed: 33 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | NaN | NaN | 单机部署 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | 集群部署 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | 双机房部署 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | 跨地域部署 |
+| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| 中间件 | 数据 | NaN | NaN | 部署 | NaN | NaN | NaN | 是否复用 | NaN | 部署规模 | 内存(G) | CPU | 磁盘 | 带宽 | 部署方式 | 适用场景 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| NaN | 容量需求 | 命名空间隔离 | 数据敏感级 | 版本要求 | 部署拓扑 | 网络带宽 | 端口 | NaN | NaN | 大型部署 | 16 | 16核 | 600G+ | 万兆 | 一主三备 | 满足100万日成交笔数以上的大型交易环境 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| zk/etcd | 存储10MB，读写每秒10次/秒 | 支持 | 非敏感 | 3.4.14 | 一主两从 | 千兆 | 2181 | 是 | NaN | 中型部署 | 8 | 8核 | 300G+ | 万兆 | 一主二备 | 满足10-100万日成交笔数的中型交易环境 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| see/apm/日志中心 | 数据容量：1T，50个监视器 | 支持 | 非敏感 | see2.0 | 一主一备 | 千兆 | 8081 | 是 | NaN | 小型部署 | 4 | 4核 | 150G+ | 千兆 | 一主一备 | 满足10万日成交笔数以下的小型交易环境 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
