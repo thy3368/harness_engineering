@@ -54,7 +54,7 @@ pdu-a-spec-repo的目录结构各pdu可以调整，通用约束引用architectur
 
 ## 任务
 
-1. 建议建立规格和 skill 的分层仓储机制
+1. 各PUD 创建自己的规格和skill仓库
 2. 各 PDU 将规格和 skill 放到对应仓库
 3. 架构部检查并维护技术平台部通用规格
 
