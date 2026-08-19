@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代码扫描选型——章工五问回应报告</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --border: #e2e8f0;
+    --text: #1a202c;
+    --text-secondary: #64748b;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --purple: #7c3aed;
+    --purple-light: #f3e8ff;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .header {
+    text-align: center;
+    padding: 48px 24px 40px;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  .header .subtitle { font-size: 15px; color: var(--text-secondary); }
+  .header .meta { font-size: 13px; color: var(--text-secondary); margin-top: 16px; }
+  .header .meta span { margin: 0 8px; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc h2 { font-size: 16px; margin-bottom: 12px; color: var(--text); }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 6px; font-size: 14px; }
+  .toc a { color: var(--primary); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  h2 { font-size: 22px; font-weight: 700; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: var(--text); }
+  h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+
+  code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 13px;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  }
+
+  .info-box {
+    background: var(--primary-light);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .warn-box {
+    background: var(--orange-light);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .success-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .danger-box {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { background: var(--surface); text-align: left; padding: 10px 14px; border: 1px solid var(--border); font-weight: 600; }
+  td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: top; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
+
+  /* Q&A 卡片 */
+  .qa-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin: 24px 0;
+  }
+  .qa-card .q-tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .qa-card .question {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .qa-card .answer-label {
+    display: inline-block;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* 统计卡片 */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .stat-item { text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 8px; }
+  .stat-item .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .stat-item .label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* 对比卡片 */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .compare-col { border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .compare-col.sonar { background: var(--orange-light); border-color: var(--orange); }
+  .compare-col.ocr { background: var(--green-light); border-color: var(--green); }
+  .compare-col h4 { margin-bottom: 8px; }
+  .compare-col.sonar h4 { color: var(--orange); }
+  .compare-col.ocr h4 { color: var(--green); }
+
+  /* 架构流程 */
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+  .arch-node { background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--primary); }
+  .arch-arrow { color: var(--text-secondary); font-size: 18px; }
+  .arch-node.green { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .arch-node.orange { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
+  .arch-node.purple { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+  .arch-node.teal { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
+
+  .summary-card {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+  .summary-card h2 { color: white; border: none; margin-top: 0; }
+  .summary-card h3 { color: rgba(255,255,255,0.9); }
+  .summary-card ul { color: rgba(255,255,255,0.95); }
+  .summary-card .badge { background: rgba(255,255,255,0.2); color: white; }
+
+  .footer { text-align: center; padding: 40px 0; color: var(--text-secondary); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .compare-grid { grid-template-columns: 1fr; }
+    .container { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<div class="header">
+  <h1>代码扫描选型——章工五问回应报告</h1>
+  <div class="subtitle">针对 Open Code Review 技术选型中五个关键问题的逐条回应</div>
+  <div class="meta">
+    <span>整理人：谢超</span>
+    <span>|</span>
+    <span>日期：2026年8月</span>
+    <span>|</span>
+    <span>背景：代码扫描方案选型讨论</span>
+  </div>
+</div>
+
+<!-- ==================== TOC ==================== -->
+<div class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#bg">背景说明</a></li>
+    <li><a href="#q1">Q1：OCR Token 效率如何？</a></li>
+    <li><a href="#q2">Q2：支持 SVN 不？</a></li>
+    <li><a href="#q3">Q3：财富张森大模型业务扫描可否替换？</a></li>
+    <li><a href="#q4">Q4：Sonar 和 OCR 都是怎么触发的？</a></li>
+    <li><a href="#q5">Q5：Sonar 哪些可以被 OCR 代替？</a></li>
+    <li><a href="#summary">总结与行动建议</a></li>
+  </ol>
+</div>
+
+<!-- ==================== 背景 ==================== -->
+<h2 id="bg">背景说明</h2>
+
+<div class="info-box">
+  <p><strong>讨论缘起：</strong>章总建议重新审视代码扫描方案，才灵推荐阿里开源的 Open Code Review（OCR），技术平台需做选型。黄华牵头调研，谢超收集了现有 SonarQube 方案的五大痛点。</p>
+  <p><strong>章工在选型讨论中提出了五个具体问题</strong>，本报告逐一回应，并附数据支撑和对比分析。</p>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-item">
+    <div class="num">5</div>
+    <div class="label">章工提出的问题数</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">1/5~1/9</div>
+    <div class="label">OCR Token 节省倍数</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">10+</div>
+    <div class="label">OCR 支持语言数</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">70%</div>
+    <div class="label">Sonar 可被替代比例</div>
+  </div>
+</div>
+
+<!-- ==================== Q1 ==================== -->
+<h2 id="q1">问题一：OCR Token 效率如何？</h2>
+
+<div class="qa-card">
+  <span class="q-tag">章工提问</span>
+  <div class="question">OCR Token 效率如何？</div>
+  <span class="answer-label">回应</span>
+
+  <h4>结论：效率很高，是 OCR 混合架构的核心设计目标</h4>
+
+  <p>Token 效率是 OCR 相比通用 Agent 方案的最大优势之一。章总之前提到"技术平台给的那个 skill 扫代码很耗 token"——OCR 的混合架构正是为了解决这个问题。</p>
+
+  <h4>官方基准数据</h4>
+  <table>
+    <tr>
+      <th>对比维度</th>
+      <th>通用 Agent 方案<br>（如直接让 Claude Code 审 diff）</th>
+      <th>Open Code Review</th>
+    </tr>
+    <tr>
+      <td>Token 消耗</td>
+      <td>基准值（100%）</td>
+      <td><strong>约 1/5 ~ 1/9</strong>（降低 80%~89%）</td>
+    </tr>
+    <tr>
+      <td>审查精确度（Precision）</td>
+      <td>较低（误报多）</td>
+      <td><strong>显著更高</strong>（阿里官方基准）</td>
+    </tr>
+    <tr>
+      <td>F1 综合得分</td>
+      <td>基准</td>
+      <td><strong>更高</strong>（AACR-Bench 基准）</td>
+    </tr>
+    <tr>
+      <td>平均审查时间</td>
+      <td>较慢</td>
+      <td><strong>更短</strong>（1-3 分钟/PR）</td>
+    </tr>
+  </table>
+
+  <h4>具体成本参考</h4>
+  <table>
+    <tr>
+      <th>模型选择</th>
+      <th>单次审查成本</th>
+      <th>50次/天 月成本</th>
+      <th>数据安全</th>
+    </tr>
+    <tr>
+      <td>GPT-4-mini</td>
+      <td>约 $0.01</td>
+      <td>约 $15（≈¥108）</td>
+      <td><span class="badge badge-orange">代码需传云端</span></td>
+    </tr>
+    <tr>
+      <td>DeepSeek（免费层）</td>
+      <td>免费</td>
+      <td>¥0</td>
+      <td><span class="badge badge-orange">代码需传云端</span></td>
+    </tr>
+    <tr>
+      <td>Ollama 本地模型</td>
+      <td>免费</td>
+      <td>¥0</td>
+      <td><span class="badge badge-green">代码不外传</span></td>
+    </tr>
+    <tr>
+      <td><strong>私有部署模型（推荐）</strong></td>
+      <td>取决于自建成本</td>
+      <td>固定 GPU 成本</td>
+      <td><span class="badge badge-green">代码不外传</span></td>
+    </tr>
+  </table>
+
+  <h4>为什么 OCR 省 Token？三个关键机制</h4>
+
+  <div class="compare-grid">
+    <div class="compare-col sonar">
+      <h4>通用 Agent 的问题</h4>
+      <ul>
+        <li>把整个 diff 糊给 LLM，"什么都让 LLM 干"</li>
+        <li>每次审查都重新构建完整上下文</li>
+        <li>大 diff 容易超出 Token 上限</li>
+        <li>对话式审查反复来回，Token 翻倍</li>
+      </ul>
+    </div>
+    <div class="compare-col ocr">
+      <h4>OCR 的优化机制</h4>
+      <ul>
+        <li><strong>确定性工程前置</strong>：文件筛选、规则匹配、任务拆分由程序完成，只有"需要 LLM 理解的部分"才送大模型</li>
+        <li><strong>三层记忆压缩</strong>：冻结/压缩/活跃三区上下文管理，突破 Token 限制，不重复传上下文</li>
+        <li><strong>场景优化提示词</strong>：针对代码审查场景深度微调的 Prompt 模板，减少无效 Token 消耗</li>
+        <li><strong>Goroutine 并发</strong>：子任务并行拆分，每个文件独立审查，避免上下文交叉膨胀</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <p><strong>阿里内部验证规模：</strong>2 万+活跃用户，执行超 100 万次审查任务，采用率超 30%。Token 成本在生产环境中已验证可控。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>一句话回应章工：</strong>OCR Token 效率是通用 Agent 方案的 1/5~1/9，建议接私有部署模型（如 DeepSeek），成本可控且数据安全。章总之前提到的"skill 扫代码很耗 token"的问题，OCR 的混合架构正是针对性解决方案。</p>
+  </div>
+</div>
+
+<!-- ==================== Q2 ==================== -->
+<h2 id="q2">问题二：支持 SVN 不？</h2>
+
+<div class="qa-card">
+  <span class="q-tag">章工提问</span>
+  <div class="question">OCR 支持 SVN 不？</div>
+  <span class="answer-label">回应</span>
+
+  <h4>结论：原生不支持，但有 workaround，不影响整体选型</h4>
+
+  <p>OCR 的核心设计依赖 <strong>Git >= 2.41</strong>，通过 git diff 获取代码变更、代码搜索和仓库操作。这是其增量审查能力的基石，因此<strong>原生不支持 SVN</strong>。</p>
+
+  <h4>OCR 支持的 CI/CD 平台</h4>
+  <table>
+    <tr>
+      <th>平台</th>
+      <th>触发方式</th>
+      <th>状态</th>
+    </tr>
+    <tr><td>GitHub Actions</td><td>PR 事件自动触发</td><td><span class="badge badge-green">原生支持</span></td></tr>
+    <tr><td>GitLab CI</td><td>MR 事件自动触发</td><td><span class="badge badge-green">原生支持</span></td></tr>
+    <tr><td>Gerrit + Jenkins</td><td>CI 流水线集成</td><td><span class="badge badge-green">原生支持</span></td></tr>
+    <tr><td>Bitbucket Pipelines</td><td>CI 流水线集成</td><td><span class="badge badge-green">原生支持</span></td></tr>
+    <tr><td>GitFlic CI</td><td>CI 流水线集成</td><td><span class="badge badge-green">原生支持</span></td></tr>
+    <tr><td>SVN</td><td>—</td><td><span class="badge badge-red">不支持</span></td></tr>
+  </table>
+
+  <h4>SVN 仓库的两个应对方案</h4>
+
+  <div class="compare-grid">
+    <div class="compare-col" style="background: var(--primary-light); border-color: var(--primary);">
+      <h4 style="color: var(--primary);">方案 A：ocr scan 全文件扫描</h4>
+      <p><code>ocr scan .</code> 全文件扫描模式<strong>不需要 git 历史</strong>，可以扫描任意目录。</p>
+      <ul>
+        <li>SVN 仓库 checkout 到本地后直接运行</li>
+        <li>失去增量能力，但能做全量代码审查</li>
+        <li>适合存量代码审计、定期基线扫描</li>
+        <li>零改造成本</li>
+      </ul>
+    </div>
+    <div class="compare-col" style="background: var(--surface); border-color: var(--border);">
+      <h4>方案 B：SVN diff 适配</h4>
+      <p>将 <code>svn diff</code> 输出转换为 Git diff 格式，再喂给 OCR。</p>
+      <ul>
+        <li>保留增量审查能力</li>
+        <li>需要定制一层适配脚本</li>
+        <li>开发量不大（格式转换），但需维护</li>
+        <li>适合仍有大量 SVN 仓库的场景</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <p><strong>务实建议：</strong>先确认公司还有多少 SVN 仓库在活跃使用。如果 SVN 仓库已不多（大部分已迁移 Git），这部分继续用 Sonar 兜底即可；Git 仓库用 OCR。不必为少量 SVN 仓库强求统一方案，避免过度设计。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>一句话回应章工：</strong>OCR 原生不支持 SVN（依赖 Git diff），但 SVN 仓库可用 <code>ocr scan</code> 全文件扫描兜底，或继续用 Sonar。不影响 Git 仓库的主流程选型。</p>
+  </div>
+</div>
+
+<!-- ==================== Q3 ==================== -->
+<h2 id="q3">问题三：财富张森大模型业务扫描可否替换？</h2>
+
+<div class="qa-card">
+  <span class="q-tag">章工提问</span>
+  <div class="question">财富张森的大模型业务扫描可否替换？</div>
+  <span class="answer-label">回应</span>
+
+  <div class="success-box">
+    <p><strong>电话沟通结论（2026-08-06 与张森确认）：</strong>财富的工具确实是基于 LLM 做的业务代码逻辑扫描，技术方向与 OCR 一致。张森表示他们也会评估 OCR，双方认为确实有点像。下一步双方各自评估后对齐结论。</p>
+  </div>
+
+  <div class="info-box">
+    <p><strong>背景回顾：</strong>章总之前提到"财富前面做过一个大模型代码评审的工具，我们拿过来看过评的内容，觉得有些用 sonar 就行，有些是个人在本机上搞没必要集中"。这说明财富自研工具已有一定积累，但也暴露了规则分散、缺少集中管控的问题。</p>
+  </div>
+
+  <h4>电话确认的关键信息</h4>
+  <table>
+    <tr>
+      <th>确认项</th>
+      <th>张森反馈</th>
+      <th>影响</th>
+    </tr>
+    <tr>
+      <td>技术架构</td>
+      <td>基于 LLM 做业务代码逻辑扫描</td>
+      <td><span class="badge badge-green">与 OCR 方向一致</span></td>
+    </tr>
+    <tr>
+      <td>对 OCR 的态度</td>
+      <td>会评估 OCR，认为确实有点像</td>
+      <td><span class="badge badge-blue">双方有合作意愿</span></td>
+    </tr>
+    <tr>
+      <td>替换意愿</td>
+      <td>开放态度，愿意评估后再定</td>
+      <td><span class="badge badge-green">无阻力</span></td>
+    </tr>
+  </table>
+
+  <h4>财富工具 vs OCR 对比（基于电话沟通更新）</h4>
+  <table>
+    <tr>
+      <th>维度</th>
+      <th>财富自研工具（张森）</th>
+      <th>Open Code Review</th>
+    </tr>
+    <tr>
+      <td>技术架构</td>
+      <td>基于 LLM 的业务代码逻辑扫描</td>
+      <td>确定性工程 + LLM Agent 混合架构</td>
+    </tr>
+    <tr>
+      <td>方向一致性</td>
+      <td colspan="2" style="text-align: center;"><span class="badge badge-green">技术方向一致，双方确认"确实有点像"</span></td>
+    </tr>
+    <tr>
+      <td>生产验证</td>
+      <td>财富部门内部使用</td>
+      <td>阿里集团 2 年、2 万+用户、百万次审查</td>
+    </tr>
+    <tr>
+      <td>维护方式</td>
+      <td>依赖张森个人/小团队维护</td>
+      <td>开源社区持续维护，Apache-2.0 协议</td>
+    </tr>
+    <tr>
+      <td>规则库</td>
+      <td>偏金融业务定制</td>
+      <td>覆盖 10+ 语言，内置 NPE/线程安全/XSS/SQL注入等规则</td>
+    </tr>
+    <tr>
+      <td>规则管理</td>
+      <td>分散，缺少集中管控</td>
+      <td>四层优先级链（公司级→产品级→个人级），自动继承分发</td>
+    </tr>
+    <tr>
+      <td>CI 集成</td>
+      <td>需自研对接</td>
+      <td>原生支持 GitHub/GitLab/Gerrit/Bitbucket</td>
+    </tr>
+    <tr>
+      <td>Token 效率</td>
+      <td>未知（待评估）</td>
+      <td>通用 Agent 的 1/5~1/9</td>
+    </tr>
+  </table>
+
+  <h4>后续评估路径</h4>
+
+  <div class="info-box">
+    <p><strong>双方各自评估 → 对齐结论</strong>，重点对比以下三个方面：</p>
+    <ol>
+      <li><strong>规则覆盖度</strong>：财富工具有没有 OCR 不具备的金融业务特定规则？不能覆盖的，能否通过 OCR 的自定义规则注入（四层优先级链）来补充？</li>
+      <li><strong>审查质量对比</strong>：拿同样的 diff 跑两个工具，对比 Precision/Recall 和误报率。建议选 50-100 个 PR 做标注对比。</li>
+      <li><strong>CI 接入成本</strong>：财富工具是否已接入 CI 卡点？OCR 输出标准 JSON 格式，对接成本相对可控，但需要评估适配层开发量。</li>
+    </ol>
+  </div>
+
+  <h4>章总之前的核心关切</h4>
+  <div class="info-box">
+    <p>章总说："有些用 sonar 就行，有些是个人在本机上搞没必要集中。"——这句话揭示的问题恰恰是<strong>规则没有分层管理</strong>：</p>
+    <ul>
+      <li>"有些用 sonar 就行" → 这些是确定性规则，Sonar 或 OCR 的确定性工程模块都能做</li>
+      <li>"个人在本机上搞" → 这些是个人定制的审查规则，没有集中管理，换人就丢了</li>
+    </ul>
+    <p><strong>OCR 的四层规则优先级链（公司级→产品级→团队级→个人级）恰好解决这个问题</strong>：集中规则自动继承，个人规则可注入但可追溯。财富自研工具如果缺少这个能力，替换为 OCR 是有价值的。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>一句话回应章工：</strong>已与张森电话确认，财富工具确实是基于 LLM 做的业务代码逻辑扫描，与 OCR 技术方向一致，张森也认为"确实有点像"。双方将各自评估 OCR 后对齐结论。方向一致意味着替换的技术阻力不大，核心看规则覆盖度和审查质量的对比结果。</p>
+  </div>
+</div>
+
+<!-- ==================== Q4 ==================== -->
+<h2 id="q4">问题四：Sonar 和 OCR 都是怎么触发的？</h2>
+
+<div class="qa-card">
+  <span class="q-tag">章工提问</span>
+  <div class="question">Sonar 和 OCR 都是怎么触发的？</div>
+  <span class="answer-label">回应</span>
+
+  <h4>结论：Sonar 是定时任务（按日构建），OCR 是事件驱动（PR/MR 提交即触发）——OCR 正好解决了"发现滞后"的痛点</h4>
+
+  <div class="compare-grid">
+    <div class="compare-col sonar">
+      <h4>Sonar 触发方式</h4>
+      <ul>
+        <li><strong>定时任务（按日构建）</strong>：配置 cron 定时触发全量扫描</li>
+        <li>CI 流水线触发：Maven/Gradle 插件在构建时扫描</li>
+        <li>手动触发：在 SonarQube Web 界面手动执行</li>
+        <li><strong>不支持增量</strong>：每次都是全量扫描</li>
+        <li><strong>问题发现滞后</strong>：白天写的代码，第二天才知道问题</li>
+        <li><strong>扫描耗时长</strong>：大型模块单次约 1 小时</li>
+        <li><strong>单线程排队</strong>：一个项目扫描时其他项目等待</li>
+      </ul>
+    </div>
+    <div class="compare-col ocr">
+      <h4>OCR 触发方式</h4>
+      <ul>
+        <li><strong>PR/MR 提交自动触发</strong>（事件驱动）</li>
+        <li>评论触发重审：<code>/open-code-review</code></li>
+        <li>本地手动：<code>ocr review</code>（工作区变更）</li>
+        <li>分支对比：<code>ocr review --from main --to feature</code></li>
+        <li>单提交审查：<code>ocr review --commit abc123</code></li>
+        <li>全文件扫描：<code>ocr scan .</code>（不需要 git 历史）</li>
+        <li>CI 定时兼容：也可配 cron 跑 <code>ocr scan</code></li>
+        <li><strong>增量审查</strong>：只审 diff，1-3 分钟出结果</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>触发方式对比表</h4>
+  <table>
+    <tr>
+      <th>维度</th>
+      <th>Sonar</th>
+      <th>OCR</th>
+    </tr>
+    <tr>
+      <td>触发机制</td>
+      <td>定时任务 / CI 构建触发</td>
+      <td><strong>事件驱动</strong>（PR/MR 提交即触发）</td>
+    </tr>
+    <tr>
+      <td>扫描范围</td>
+      <td>全量扫描</td>
+      <td><strong>增量扫描</strong>（仅审 diff）</td>
+    </tr>
+    <tr>
+      <td>扫描耗时</td>
+      <td>大型模块 ~1 小时</td>
+      <td><strong>1-3 分钟/PR</strong></td>
+    </tr>
+    <tr>
+      <td>问题发现时效</td>
+      <td><span class="badge badge-red">滞后</span>（次日才知道）</td>
+      <td><span class="badge badge-green">实时</span>（提交即审查）</td>
+    </tr>
+    <tr>
+      <td>能否做 CI 卡点</td>
+      <td><span class="badge badge-red">不适合</span>（全量太慢）</td>
+      <td><span class="badge badge-green">适合</span>（增量快，可阻断合并）</td>
+    </tr>
+    <tr>
+      <td>并发能力</td>
+      <td>单线程排队</td>
+      <td><strong>Goroutine 动态并发</strong></td>
+    </tr>
+    <tr>
+      <td>兼容定时模式</td>
+      <td>原生支持</td>
+      <td>支持（CI cron + ocr scan）</td>
+    </tr>
+  </table>
+
+  <h4>OCR 触发流程图</h4>
+
+  <div class="arch-flow">
+    <div class="arch-node green">开发者提交 PR/MR</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">CI 事件触发</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">ocr review（仅审 diff）</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node purple">LLM Agent 审查</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node teal">JSON 结果 + 行级评论</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node orange">PR 评论区展示 / CI 卡点</div>
+  </div>
+
+  <p style="text-align: center; color: var(--text-secondary); font-size: 13px;">整个流程 1-3 分钟完成，开发者在提交 PR 后即可看到审查结果</p>
+
+  <div class="info-box">
+    <p><strong>关键区别：</strong>Sonar 的定时全量扫描模式是"事后体检"——代码已经合并了，第二天才发现问题，还要回头修。OCR 的事件驱动增量扫描是"门禁检查"——代码合并前就拦住问题，从流程上卡住问题代码上线入口。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>一句话回应章工：</strong>Sonar 是定时任务全量扫描（按日构建，问题发现滞后，约1小时/次）；OCR 是事件驱动增量扫描（PR/MR 提交即触发，1-3分钟出结果，可直接做 CI 卡点）。OCR 也能兼容定时模式（CI cron + ocr scan），但核心价值在于实时增量审查。</p>
+  </div>
+</div>
+
+<!-- ==================== Q5 ==================== -->
+<h2 id="q5">问题五：Sonar 哪些可以被 OCR 代替？</h2>
+
+<div class="qa-card">
+  <span class="q-tag">章工提问</span>
+  <div class="question">Sonar 哪些可以被 OCR 代替？</div>
+  <span class="answer-label">回应</span>
+
+  <h4>结论：不是全部替代，是分层互补。OCR 代替增量审查和安全检测（约 70%），Sonar 降级为低频基线扫描</h4>
+
+  <h4>逐能力对比</h4>
+  <table>
+    <tr>
+      <th>能力</th>
+      <th>Sonar</th>
+      <th>OCR</th>
+      <th>结论</th>
+    </tr>
+    <tr>
+      <td>增量代码审查（PR 级）</td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-green">天然增量</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+    <tr>
+      <td>已知漏洞检测（NPE/SQL注入/XSS/线程安全）</td>
+      <td><span class="badge badge-orange">规则匹配</span></td>
+      <td><span class="badge badge-green">LLM + 规则</span></td>
+      <td><span class="badge badge-green">OCR 代替</span>（更精准）</td>
+    </tr>
+    <tr>
+      <td>代码安全审查</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+    <tr>
+      <td>代码规范检查</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+    <tr>
+      <td>前端扫描（JS/TS/HTML/CSS）</td>
+      <td><span class="badge badge-red">新版不支持</span></td>
+      <td><span class="badge badge-green">LLM 天然支持</span></td>
+      <td><span class="badge badge-green">OCR 代替</span>（解决前端插件问题）</td>
+    </tr>
+    <tr>
+      <td>跨文件上下文审查</td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+    <tr>
+      <td>修复方案建议</td>
+      <td><span class="badge badge-red">只报位置</span></td>
+      <td><span class="badge badge-green">报位置 + 给修复</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+    <tr>
+      <td>代码覆盖率统计</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-orange">Sonar 保留</span></td>
+    </tr>
+    <tr>
+      <td>圈复杂度分析</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-orange">Sonar 保留</span></td>
+    </tr>
+    <tr>
+      <td>重复代码检测</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-orange">Sonar 保留</span></td>
+    </tr>
+    <tr>
+      <td>技术债全景看板</td>
+      <td><span class="badge badge-green">支持</span></td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-orange">Sonar 保留</span></td>
+    </tr>
+    <tr>
+      <td>规则集自动化继承分发</td>
+      <td><span class="badge badge-red">不支持</span></td>
+      <td><span class="badge badge-green">四层优先级链</span></td>
+      <td><span class="badge badge-green">OCR 代替</span></td>
+    </tr>
+  </table>
+
+  <h4>分层架构建议</h4>
+
+  <div class="arch-flow">
+    <div class="arch-node green" style="min-width: 200px;">
+      <strong>高频层：OCR</strong><br>
+      <span style="font-size: 12px; font-weight: 400;">
+        每次 PR/MR 提交触发<br>
+        增量审查 · 安全检测 · 代码规范<br>
+        1-3 分钟 · CI 卡点
+      </span>
+    </div>
+    <span class="arch-arrow">+</span>
+    <div class="arch-node orange" style="min-width: 200px;">
+      <strong>低频层：Sonar（降级）</strong><br>
+      <span style="font-size: 12px; font-weight: 400;">
+        周/月级定时触发<br>
+        覆盖率 · 复杂度 · 重复代码 · 技术债看板<br>
+        全量基线扫描
+      </span>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <p><strong>对现有痛点的影响：</strong></p>
+    <ul>
+      <li><strong>前端插件升级</strong>→ OCR 天然支持 JS/TS，前端 Sonar 插件升级可<strong>暂停</strong>，等选型结论出来再定</li>
+      <li><strong>JDK 17 升级影响</strong>→ OCR 是 Go 二进制，无 JDK 依赖，Sonar 降级为低频后升级紧迫性<strong>大幅降低</strong></li>
+      <li><strong>扫描性能</strong>→ 高频审查走 OCR 增量（1-3 分钟），Sonar 全量扫描只在低频基线时跑</li>
+      <li><strong>本地/CI 不一致</strong>→ OCR 同一规则文件 + 同一 CLI，本地和 CI 天然一致</li>
+    </ul>
+  </div>
+
+  <div class="success-box">
+    <p><strong>一句话回应章工：</strong>OCR 代替 Sonar 的增量审查、安全检测、代码规范、前端扫描部分（约占日常扫描 70%）；Sonar 降级为低频基线扫描，保留覆盖率、复杂度、重复代码、技术债看板（约 30%）。两者分层互补，不是替代关系。前端 Sonar 插件升级建议先暂停。</p>
+  </div>
+</div>
+
+<!-- ==================== 总结 ==================== -->
+<h2 id="summary">总结与行动建议</h2>
+
+<div class="summary-card">
+  <h2>五问核心回应汇总</h2>
+  <table style="background: rgba(255,255,255,0.1); border: none; margin-top: 16px;">
+    <tr style="background: rgba(255,255,255,0.15);">
+      <th style="color: white; border: 1px solid rgba(255,255,255,0.2);">章工提问</th>
+      <th style="color: white; border: 1px solid rgba(255,255,255,0.2);">核心回应</th>
+    </tr>
+    <tr>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);"><strong>1. Token 效率</strong></td>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);">通用 Agent 的 1/5~1/9，建议接私有部署模型，成本可控数据安全</td>
+    </tr>
+    <tr>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);"><strong>2. SVN 支持</strong></td>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);">原生不支持（依赖 Git），SVN 仓库可用 ocr scan 兜底或继续用 Sonar</td>
+    </tr>
+    <tr>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);"><strong>3. 财富替换</strong></td>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);">已与张森电话确认：财富工具基于LLM做业务代码逻辑扫描，与OCR方向一致。双方各自评估后对齐结论</td>
+    </tr>
+    <tr>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);"><strong>4. 触发方式</strong></td>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);">Sonar=定时全量（滞后），OCR=事件驱动增量（实时），OCR 也可兼容定时模式</td>
+    </tr>
+    <tr>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);"><strong>5. 替代边界</strong></td>
+      <td style="color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.2);">OCR 代替约 70%（增量审查/安全检测/前端），Sonar 保留约 30%（覆盖率/复杂度/技术债）</td>
+    </tr>
+  </table>
+</div>
+
+<h3>建议的下一步行动</h3>
+<ol>
+  <li><strong>暂停前端 Sonar 插件升级</strong>：OCR 天然支持 JS/TS，等选型结论出来再定，避免无效投入</li>
+  <li><strong>启动 OCR 试点验证</strong>（2-3 周）：选 1-2 个 Git 仓库试点，接私有部署模型，验证 Token 成本和审查质量</li>
+  <li><strong>与张森团队各自评估 OCR 后对齐结论</strong>：已电话确认财富工具基于 LLM 做业务代码逻辑扫描，与 OCR 方向一致。双方各自评估规则覆盖度和审查质量，重点对比金融业务特定规则能否迁移到 OCR 的自定义规则注入</li>
+  <li><strong>确认 SVN 仓库存量</strong>：如果 SVN 仓库已不多，继续用 Sonar 兜底；如果仍有大量，评估适配脚本开发</li>
+  <li><strong>制定分层方案实施计划</strong>：OCR 为主（高频增量）+ Sonar 为辅（低频基线），分阶段推广</li>
+</ol>
+
+<div class="footer">
+  <p>本报告配套《代码静态扫描方案选型调研报告》和《纯静态扫描局限性分析报告》使用</p>
+  <p>整理人：谢超 | 日期：2026年8月 | 更新：2026-08-06（补充与张森电话沟通结论）</p>
+</div>
+
+</div>
+</body>
+</html>

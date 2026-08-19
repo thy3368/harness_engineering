@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纯静态扫描的局限性分析 — SonarQube vs Open Code Review</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --surface-alt: #f1f5f9;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #1a202c;
+    --text-secondary: #64748b;
+    --text-tertiary: #94a3b8;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --primary-dark: #1e40af;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --green-dark: #15803d;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --amber-bg: #fffbeb;
+    --purple: #7c3aed;
+    --purple-light: #f3e8ff;
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+    --code-keyword: #93c5fd;
+    --code-type: #67e8f9;
+    --code-method: #86efac;
+    --code-string: #fcd34d;
+    --code-comment: #64748b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .header {
+    text-align: center;
+    padding: 56px 24px 40px;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .header .tag {
+    display: inline-block;
+    padding: 4px 14px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
+  .header .subtitle { font-size: 15px; color: var(--text-secondary); }
+  .header .meta { font-size: 13px; color: var(--text-tertiary); margin-top: 16px; }
+  .header .meta span { margin: 0 8px; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 48px;
+  }
+  .toc h3 { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 8px; }
+  .toc ol li::before { content: counter(toc) ". "; color: var(--primary); font-weight: 600; }
+  .toc a { color: var(--text); text-decoration: none; }
+  .toc a:hover { color: var(--primary); }
+
+  section { margin-bottom: 48px; }
+  h2 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h2 .num { color: var(--primary); margin-right: 8px; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text); margin: 32px 0 12px; }
+  h4 { font-size: 15px; font-weight: 600; color: var(--text); margin: 20px 0 8px; }
+
+  p { margin-bottom: 14px; color: var(--text); }
+  .lead { font-size: 16px; color: var(--text-secondary); margin-bottom: 24px; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    border-left: 4px solid;
+  }
+  .callout-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+  .callout-amber { background: var(--amber-bg); border-color: var(--amber); }
+  .callout-amber .callout-title { color: var(--amber); }
+  .callout-blue { background: var(--primary-light); border-color: var(--primary); }
+  .callout-blue .callout-title { color: var(--primary-dark); }
+  .callout-green { background: var(--green-light); border-color: var(--green); }
+  .callout-green .callout-title { color: var(--green-dark); }
+  .callout-red { background: var(--red-light); border-color: var(--red); }
+  .callout-red .callout-title { color: var(--red); }
+
+  .code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 20px 24px;
+    font-family: "SF Mono", Monaco, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  .code-block .label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    font-family: -apple-system, sans-serif;
+  }
+  .code-block .label .lang { color: var(--amber); font-weight: 600; }
+  .kw { color: var(--code-keyword); }
+  .tp { color: var(--code-type); }
+  .mt { color: var(--code-method); }
+  .st { color: var(--code-string); }
+  .cm { color: var(--code-comment); font-style: italic; }
+  .anno { color: var(--code-keyword); }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .compare-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .compare-card.sonar { border-top: 3px solid var(--primary); }
+  .compare-card.ocr { border-top: 3px solid var(--green); }
+  .compare-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .compare-card.sonar h4 { color: var(--primary-dark); }
+  .compare-card.ocr h4 { color: var(--green-dark); }
+  .compare-card ul { list-style: none; }
+  .compare-card ul li {
+    font-size: 14px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .compare-card ul li::before { content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%; }
+  .compare-card.sonar ul li::before { background: var(--orange); }
+  .compare-card.ocr ul li::before { background: var(--green); }
+  .compare-card .status {
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .compare-card.sonar .status { background: var(--green-light); color: var(--green-dark); }
+  .compare-card.ocr .status { background: var(--amber-light); color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th {
+    background: var(--surface-alt);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--border-strong);
+  }
+  th.sonar-col { color: var(--primary-dark); }
+  th.ocr-col { color: var(--green-dark); }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  td:first-child { font-weight: 600; }
+  tr:hover td { background: var(--surface); }
+
+  .flow-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .flow-label { font-size: 13px; font-weight: 700; width: 180px; flex-shrink: 0; }
+  .flow-label.sonar { color: var(--primary-dark); }
+  .flow-label.ocr { color: var(--green-dark); }
+  .flow-box {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 100px;
+  }
+  .flow-box.sonar { background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary); }
+  .flow-box.ocr { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green); }
+  .flow-arrow { color: var(--text-tertiary); font-size: 18px; }
+  .flow-notes {
+    display: flex;
+    gap: 24px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .flow-notes .sonar-notes { color: var(--orange); width: 180px; flex-shrink: 0; }
+  .flow-notes .ocr-notes { color: var(--green); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-green { background: var(--green-light); color: var(--green-dark); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+
+  .section-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .section-summary h4 { margin-top: 0; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .flow-row { flex-direction: column; align-items: stretch; }
+    .flow-label { width: auto; }
+    .flow-notes { flex-direction: column; gap: 8px; }
+    .flow-notes .sonar-notes, .flow-notes .ocr-notes { width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <div class="tag">软件工程分析报告</div>
+  <h1>纯静态扫描的局限性分析<br>SonarQube vs Open Code Review</h1>
+  <div class="subtitle">从软件工程视角剖析确定性静态扫描的能力边界，逐条举例对比两种工具架构</div>
+  <div class="meta">
+    <span>2026 年 8 月 5 日</span>|<span>代码扫描方案选型专题</span>|<span>配套文档：选型调研报告</span>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#s1">引言：静态扫描在软件工程中的定位</a></li>
+    <li><a href="#s2">纯静态扫描的本质局限：五大维度</a></li>
+    <li><a href="#s3">架构对比：模式匹配 vs 语义理解</a></li>
+    <li><a href="#s4">逐条对比矩阵</a></li>
+    <li><a href="#s5">总结：分层互补而非替代</a></li>
+  </ol>
+</div>
+
+<section id="s1">
+  <h2><span class="num">1</span>引言：静态扫描在软件工程中的定位</h2>
+  <p class="lead">静态代码扫描是软件质量保障体系的重要一环，但它不是银弹。理解它的能力边界，才能在选型时做出正确判断。</p>
+
+  <p>在软件工程的经典理论中，代码质量保障手段沿"发现成本从低到高"排列：编码规范检查 &rarr; 静态分析 &rarr; 单元测试 &rarr; 集成测试 &rarr; 人工 Code Review &rarr; 生产环境监控。静态分析位于前端，优势是<strong>自动化、可重复、覆盖全量代码</strong>，能在编码阶段就发现问题，修复成本最低。</p>
+
+  <p>但静态分析的本质是<strong>在不运行代码的前提下，通过分析代码文本/语法树来推断潜在问题</strong>。这个"不运行"的前提，决定了它有一道无法跨越的能力边界。这道边界的一侧是"可以用模式/规则描述的问题"，另一侧是"需要理解代码意图、运行时行为、业务上下文才能判断的问题"。</p>
+
+  <div class="callout callout-amber">
+    <div class="callout-title">核心论点</div>
+    纯静态扫描（如 SonarQube 社区版）的能力本质是<strong>"模式匹配"</strong>——它能识别"代码文本是否符合已知的问题模式"，但无法理解<strong>"代码的语义意图"</strong>。这个差异在五类典型场景中表现尤为突出。
+  </div>
+</section>
+
+<section id="s2">
+  <h2><span class="num">2</span>纯静态扫描的本质局限：五大维度</h2>
+
+  <h3>2.1 业务语义盲区 <span class="badge badge-red">最致命的漏报</span></h3>
+  <p>静态扫描能发现"SQL 语句拼接了用户输入"这个模式，但判断不了"这个转账接口允许金额为负数"是不是 bug。业务逻辑正确性需要理解代码的意图，而非语法结构。<strong>大部分线上事故恰恰不是语法错误，而是业务逻辑错误</strong>。</p>
+
+  <div class="code-block">
+    <div class="label"><span class="lang">Java</span> &mdash; 转账服务：生产环境真实代码</div>
+<span class="cm">// 语法完全合规，SonarQube 报告 0 issues</span>
+<span class="cm">// 但存在三个会在生产环境引发事故的业务逻辑缺陷</span>
+
+<span class="kw">public class</span> <span class="tp">TransferService</span> {
+
+    <span class="anno">@Transactional</span>
+    <span class="kw">public void</span> <span class="mt">transfer</span>(<span class="tp">Long</span> fromId, <span class="tp">Long</span> toId, <span class="tp">BigDecimal</span> amount) {
+        <span class="cm">// 缺陷 1: amount 可能为负数或零</span>
+        <span class="cm">// 缺陷 2: fromId 可能等于 toId（自转）</span>
+        <span class="cm">// 缺陷 3: 缺少余额预检查，可能导致透支</span>
+        accountDao.<span class="mt">debit</span>(fromId, amount);
+        accountDao.<span class="mt">credit</span>(toId, amount);
+    }
+}
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card sonar">
+      <h4>SonarQube 分析结果</h4>
+      <ul>
+        <li>0 issues found</li>
+        <li>代码结构合规，未匹配到任何已知规则模式</li>
+      </ul>
+      <div class="status">状态：通过</div>
+    </div>
+    <div class="compare-card ocr">
+      <h4>Open Code Review 分析结果</h4>
+      <ul>
+        <li>缺少金额校验：amount 可能为负数或零</li>
+        <li>缺少防自转校验：fromId 可能等于 toId</li>
+        <li>缺少余额预检：可能导致透支</li>
+      </ul>
+      <div class="status">建议：在 debit 前添加 amount &gt; 0 和 fromId != toId 校验</div>
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <div class="callout-title">为什么 SonarQube 漏报？</div>
+    SonarQube 的规则引擎只能匹配预定义的模式（如"资源未关闭""空指针赋值""SQL 拼接"）。"转账方法应该校验金额 &gt; 0"不是一个可以用模式描述的规则——它需要理解"这是一个转账操作"这个语义。这是纯静态扫描最大的盲区。
+  </div>
+
+  <h3>2.2 跨文件上下文断裂 <span class="badge badge-amber">误报和漏报的根源</span></h3>
+  <p>静态扫描通常以文件为分析单位。但真正的 bug 往往跨文件：A 模块传了一个 null 给 B 模块，B 模块没做防御性检查就 NPE 了。SonarQube 看到的是"B 模块有空指针风险"或"A 模块传了 null"，但它没法把两者关联起来判断这是否真的是一个问题路径。</p>
+
+  <div class="code-block">
+    <div class="label"><span class="lang">Java</span> &mdash; 跨文件 NPE 传播</div>
+<span class="cm">// 文件 A: UserService.java</span>
+<span class="kw">public class</span> <span class="tp">UserService</span> {
+    <span class="kw">public</span> <span class="tp">User</span> <span class="mt">getUser</span>(<span class="tp">Long</span> id) {
+        <span class="kw">return</span> userMapper.<span class="mt">selectById</span>(id); <span class="cm">// 可能返回 null</span>
+    }
+}
+
+<span class="cm">// 文件 B: OrderController.java</span>
+<span class="kw">public class</span> <span class="tp">OrderController</span> {
+    <span class="kw">public</span> <span class="tp">Result</span> <span class="mt">createOrder</span>(<span class="tp">Long</span> userId) {
+        <span class="tp">User</span> user = userService.<span class="mt">getUser</span>(userId);
+        <span class="tp">String</span> name = user.<span class="mt">getName</span>(); <span class="cm">// NPE 风险！</span>
+        <span class="cm">// SonarQube: 只报这一行 "possible NPE"</span>
+        <span class="cm">// 无法追溯到 getUser() 的 selectById 返回 null</span>
+    }
+}
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card sonar">
+      <h4>SonarQube</h4>
+      <ul>
+        <li>报 "B 文件第 5 行可能 NPE"</li>
+        <li>不知道 null 来自哪里</li>
+        <li>无法判断这是真实风险还是误报</li>
+        <li>开发需手动排查上下游</li>
+      </ul>
+    </div>
+    <div class="compare-card ocr">
+      <h4>Open Code Review</h4>
+      <ul>
+        <li>追踪数据流：getUser() 调用 selectById()</li>
+        <li>selectById() 可能返回 null（MyBatis 约定）</li>
+        <li>调用方 user.getName() 未做 null check</li>
+        <li>建议：在调用处加 Optional 或 null check</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>SonarQube 的分析边界是单文件（部分规则支持过程内分析，但不跨文件追踪数据流）。这导致两个后果：一是<strong>漏报</strong>（看不到上游传来的风险），二是<strong>误报</strong>（不知道上游已经有保护，下游的检查其实是多余的）。OCR 的 LLM 能将多个文件的代码放在一起分析，追踪数据从产生到消费的完整路径。</p>
+
+  <h3>2.3 运行时行为盲区 <span class="badge badge-red">完全探测不到</span></h3>
+  <p>并发问题（死锁、竞态条件）、资源泄漏（特定负载下才暴露）、时序依赖（初始化顺序）——这些问题在代码静态层面是"合法"的。每个 synchronized 块单独看都没问题，只有运行时并发执行才暴露。静态扫描对此基本无能为力。</p>
+
+  <div class="code-block">
+    <div class="label"><span class="lang">Java</span> &mdash; 锁顺序不一致导致潜在死锁</div>
+<span class="kw">public class</span> <span class="tp">TransferService</span> {
+    <span class="kw">private final</span> <span class="tp">Object</span> lock1 = <span class="kw">new</span> <span class="tp">Object</span>();
+    <span class="kw">private final</span> <span class="tp">Object</span> lock2 = <span class="kw">new</span> <span class="tp">Object</span>();
+
+    <span class="kw">public void</span> <span class="mt">transferAtoB</span>() {
+        <span class="kw">synchronized</span>(lock1) {
+            <span class="kw">synchronized</span>(lock2) { <span class="cm">/* 锁顺序: 1 &rarr; 2 */</span> }
+        }
+    }
+
+    <span class="kw">public void</span> <span class="mt">transferBtoA</span>() {
+        <span class="kw">synchronized</span>(lock2) {
+            <span class="kw">synchronized</span>(lock1) { <span class="cm">/* 锁顺序: 2 &rarr; 1 */</span> }
+        }   <span class="cm">// 两个方法以相反顺序获取同一对锁 &rarr; 潜在死锁</span>
+    }
+}
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card sonar">
+      <h4>SonarQube</h4>
+      <ul>
+        <li>每个 synchronized 块单独看都合法</li>
+        <li>无法检测锁获取顺序</li>
+        <li>无法模拟多线程并发执行路径</li>
+        <li>结果：完全沉默，0 issues</li>
+      </ul>
+    </div>
+    <div class="compare-card ocr">
+      <h4>Open Code Review</h4>
+      <ul>
+        <li>LLM 理解并发编程模式</li>
+        <li>识别出两个方法获取同一对锁</li>
+        <li>锁顺序相反 &rarr; 经典死锁模式</li>
+        <li>建议：统一锁获取顺序</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>类似的运行时盲区还包括：资源泄漏（仅在特定负载/异常路径下才不关闭）、竞态条件（check-then-act 模式中的 TOCTOU bug）、初始化时序依赖（静态块初始化顺序导致的 NPE）。这些问题的共同特征是<strong>代码在静态层面"合法"，只有在运行时特定条件下才暴露</strong>。</p>
+
+  <h3>2.4 规则永远滞后于技术演进 <span class="badge badge-amber">你们正在遇到的</span></h3>
+  <p>这正是当前代码扫描方案的核心痛点之一——<strong>Sonar 新版本还不支持前端扫描</strong>。每出一个新框架（React Hooks、Vue 3 Composition API）、新语言特性（Java Records、Sealed Classes）、新漏洞类型（Prototype Pollution、SSRF），都需要有人写新规则/插件，永远在追赶。</p>
+
+  <div class="code-block">
+    <div class="label"><span class="lang">JavaScript</span> &mdash; React Hooks 规则违反（2020 年前 SonarQube 无法检测）</div>
+<span class="cm">// React Hooks 的使用约定：不能在条件分支中调用 Hook</span>
+<span class="cm">// 这不是语法错误，而是 React 框架的运行时约束</span>
+
+<span class="kw">function</span> <span class="mt">MyComponent</span>({ showName }) {
+    <span class="kw">if</span> (showName) {
+        <span class="kw">const</span> [name, setName] = <span class="mt">useState</span>(<span class="st">""</span>); <span class="cm">// Hook 在条件中调用</span>
+        <span class="kw">return</span> <span class="st">&lt;h1&gt;{name}&lt;/h1&gt;</span>;
+    }
+    <span class="kw">return</span> <span class="st">&lt;p&gt;No name&lt;/p&gt;</span>;
+}
+<span class="cm">// SonarQube: 需要专门的 React 插件才能检测此问题</span>
+<span class="cm">// OCR: LLM 天然理解 React Hooks 约定（训练数据中包含）</span>
+  </div>
+
+  <p>SonarQube 的规则库本质上是一个<strong>"已知问题模式数据库"</strong>。它的覆盖范围取决于有多少人编写了多少规则/插件。而 LLM"读过"海量开源代码，天然能理解新框架的约定和风险——不需要有人专门写一条规则来描述"React Hooks 不能在条件中调用"。</p>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">与当前痛点的关联</div>
+    谢超收集的痛点之一正是"前端扫描插件尚未升级适配新版本 Sonar"。如果采用 OCR 方案，其原生支持 JavaScript/TypeScript，<strong>前端扫描插件升级的问题将不复存在</strong>——不需要等 Sonar 社区发布前端插件，OCR 的 LLM 直接理解前端代码。
+  </div>
+
+  <h3>2.5 高误报 + 无法给修复方案 <span class="badge badge-amber">导致告警疲劳</span></h3>
+  <p>静态扫描报出来一个问题，开发还要去判断"这是不是真的问题""怎么改"。大量误报导致<strong>告警疲劳</strong>——开发者开始忽略所有告警，真正的问题也被淹没。而且它只告诉你"第 42 行有空指针风险"，不会告诉你"因为你上游传参没校验，所以应该在调用方加 null check"。</p>
+
+  <div class="code-block">
+    <div class="label"><span class="lang">Java</span> &mdash; SQL 注入误报（无法区分可信源与不可信源）</div>
+<span class="cm">// SonarQube 报: "Potential SQL Injection" (规则: S3649)</span>
+
+<span class="kw">public</span> <span class="tp">User</span> <span class="mt">findById</span>(<span class="tp">Long</span> userId) {
+    <span class="cm">// userId 是 Long 类型，来自内部系统路由参数，不是用户输入</span>
+    <span class="cm">// 不存在 SQL 注入风险 &rarr; 误报</span>
+    <span class="tp">String</span> sql = <span class="st">"SELECT * FROM users WHERE id = "</span> + userId;
+    <span class="kw">return</span> jdbcTemplate.<span class="mt">queryForObject</span>(sql, <span class="tp">User</span>.<span class="kw">class</span>);
+}
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card sonar">
+      <h4>SonarQube</h4>
+      <ul>
+        <li>报 "Potential SQL Injection"</li>
+        <li>不区分 userId 来自路由参数还是用户表单</li>
+        <li>不提供修复代码</li>
+        <li>开发需自行判断是否误报</li>
+      </ul>
+    </div>
+    <div class="compare-card ocr">
+      <h4>Open Code Review</h4>
+      <ul>
+        <li>分析 userId 的来源（路由参数，非用户输入）</li>
+        <li>判断为低风险（非误报但不紧急）</li>
+        <li>仍建议改为参数化查询（防御性编程）</li>
+        <li>直接给出修复代码片段</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>告警疲劳的后果是灾难性的：当扫描结果中有 30% 是误报时，开发者会习惯性地<strong>忽略所有告警</strong>。这意味着即使有真正严重的问题被报出来，也会被淹没在噪声中。SonarQube 社区版尤其严重——它不区分数据来源（可信/不可信），所有"拼接 SQL"都报"潜在注入"，大量内部系统代码被误报。</p>
+</section>
+
+<section id="s3">
+  <h2><span class="num">3</span>架构对比：模式匹配 vs 语义理解</h2>
+  <p class="lead">两者的处理架构有本质差异，这决定了它们的能力边界。</p>
+
+  <div class="flow-diagram">
+    <div class="flow-row">
+      <div class="flow-label sonar">SonarQube</div>
+      <div class="flow-box sonar">源代码<br><small>全量输入</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box sonar">AST 解析<br><small>逐文件</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box sonar">规则匹配<br><small>模式比对</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box sonar">问题列表<br><small>误报高</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box sonar">看板展示<br><small>无修复</small></div>
+    </div>
+    <div class="flow-notes">
+      <div class="sonar-notes">局限：全量扫描 ~1h / 单线程排队 / 无法理解语义 / 规则滞后</div>
+      <div class="ocr-notes">&nbsp;</div>
+    </div>
+
+    <div class="flow-row" style="margin-top: 20px;">
+      <div class="flow-label ocr">Open Code Review</div>
+      <div class="flow-box ocr">Git Diff<br><small>增量输入</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box ocr">文件筛选<br><small>变更检测</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box ocr">规则 + LLM<br><small>语义理解</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box ocr">问题 + 上下文<br><small>含修复方案</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box ocr">JSON / 评论<br><small>行级定位</small></div>
+    </div>
+    <div class="flow-notes">
+      <div class="sonar-notes">&nbsp;</div>
+      <div class="ocr-notes">优势：增量扫描 1-3min / 8 路并发 / 跨文件上下文 / 行级定位 + 修复建议</div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <div class="callout-title">核心差异</div>
+    <p style="margin-bottom: 8px;"><strong>SonarQube 的输出</strong>："这段代码匹配了规则 X"（第 42 行，规则 S3649，严重级别 Blocker）</p>
+    <p><strong>OCR 的输出</strong>："这段代码的意图是转账，但缺少金额校验（amount 可能为负数）和防自转检查（fromId 可能等于 toId），建议在 debit 前添加校验逻辑"</p>
+  </div>
+
+  <p>这个差异的根源在于处理架构：SonarQube 是<strong>规则驱动的模式匹配</strong>——代码经过 AST 解析后，用预定义的规则集逐一匹配，命中则报。OCR 是<strong>LLM 驱动的语义理解</strong>——代码变更经过文件筛选后，确定性规则做第一轮快速过滤，然后 LLM 对筛选后的代码做深度审查，理解代码意图、追踪数据流、判断业务逻辑正确性。</p>
+</section>
+
+<section id="s4">
+  <h2><span class="num">4</span>逐条对比矩阵</h2>
+  <p class="lead">五大局限性维度下，两种工具的对比一览。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 18%;">局限性</th>
+        <th class="sonar-col" style="width: 41%;">SonarQube（纯静态分析）</th>
+        <th class="ocr-col" style="width: 41%;">Open Code Review（确定性 + LLM）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>业务语义盲区</td>
+        <td>语法合规即通过，业务逻辑 bug 全漏报<br><span class="badge badge-green">0 issues</span> 对转账代码</td>
+        <td>LLM 理解代码意图，识别业务逻辑缺陷<br><span class="badge badge-amber">3 issues</span> 含修复方案</td>
+      </tr>
+      <tr>
+        <td>跨文件上下文</td>
+        <td>分析边界 = 单文件，只报下游 NPE，无法追溯上游根因</td>
+        <td>追踪跨文件数据流，定位根因 + 修复点</td>
+      </tr>
+      <tr>
+        <td>运行时行为</td>
+        <td>完全盲区，无法检测死锁 / 竞态 / 资源泄漏</td>
+        <td>理解并发模式，预判运行时风险</td>
+      </tr>
+      <tr>
+        <td>规则滞后</td>
+        <td>新框架需写新插件（前端插件尚未适配），永远追赶技术演进</td>
+        <td>LLM 天然理解新框架 / 新语言，无需写规则</td>
+      </tr>
+      <tr>
+        <td>误报与修复</td>
+        <td>高误报率（不区分数据来源），只报位置不给方案</td>
+        <td>精准定位（区分可信/不可信源），附上下文修复建议</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">维度</th>
+        <th class="sonar-col" style="width: 37.5%;">SonarQube（纯静态）</th>
+        <th class="ocr-col" style="width: 37.5%;">OCR（确定性 + LLM）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>能力本质</td>
+        <td>模式匹配</td>
+        <td>语义理解</td>
+      </tr>
+      <tr>
+        <td>误报率</td>
+        <td>高（无法区分上下文）</td>
+        <td>低（理解数据来源和意图）</td>
+      </tr>
+      <tr>
+        <td>漏报率</td>
+        <td>高（业务逻辑 bug 全漏）</td>
+        <td>低（能识别业务语义缺陷）</td>
+      </tr>
+      <tr>
+        <td>修复能力</td>
+        <td>只报位置，不给方案</td>
+        <td>报位置 + 给修复方案</td>
+      </tr>
+      <tr>
+        <td>技术适应性</td>
+        <td>规则滞后，需写插件</td>
+        <td>LLM 天然理解新技术</td>
+      </tr>
+      <tr>
+        <td>扫描模式</td>
+        <td>全量扫描，~1h / 模块</td>
+        <td>增量扫描（基于 Diff），1-3min / PR</td>
+      </tr>
+      <tr>
+        <td>并发能力</td>
+        <td>社区版单线程排队</td>
+        <td>8 路并发</td>
+      </tr>
+      <tr>
+        <td>本地/CI 一致性</td>
+        <td>需手动指定规则集，易不一致</td>
+        <td>同一规则文件 + 同一 CLI，天然一致</td>
+      </tr>
+      <tr>
+        <td>适用场景</td>
+        <td>代码规范 / 覆盖率 / 复杂度 / 技术债看板</td>
+        <td>业务逻辑 / 安全 / 跨文件审查 / 增量卡点</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="s5">
+  <h2><span class="num">5</span>总结：分层互补而非替代</h2>
+
+  <div class="section-summary">
+    <h4>核心结论</h4>
+    <p>纯静态扫描（SonarQube）和 LLM 混合扫描（Open Code Review）<strong>不是替代关系，而是分层互补关系</strong>。确定性工具适合做"工程化的基线扫描"——代码覆盖率、复杂度统计、已知漏洞模式匹配、技术债全景看板。LLM 工具适合做"需要理解代码意图的深度审查"——业务逻辑正确性、跨文件数据流、上下文修复建议、增量卡点。</p>
+    <p>OCR 的混合架构恰好把<strong>确定性工程</strong>（文件筛选、规则匹配、行级定位）交给程序，把<strong>"理解代码并判断风险"</strong>交给 LLM——这恰好是纯静态扫描做不到的那部分。</p>
+  </div>
+
+  <h3>哪些扫描适合确定性工具（SonarQube）</h3>
+  <table>
+    <thead>
+      <tr><th style="width: 30%;">场景</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>代码覆盖率</td><td>统计测试覆盖比例，LLM 无法替代</td></tr>
+      <tr><td>复杂度统计</td><td>圈复杂度、认知复杂度等量化指标</td></tr>
+      <tr><td>已知漏洞模式</td><td>SQL 注入特征匹配、XSS 检测等已有规则库</td></tr>
+      <tr><td>代码风格/规范</td><td>命名约定、缩进、导入排序等格式化规则</td></tr>
+      <tr><td>技术债全景看板</td><td>全量代码的问题趋势、热力图、历史演进</td></tr>
+    </tbody>
+  </table>
+
+  <h3>哪些扫描适合 LLM Agent（Open Code Review）</h3>
+  <table>
+    <thead>
+      <tr><th style="width: 30%;">场景</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>业务语义正确性</td><td>转账是否校验金额、订单是否校验库存等业务逻辑</td></tr>
+      <tr><td>跨文件上下文审查</td><td>追踪数据流、识别 null 传播路径、关联上下游</td></tr>
+      <tr><td>上下文修复建议</td><td>不仅报问题，还给出可执行的修复代码</td></tr>
+      <tr><td>增量 Diff 深度审查</td><td>基于 PR/MR 的变更做精准审查，适合 CI 卡点</td></tr>
+      <tr><td>新框架/新语言</td><td>无需写规则，LLM 天然理解 React/Vue/Spring 等框架</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-green">
+    <div class="callout-title">选型建议</div>
+    <p style="margin-bottom: 8px;"><strong>推荐方案：混合分层架构（OCR 为主 + SonarQube 为辅）</strong></p>
+    <ul style="margin-left: 20px; margin-bottom: 8px;">
+      <li>OCR 负责高频增量审查和实时卡点（直接解决前端扫描问题，无需升级前端 Sonar 插件）</li>
+      <li>SonarQube 降级为低频基线扫描（技术债看板、覆盖率、复杂度），升级紧迫性大幅降低</li>
+      <li>前端插件升级暂停，等选型结论出来再定</li>
+    </ul>
+    <p>详见配套文档《代码静态扫描方案选型调研报告》。</p>
+  </div>
+
+  <div class="callout callout-red">
+    <div class="callout-title">需重点评估的风险</div>
+    LLM API 成本和数据安全合规。建议接私有部署模型，代码不外传。试点阶段选择 1-2 个非核心产品线验证效果和成本，再决定是否全面推广。
+  </div>
+</section>
+
+<div class="footer">
+  纯静态扫描局限性分析报告 &middot; 2026 年 8 月 5 日<br>
+  配套文档：代码静态扫描方案选型调研报告 &middot; 内部技术选型专题
+</div>
+
+</div>
+
+</body>
+</html>

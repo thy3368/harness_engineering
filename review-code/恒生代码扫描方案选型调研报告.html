@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恒生代码扫描方案选型调研报告</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --border: #e2e8f0;
+    --text: #1a202c;
+    --text-secondary: #64748b;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --purple: #7c3aed;
+    --purple-light: #f3e8ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .header {
+    text-align: center;
+    padding: 48px 24px 40px;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  .header .subtitle { font-size: 15px; color: var(--text-secondary); }
+  .header .meta { font-size: 13px; color: var(--text-secondary); margin-top: 16px; }
+  .header .meta span { margin: 0 8px; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc h2 { font-size: 16px; margin-bottom: 12px; color: var(--text); }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 6px; font-size: 14px; }
+  .toc a { color: var(--primary); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  h2 { font-size: 22px; font-weight: 700; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: var(--text); }
+  h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; }
+
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+
+  .info-box {
+    background: var(--primary-light);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .warn-box {
+    background: var(--orange-light);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .success-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { background: var(--surface); text-align: left; padding: 10px 14px; border: 1px solid var(--border); font-weight: 600; }
+  td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: top; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+  .pain-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .pain-card h4 { color: var(--red); margin-bottom: 8px; }
+  .pain-card .ocr-fix { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .pain-card .ocr-fix h4 { color: var(--green); }
+
+  .summary-card {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+  .summary-card h2 { color: white; border: none; margin-top: 0; }
+  .summary-card h3 { color: rgba(255,255,255,0.9); }
+  .summary-card ul { color: rgba(255,255,255,0.95); }
+  .summary-card .badge { background: rgba(255,255,255,0.2); color: white; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .stat-item { text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 8px; }
+  .stat-item .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .stat-item .label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+  .arch-node { background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--primary); }
+  .arch-arrow { color: var(--text-secondary); font-size: 18px; }
+  .arch-node.green { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .arch-node.purple { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+
+  .footer { text-align: center; padding: 40px 0; color: var(--text-secondary); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<div class="header">
+  <h1>恒生代码扫描方案选型调研报告</h1>
+  <div class="subtitle">现有 SonarQube 方案痛点分析 vs Open Code Review（阿里开源）技术评估</div>
+  <div class="meta">
+    <span>调研人：黄华</span>
+    <span>|</span>
+    <span>日期：2026年8月（8月7日更新）</span>
+    <span>|</span>
+    <span>背景：JDK 17 升级引发代码扫描方案重新审视</span>
+  </div>
+</div>
+
+<!-- ==================== TOC ==================== -->
+<div class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#bg">背景与目标</a></li>
+    <li><a href="#biz-needs">业务部门对业务逻辑扫描的需求现状</a></li>
+    <li><a href="#pains">现有 SonarQube 方案五大痛点梳理</a></li>
+    <li><a href="#ocr">Open Code Review 方案介绍</a></li>
+    <li><a href="#compare">逐条痛点对比：SonarQube vs Open Code Review</a></li>
+    <li><a href="#full-compare">全面对比矩阵</a></li>
+    <li><a href="#risks">风险与限制</a></li>
+    <li><a href="#recommendation">选型建议与实施路径</a></li>
+    <li><a href="#appendix">附录：OCR 关键技术参数</a></li>
+  </ol>
+</div>
+
+<!-- ==================== 1. BACKGROUND ==================== -->
+<h2 id="bg">一、背景与目标</h2>
+
+<div class="info-box">
+  <p><strong>起因：</strong>产品线要求支持 JDK 17，现有 SonarQube 版本无法适配，需部署新版 SonarQube。但升级涉及恒生规约插件、多分支插件等自研组件适配改造，改造成本高。技术平台才灵建议不再沿用 Sonar 老方案，推荐评估阿里开源的 Open Code Review。</p>
+  <p><strong>决策：</strong>章总指示由黄华牵头，对代码扫描方案进行重新审视和技术选型，明确"哪些扫描由确定性工具做，哪些适合大模型"。</p>
+  <p><strong>业务部门需求：</strong>调研中发现，财富部门（张森团队）已自发探索 LLM 驱动的业务逻辑代码扫描，章总此前看过其审查内容。说明纯静态扫描在业务逻辑层面存在系统性缺口，并非个别现象——这一需求是本次选型的重要输入。</p>
+  <p><strong>目标：</strong>评估 Open Code Review 是否能替代或补充现有 SonarQube 方案，同时评估能否统一收敛各业务部门自研的 LLM 扫描工具，解决当前痛点并降低升级和维护成本。</p>
+</div>
+
+<!-- ==================== 2. BUSINESS DEPT NEEDS ==================== -->
+<h2 id="biz-needs">二、业务部门对业务逻辑扫描的需求现状</h2>
+
+<p>章总明确指出："哪些扫描由确定性工具做，哪些适合大模型"是本次选型的核心问题。在调研中我们发现，多个业务部门已经自发探索了 LLM 驱动的业务逻辑代码审查，说明<strong>纯静态扫描在业务逻辑层面存在系统性缺口</strong>，这一需求并非个别现象。</p>
+
+<h3>2.1 财富部门：已自建 LLM 业务代码逻辑扫描工具</h3>
+
+<div class="info-box">
+  <p><strong>背景：</strong>财富部门张森团队基于 LLM 自研了一套业务代码逻辑扫描工具，已在部门内部使用。章总此前看过该工具的审查内容，评价为"有些用 Sonar 就行，有些是个人在本机上搞没必要集中"。</p>
+  <p><strong>电话沟通确认（2026年8月）：</strong>与张森电话沟通后确认——</p>
+  <ul>
+    <li>财富工具确实是<strong>基于 LLM 做的业务代码逻辑扫描</strong>，与 OCR 技术方向一致</li>
+    <li>张森表示他们<strong>也会评估 OCR</strong>，双方认为"确实有点像"</li>
+    <li>后续路径：<strong>双方各自评估后对齐结论</strong>，重点对比规则覆盖度和审查质量</li>
+  </ul>
+</div>
+
+<table>
+  <tr><th style="width:25%">维度</th><th style="width:37%">财富自研工具（张森团队）</th><th style="width:38%">Open Code Review</th></tr>
+  <tr>
+    <td><strong>技术方向</strong></td>
+    <td>LLM 驱动业务逻辑扫描</td>
+    <td>确定性工程 + LLM 混合架构（方向一致）</td>
+  </tr>
+  <tr>
+    <td><strong>生产验证</strong></td>
+    <td>财富部门内部使用</td>
+    <td>阿里集团 2 年、2 万+ 用户、百万次审查</td>
+  </tr>
+  <tr>
+    <td><strong>维护方式</strong></td>
+    <td>依赖张森个人/小团队维护</td>
+    <td>开源社区持续维护，Apache-2.0 协议</td>
+  </tr>
+  <tr>
+    <td><strong>规则管理</strong></td>
+    <td>分散，缺少集中管控（章总评价"个人在本机上搞"）</td>
+    <td>四层优先级链（公司级→产品级→团队级→个人级），自动继承分发</td>
+  </tr>
+  <tr>
+    <td><strong>CI 集成</strong></td>
+    <td>需自研对接</td>
+    <td>原生支持 GitHub/GitLab/Gerrit/Bitbucket</td>
+  </tr>
+  <tr>
+    <td><strong>Token 效率</strong></td>
+    <td>未知（需对比评估）</td>
+    <td>通用 Agent 的 1/5~1/9</td>
+  </tr>
+  <tr>
+    <td><strong>业务特定规则</strong></td>
+    <td><span class="badge badge-blue">可能有金融合规定制</span>（金额精度、事务完整性、敏感数据脱敏等）</td>
+    <td>内置通用规则 + 自定义规则注入（需评估能否覆盖金融特定规则）</td>
+  </tr>
+</table>
+
+<div class="warn-box">
+  <p><strong>替换评估的关键问题：</strong></p>
+  <ol>
+    <li><strong>规则覆盖度</strong>：财富工具有没有 OCR 不具备的金融业务特定规则？（如金额精度校验、事务完整性检查、敏感数据脱敏检查等）</li>
+    <li><strong>审查准确率</strong>：财富工具的审查结果准确率如何？有没有做过标注对比？建议选 50-100 个 PR 做人工标注对比</li>
+    <li><strong>改造成本</strong>：财富工具是否已接入效能平台/卡点平台？替换的对接改造量如何？OCR 输出标准 JSON 格式，对接成本相对可控</li>
+  </ol>
+  <p><strong>建议路径：</strong>双方各自评估后对齐结论，先做 2-3 周对比测试（同样的 diff 跑两个工具，对比 Precision/Recall），再决定是否替换。</p>
+</div>
+
+<h3>2.2 纯静态扫描为何无法满足业务逻辑需求</h3>
+
+<p>章总提出"哪些扫描适合确定性工具，哪些适合大模型"——这个问题在业务部门已有答案：</p>
+
+<table>
+  <tr><th style="width:50%">适合确定性工具（SonarQube）</th><th style="width:50%">适合 LLM Agent（OCR / 财富工具）</th></tr>
+  <tr>
+    <td>
+      <ul>
+        <li>代码覆盖率统计</li>
+        <li>圈复杂度分析</li>
+        <li>已知漏洞模式匹配（SQL 注入特征、XSS 特征）</li>
+        <li>代码风格/规范检查</li>
+        <li>技术债全景看板</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li><strong>业务语义正确性判断</strong>（如转账金额是否校验 > 0）</li>
+        <li><strong>跨文件/跨模块数据流追踪</strong>（上游传 null → 下游 NPE）</li>
+        <li><strong>并发安全审查</strong>（锁顺序、死锁风险）</li>
+        <li><strong>上下文修复建议</strong>（不仅报位置，还给改法）</li>
+        <li><strong>增量 Diff 深度审查</strong>（PR 级实时审查）</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<div class="info-box">
+  <p><strong>核心结论：</strong>纯静态扫描的本质是"模式匹配"，做不到"语义理解"。大部分线上事故不是语法错误，而是业务逻辑错误——而业务逻辑审查恰恰是 SonarQube 的固有盲区，也是财富等部门自发探索 LLM 扫描的根本原因。OCR 的混合架构恰好把"理解代码意图并判断风险"交给 LLM，填补了这一缺口。</p>
+</div>
+
+<h3>2.3 对选型的核心影响</h3>
+
+<ul>
+  <li><strong>选型不只是"Sonar 还是 OCR"</strong>，还要考虑"已有业务部门自研 LLM 工具怎么办"</li>
+  <li>OCR 的四层规则优先级链（公司级→产品级→团队级→个人级）恰好解决章总说的"个人在本机上搞没必要集中"的问题——个人规则可注入但可追溯，集中规则自动继承</li>
+  <li>如果 OCR 能覆盖财富等部门的业务特定规则，可以<strong>统一收敛</strong>为公司级标准方案，避免各业务部门重复造轮子</li>
+  <li>如果不能完全覆盖，OCR 的自定义规则注入机制可以作为各业务部门业务特定规则的载体，<strong>统一平台 + 差异化规则</strong></li>
+</ul>
+
+<!-- ==================== 3. PAINS ==================== -->
+<h2 id="pains">三、现有 SonarQube 方案五大痛点梳理</h2>
+
+<p>谢超从配管收集的问题归纳如下，按影响面排序：</p>
+
+<div class="pain-card">
+  <h4>痛点一：规则管理灵活性不足，制约多产品线定制需求</h4>
+  <ul>
+    <li>规则配置仅支持公司级统一设定，各产品定制需人工逐条挑选并逐个 Sonar 项目手工配置，无法自动化继承与分发</li>
+    <li>独立定制化需求只能单独部署 SonarQube 实例，运维成本高且资源重复建设</li>
+  </ul>
+</div>
+
+<div class="pain-card">
+  <h4>痛点二：扫描性能低下，影响开发交付效率</h4>
+  <ul>
+    <li>仅恒生规约插件支持增量扫描，FindBugs 及核心引擎不支持，每次全量扫描，大型模块单次耗时约 1 小时</li>
+    <li>社区版仅支持单线程处理分析报告，一个项目写入数据库期间其他项目全部排队</li>
+    <li>无法满足"代码提交即触发"的 CI 卡点要求，只能降级为按日构建，问题发现滞后</li>
+  </ul>
+</div>
+
+<div class="pain-card">
+  <h4>痛点三：本地扫描与卡点扫描结果不一致</h4>
+  <ul>
+    <li>开发本地通过 SonarLint/MCP 扫描需手动指定规则集，选错则"本地通过、卡点失败"频发</li>
+    <li>要求用户明确指定 Sonar 项目名称才能保证一致，增加认知负担</li>
+  </ul>
+</div>
+
+<div class="pain-card">
+  <h4>痛点四：问题归因困难，影响问题闭环效率</h4>
+  <ul>
+    <li>代码未修改却产出新问题，SonarQube 后台"新代码周期"判定逻辑不透明</li>
+    <li>扫描问题无法定位到具体效能任务单，无法精准退回</li>
+  </ul>
+</div>
+
+<div class="pain-card">
+  <h4>痛点五：升级影响大</h4>
+  <ul>
+    <li>JDK 17 要求部署新版 SonarQube，涉及恒生规约插件、多分支插件适配改造</li>
+    <li>效能平台、卡点平台取数逻辑同步升级，改造成本高、影响面大</li>
+  </ul>
+</div>
+
+<!-- ==================== 3. OCR INTRO ==================== -->
+<h2 id="ocr">四、Open Code Review 方案介绍</h2>
+
+<h3>4.1 基本信息一览</h3>
+
+<div class="stat-grid">
+  <div class="stat-item">
+    <div class="num">18,000+</div>
+    <div class="label">GitHub Stars（2026.08）</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">2 年</div>
+    <div class="label">阿里内部验证</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">~1/9</div>
+    <div class="label">Token 消耗（vs 通用 Agent）</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">OpenSSF Gold</div>
+    <div class="label">安全认证等级（2026.08）</div>
+  </div>
+</div>
+
+<table>
+  <tr><th style="width:30%">项目</th><th>信息</th></tr>
+  <tr><td>全名</td><td>Open Code Review（简称 OCR），命令行工具名为 <code>ocr</code></td></tr>
+  <tr><td>出品方</td><td>阿里巴巴集团（内部使用两年后于 2026 年 5 月开源）</td></tr>
+  <tr><td>GitHub</td><td>github.com/alibaba/open-code-review</td></tr>
+  <tr><td>主要语言</td><td>Go（核心 CLI）+ TypeScript（VSCode 扩展）</td></tr>
+  <tr><td>安装方式</td><td><code>npm install -g @alibaba-group/open-code-review</code></td></tr>
+  <tr><td>许可协议</td><td>Apache-2.0（无 seat 限制、无 vendor 锁定）</td></tr>
+  <tr><td>支持语言</td><td>10 种（Java、JavaScript/TypeScript、Python、Go、SQL、XML/JSON 等）</td></tr>
+  <tr><td>内置规则</td><td>NPE、线程安全、XSS、SQL 注入、React Hooks、TypeScript 类型安全等</td></tr>
+  <tr><td>集成方式</td><td>CLI、GitHub Actions、GitLab CI、Gerrit、VSCode 扩展、MCP Server、编码 Agent 插件、委托模式</td></tr>
+  <tr><td>模型兼容</td><td>OpenAI / Anthropic API 兼容（可接自建模型端点）+ 委托模式（无需独立 API Key）</td></tr>
+  <tr><td>输出格式</td><td>Terminal、JSON、SARIF（可导入 GitHub Code Scanning）、HTML</td></tr>
+  <tr><td>安全认证</td><td>OpenSSF Best Practices <strong>Gold</strong>（2026-08-06 升级）+ CodeQL 扫描 + Sigstore 签名</td></tr>
+</table>
+
+<h3>4.2 近期重要更新（2026年7-8月）</h3>
+
+<div class="info-box">
+  <p><strong>2026-08-06</strong> — OpenSSF 安全认证从 Silver 升级为 <strong>Gold</strong>，语句覆盖率提升至 90% 并在 CI 中强制执行</p>
+  <p><strong>2026-08-05</strong> — 添加 Qwen3.8-Max 基准测试结果；本地 viewer 添加深度防御安全头（CSP 等）；添加 SPDX 许可证头自动化验证</p>
+  <p><strong>2026-07-31</strong> — CLI 迁移至 Cobra 框架，支持 shell 自动补全</p>
+  <p><strong>2026-07-16</strong> — 新增<strong>委托模式（Delegation Mode）</strong>：OCR 仅负责文件选择和规则解析，审查由已有编码 Agent（Claude Code/Codex/Cursor）的 LLM 执行，<strong>无需独立配置 API Key</strong></p>
+  <p><strong>2026-07-17</strong> — 添加 Windows 一键安装脚本</p>
+  <p><strong>2026-06-17</strong> — 添加平台特定 npm 包，消除 postinstall 下载依赖</p>
+</div>
+
+<h3>4.3 核心架构：确定性工程 × LLM Agent 混合驱动</h3>
+
+<p>OCR 的核心创新在于将审查流程拆分为两部分——<strong>确定性工程负责"不能出错"的环节，LLM Agent 负责"需要理解"的环节</strong>：</p>
+
+<div class="arch-flow">
+  <div class="arch-node">Git Diff 输入</div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-node green">确定性工程<br><small>文件筛选 · 智能打包 · 规则匹配</small></div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-node purple">LLM Agent<br><small>深度审查 · 上下文检索 · 缺陷判断</small></div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-node green">确定性工程<br><small>行级定位 · 评论反思 · 结果过滤</small></div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-node">行级精度评论输出</div>
+</div>
+
+<table>
+  <tr><th style="width:50%">确定性工程（硬约束）</th><th style="width:50%">LLM Agent（动态决策）</th></tr>
+  <tr>
+    <td>
+      <ul>
+        <li><strong>精准文件筛选</strong>：计算确定哪些文件需审查、哪些应过滤，确保不遗漏</li>
+        <li><strong>智能文件打包</strong>：关联文件（如中英文 properties）归并为同一审查单元，上下文隔离，天然支持并发</li>
+        <li><strong>细粒度规则匹配</strong>：基于模板引擎按文件特征匹配规则，消除信息噪声</li>
+        <li><strong>独立定位与反思模块</strong>：评论定位模块和反思模块独立校验位置和内容准确性</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li><strong>场景化提示词</strong>：针对代码审查深度优化的 prompt 模板</li>
+        <li><strong>场景化工具集</strong>：从大规模线上数据沉淀的专属工具集</li>
+        <li><strong>动态上下文检索</strong>：读取完整文件、搜索代码库、对比多个变更文件</li>
+        <li><strong>深度审查判断</strong>：给出具体、有上下文的缺陷描述</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<h3>4.4 Benchmark 数据</h3>
+
+<p>基于 50 个热门开源仓库、200 个真实 PR、10 种编程语言，由 80+ 位资深工程师交叉标注验证（共 1,505 个标注缺陷）：</p>
+
+<table>
+  <tr><th>指标</th><th>Open Code Review</th><th>通用 Agent（Claude Code）</th><th>说明</th></tr>
+  <tr><td>Precision（准确率）</td><td><span class="badge badge-green">显著更高</span></td><td>基线</td><td>误报更少，减少人工确认</td></tr>
+  <tr><td>F1（综合得分）</td><td><span class="badge badge-green">显著更高</span></td><td>基线</td><td>整体审查质量最佳单一指标</td></tr>
+  <tr><td>Recall（召回率）</td><td><span class="badge badge-orange">略低（有意取舍）</span></td><td>基线</td><td>以精准度换低噪声</td></tr>
+  <tr><td>Token 消耗</td><td><span class="badge badge-green">约 1/9</span></td><td>基线</td><td>直接影响 API 成本</td></tr>
+  <tr><td>审查速度</td><td><span class="badge badge-green">更快</span></td><td>基线</td><td>影响 CI 流水线延迟</td></tr>
+</table>
+
+<h3>4.5 三种审查模式</h3>
+
+<table>
+  <tr><th>模式</th><th>命令</th><th>适用场景</th></tr>
+  <tr><td>工作区模式</td><td><code>ocr review</code></td><td>审所有 staged/unstaged/untracked 变更（开发本地）</td></tr>
+  <tr><td>分支区间模式</td><td><code>ocr review --from main --to feature-branch</code></td><td>比较两个 Git ref（CI/CD 卡点）</td></tr>
+  <tr><td>单 Commit 模式</td><td><code>ocr review --commit abc123</code></td><td>审查单个提交</td></tr>
+  <tr><td>全文件扫描</td><td><code>ocr scan</code></td><td>审查整个文件/目录，不依赖 diff（审计不熟悉的代码库），支持 <code>--output html</code> 输出报告</td></tr>
+</table>
+
+<h3>4.6 规则管理：多层级配置</h3>
+
+<p>OCR 支持规则来源优先级，天然适配公司级 + 产品级分层管理：</p>
+
+<table>
+  <tr><th>优先级</th><th>来源</th><th>配置位置</th><th>说明</th></tr>
+  <tr><td>1（最高）</td><td>命令行指定</td><td><code>--rule</code> 参数</td><td>临时覆盖</td></tr>
+  <tr><td>2</td><td>项目级规则</td><td><code>.opencodereview/rule.json</code></td><td>提交到仓库，团队共享</td></tr>
+  <tr><td>3</td><td>用户全局规则</td><td><code>~/.opencodereview/rule.json</code></td><td>个人偏好</td></tr>
+  <tr><td>4（最低）</td><td>内置规则</td><td>按文件类型自动匹配</td><td>无需配置即可使用</td></tr>
+</table>
+
+<p>项目级规则示例（<code>.opencodereview/rule.json</code>）：</p>
+<div style="background:#1e293b; color:#e2e8f0; border-radius:8px; padding:16px; font-family:'Fira Code', monospace; font-size:13px; overflow-x:auto; margin:12px 0;">
+<pre>{
+  "rules": [
+    {
+      "path": "src/pay/**/*.java",
+      "rule": "重点检查金额计算、错误处理和并发安全"
+    },
+    {
+      "path": "**/*mapper*.xml",
+      "rule": "检查 SQL 注入风险、参数错误和缺少闭合标签"
+    },
+    {
+      "path": "src/**/*.{ts,tsx,js,jsx}",
+      "rule": "检查 React Hooks 使用规范、TypeScript 类型安全、XSS 风险"
+    }
+  ],
+  "exclude": ["**/generated/**", "vendor/**"]
+}</pre>
+</div>
+
+<!-- ==================== 4. PAIN COMPARE ==================== -->
+<h2 id="compare">五、逐条痛点对比：SonarQube vs Open Code Review</h2>
+
+<div class="pain-card">
+  <h4>痛点一：规则管理灵活性不足</h4>
+  <table>
+    <tr><th style="width:50%">SonarQube 现状</th><th style="width:50%">Open Code Review</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>仅支持公司级统一规则，产品定制需逐项目手工配置</li>
+          <li>独立需求需单独部署实例</li>
+          <li>无规则集自动化继承与分发</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li><span class="badge badge-green">已解决</span> 多层级规则配置：公司级 → 项目级 → 个人级，自动继承覆盖</li>
+          <li>项目级规则文件 <code>.opencodereview/rule.json</code> 提交到仓库即生效</li>
+          <li>无需额外部署实例，不同项目不同规则天然支持</li>
+          <li>路径匹配 + 文件类型匹配双重过滤，灵活度高</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="pain-card">
+  <h4>痛点二：扫描性能低下</h4>
+  <table>
+    <tr><th style="width:50%">SonarQube 现状</th><th style="width:50%">Open Code Review</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>全量扫描，单次约 1 小时（大型模块）</li>
+          <li>社区版单线程，项目间排队等待</li>
+          <li>无法做 CI 卡点，只能按日构建</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li><span class="badge badge-green">已解决</span> 天然增量扫描——基于 Git Diff，只审变更文件</li>
+          <li>默认 8 路并发审查，文件打包后各 sub-agent 独立并行</li>
+          <li>中等 PR 审查约 1-3 分钟，满足 CI 实时卡点</li>
+          <li>Token 消耗仅通用 Agent 的 ~1/9</li>
+          <li>无需数据库，无排队等待问题</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="pain-card">
+  <h4>痛点三：本地与卡点扫描结果不一致</h4>
+  <table>
+    <tr><th style="width:50%">SonarQube 现状</th><th style="width:50%">Open Code Review</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>本地 SonarLint 需手动指定规则集，选错即不一致</li>
+          <li>需明确指定 Sonar 项目名称</li>
+          <li>"本地通过、卡点失败"频发</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li><span class="badge badge-green">已解决</span> 本地和 CI 使用<strong>同一份</strong>规则文件 <code>.opencodereview/rule.json</code></li>
+          <li>同一 CLI 工具、同一规则集、同一模型端点 → 结果天然一致</li>
+          <li>无需指定项目名称，规则随仓库走</li>
+          <li>委托模式（Delegation Mode）下甚至无需独立配置 API Key</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="pain-card">
+  <h4>痛点四：问题归因困难</h4>
+  <table>
+    <tr><th style="width:50%">SonarQube 现状</th><th style="width:50%">Open Code Review</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>代码未改却出新问题，判定逻辑不透明</li>
+          <li>无法定位到效能任务单</li>
+          <li>无法精准退回</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li><span class="badge badge-green">已解决</span> 基于增量 Diff 审查——只看变更代码，未改不会报新问题</li>
+          <li>行级精度评论，直接定位到具体代码行</li>
+          <li>JSON 格式输出，可对接效能平台实现任务单关联和精准退回</li>
+          <li>每条评论含 severity（严重性）和 category（分类），支持路由策略</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="pain-card">
+  <h4>痛点五：升级影响大</h4>
+  <table>
+    <tr><th style="width:50%">SonarQube 现状</th><th style="width:50%">Open Code Review</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>JDK 17 需部署新版 SonarQube</li>
+          <li>恒生规约插件、多分支插件需适配改造</li>
+          <li>效能平台、卡点平台取数逻辑需同步升级</li>
+          <li>改造成本高、影响面大</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li><span class="badge badge-green">已解决</span> Go 编译二进制，无 JDK 依赖</li>
+          <li>npm 一键安装，无需部署服务端</li>
+          <li>无数据库、无插件适配问题</li>
+          <li>无 SonarQube 版本绑定问题</li>
+          <li>但需对接 LLM 模型端点（需评估模型成本和安全合规）</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ==================== 5. FULL COMPARE ==================== -->
+<h2 id="full-compare">六、全面对比矩阵</h2>
+
+<table>
+  <tr>
+    <th style="width:20%">维度</th>
+    <th style="width:40%">SonarQube（现有方案）</th>
+    <th style="width:40%">Open Code Review（候选方案）</th>
+  </tr>
+  <tr>
+    <td><strong>架构类型</strong></td>
+    <td>静态分析引擎 + 规则插件</td>
+    <td>确定性工程 + LLM Agent 混合</td>
+  </tr>
+  <tr>
+    <td><strong>部署形态</strong></td>
+    <td>服务端部署（需数据库、Web 服务）</td>
+    <td>CLI 工具，无服务端，无需数据库</td>
+  </tr>
+  <tr>
+    <td><strong>JDK 依赖</strong></td>
+    <td><span class="badge badge-red">强依赖</span> 升级 JDK 影响大</td>
+    <td><span class="badge badge-green">无依赖</span> Go 二进制</td>
+  </tr>
+  <tr>
+    <td><strong>扫描模式</strong></td>
+    <td>全量为主，仅恒生规约插件支持增量</td>
+    <td><span class="badge badge-green">天然增量</span>（基于 Git Diff）+ 全文件扫描</td>
+  </tr>
+  <tr>
+    <td><strong>并发能力</strong></td>
+    <td>社区版单线程，项目间排队</td>
+    <td><span class="badge badge-green">默认 8 路并发</span>，可配置</td>
+  </tr>
+  <tr>
+    <td><strong>扫描速度</strong></td>
+    <td>大型模块 ~1 小时/次</td>
+    <td>中等 PR ~1-3 分钟/次</td>
+  </tr>
+  <tr>
+    <td><strong>规则管理</strong></td>
+    <td>公司级统一，手工逐项目配置</td>
+    <td><span class="badge badge-green">多层级自动继承</span>（公司级→项目级→个人级）</td>
+  </tr>
+  <tr>
+    <td><strong>本地/CI 一致性</strong></td>
+    <td><span class="badge badge-red">不一致风险高</span></td>
+    <td><span class="badge badge-green">天然一致</span>（同一规则文件 + 同一 CLI）</td>
+  </tr>
+  <tr>
+    <td><strong>问题归因</strong></td>
+    <td>判定逻辑不透明，无法定位任务单</td>
+    <td>行级精度 + JSON 输出，可对接效能平台</td>
+  </tr>
+  <tr>
+    <td><strong>支持语言</strong></td>
+    <td>25+ 语言（含社区插件）</td>
+    <td>10 种（Java、JS/TS、Python、Go、SQL 等）</td>
+  </tr>
+  <tr>
+    <td><strong>前端支持</strong></td>
+    <td><span class="badge badge-red">待升级</span> 前端插件未适配新版 Sonar</td>
+    <td><span class="badge badge-green">原生支持</span> 内置 TS/JS 规则（React Hooks、XSS 等）</td>
+  </tr>
+  <tr>
+    <td><strong>CI/CD 集成</strong></td>
+    <td>需自研适配（效能平台/卡点平台取数）</td>
+    <td>GitHub Actions / GitLab CI / Gerrit 开箱即用</td>
+  </tr>
+  <tr>
+    <td><strong>成本模型</strong></td>
+    <td>服务器 + 数据库运维成本 + 插件开发维护成本</td>
+    <td>LLM API 调用成本（Token 计费）+ 无运维成本</td>
+  </tr>
+  <tr>
+    <td><strong>开源协议</strong></td>
+    <td>社区版 LGPL，商用版付费</td>
+    <td><span class="badge badge-green">Apache-2.0</span> 无限制</td>
+  </tr>
+  <tr>
+    <td><strong>成熟度</strong></td>
+    <td>成熟（2008 年至今），生态丰富</td>
+    <td>新兴（2026.05 开源），阿里内部验证 2 年</td>
+  </tr>
+  <tr>
+    <td><strong>仪表盘/报告</strong></td>
+    <td><span class="badge badge-green">丰富</span> Web 仪表盘、技术债报告</td>
+    <td>JSON / Terminal / SARIF（可导入 GitHub Security）/ HTML + Session Viewer（WebUI 回放审查会话）</td>
+  </tr>
+  <tr>
+    <td><strong>代码覆盖率</strong></td>
+    <td><span class="badge badge-green">支持</span></td>
+    <td><span class="badge badge-red">不支持</span>（非设计目标）</td>
+  </tr>
+  <tr>
+    <td><strong>复杂度指标</strong></td>
+    <td><span class="badge badge-green">支持</span>（圈复杂度等）</td>
+    <td><span class="badge badge-red">不支持</span>（聚焦缺陷发现）</td>
+  </tr>
+  <tr>
+    <td><strong>业务逻辑扫描</strong></td>
+    <td><span class="badge badge-red">不支持</span>（模式匹配，无法理解业务语义）</td>
+    <td><span class="badge badge-green">原生支持</span>（LLM 理解业务意图，可替代业务部门自研工具）</td>
+  </tr>
+  <tr>
+    <td><strong>跨文件上下文</strong></td>
+    <td><span class="badge badge-red">断裂</span>（以文件为单位分析）</td>
+    <td><span class="badge badge-green">支持</span>（动态上下文检索，追踪数据流）</td>
+  </tr>
+  <tr>
+    <td><strong>修复建议</strong></td>
+    <td>只报问题位置，无修复方案</td>
+    <td><span class="badge badge-green">报位置 + 给修复代码</span></td>
+  </tr>
+  <tr>
+    <td><strong>数据安全</strong></td>
+    <td>代码不外传，本地分析</td>
+    <td>需评估：代码 Diff 发送给 LLM 端点（可接私有部署模型；委托模式下不发送代码至第三方）</td>
+  </tr>
+  <tr>
+    <td><strong>安全认证</strong></td>
+    <td>—</td>
+    <td><span class="badge badge-green">OpenSSF Gold</span> + CodeQL 扫描 + Sigstore 签名</td>
+  </tr>
+  <tr>
+    <td><strong>可观测性</strong></td>
+    <td>内置 Web 仪表盘</td>
+    <td>OpenTelemetry 集成 + Session Viewer 会话回放</td>
+  </tr>
+</table>
+
+<!-- ==================== 6. RISKS ==================== -->
+<h2 id="risks">七、风险与限制</h2>
+
+<div class="warn-box">
+  <h4>风险一：LLM API 成本与可用性</h4>
+  <ul>
+    <li>OCR 需配置 LLM 端点（OpenAI / Anthropic / 自建），每次审查产生 Token 消耗</li>
+    <li>虽然 Token 消耗仅通用 Agent 的 ~1/9，但大规模使用仍需评估月度成本</li>
+    <li><strong>缓解措施：</strong>支持委托模式（复用已有编码 Agent 订阅，<strong>零额外 API 成本</strong>）、可接私有部署模型（如自建 Qwen/GLM 端点）</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <h4>风险二：代码数据安全合规</h4>
+  <ul>
+    <li>审查时代码 Diff 会发送至 LLM 端点，需评估是否符合公司数据安全要求</li>
+    <li><strong>缓解措施：</strong>OCR 仅发送变更文件的 Diff（非全量代码），可接公司私有部署的 LLM，数据不出内网；<strong>委托模式</strong>下 OCR 仅做文件选择和规则解析，审查由已有编码 Agent 执行，代码不经第三方</li>
+    <li>需与安全团队确认模型选型和数据流向</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <h4>风险三：召回率偏低（有意取舍）</h4>
+  <ul>
+    <li>OCR 的设计理念是"高精度、低噪声"，Recall 低于通用 Agent，可能漏报部分问题</li>
+    <li><strong>缓解措施：</strong>对于安全合规要求高的场景，可保留 SonarQube 做基线扫描，OCR 做增量深度审查，两者互补</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <h4>风险四：缺少仪表盘与技术债管理</h4>
+  <ul>
+    <li>OCR 聚焦"增量审查 + 实时卡点"，不具备 SonarQube 的全量技术债看板、代码覆盖率、复杂度趋势等能力</li>
+    <li><strong>缓解措施：</strong>如需技术债全景看板，可保留 SonarQube 社区版做低频全量基线扫描（按周/月），OCR 做高频增量审查</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <h4>风险五：项目成熟度</h4>
+  <ul>
+    <li>OCR 于 2026 年 5 月开源，社区生态仍在建设中</li>
+    <li>阿里内部已验证 2 年，GitHub Stars 已达 18,000+，社区增长迅速</li>
+    <li>已获 OpenSSF Best Practices Gold 认证，安全治理成熟度高</li>
+    <li><strong>缓解措施：</strong>Apache-2.0 协议可自主维护，不依赖上游更新节奏；可先在 1-2 个产品线试点</li>
+  </ul>
+</div>
+
+<!-- ==================== 7. RECOMMENDATION ==================== -->
+<h2 id="recommendation">八、选型建议与实施路径</h2>
+
+<div class="summary-card">
+  <h2>核心结论</h2>
+  <p>Open Code Review <strong>直接解决了现有 SonarQube 方案的五大痛点</strong>，特别是在增量扫描性能、规则多层级管理、本地/CI 一致性方面具有结构性优势。</p>
+  <p><strong>关键认知：OCR 并非纯 LLM 工具，而是"确定性静态扫描 + LLM 语义审查"的混合架构。</strong>其内置确定性工程模块可完成文件筛选、规则匹配、行级定位等传统静态扫描能力（与 Sonar 重叠的部分），再由 LLM 在此基础上做业务语义理解、跨文件上下文追踪、修复方案生成——这是 Sonar 做不到的部分。换句话说，OCR 同时覆盖了"确定性扫描"和"大模型审查"两个维度。</p>
+  <p>但 OCR 不具备全量技术债看板、代码覆盖率、复杂度指标等工程化仪表盘能力——这些 Sonar 仍不可替代。</p>
+  <h3>推荐方案：混合分层架构（OCR 为主 + SonarQube 为辅）</h3>
+</div>
+
+<h3>8.1 推荐架构</h3>
+
+<table>
+  <tr><th style="width:25%">层级</th><th style="width:30%">工具</th><th style="width:45%">职责</th></tr>
+  <tr>
+    <td><strong>实时卡点层</strong><br><span class="badge badge-blue">高频</span></td>
+    <td>Open Code Review</td>
+    <td>
+      <ul>
+        <li>每次代码提交/MR 触发增量审查</li>
+        <li>行级精度评论直接回贴到 MR</li>
+        <li>严重问题阻断合并（CI 卡点）</li>
+        <li>前端/Java/C++ 统一覆盖</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>基线扫描层</strong><br><span class="badge badge-purple">低频</span></td>
+    <td>SonarQube（保留）</td>
+    <td>
+      <ul>
+        <li>按周/月做全量基线扫描</li>
+        <li>技术债看板、代码覆盖率、复杂度趋势</li>
+        <li>合规审计报告</li>
+        <li>降级为按周构建，不影响日常开发</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>规则管理层</strong></td>
+    <td>OCR 多层级规则 + Sonar 规则</td>
+    <td>
+      <ul>
+        <li>公司级统一规则 → OCR 全局配置 + Sonar 默认规则集</li>
+        <li>产品级定制规则 → <code>.opencodereview/rule.json</code> 提交到仓库</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<h3>8.2 实施路径</h3>
+
+<table>
+  <tr><th style="width:10%">阶段</th><th style="width:20%">时间</th><th style="width:50%">关键动作</th><th style="width:20%">产出</th></tr>
+  <tr>
+    <td><strong>阶段一<br>试点验证</strong></td>
+    <td>2-3 周</td>
+    <td>
+      <ul>
+        <li>选 1-2 个产品线（含前端 + Java）接入 OCR</li>
+        <li>配置 LLM 端点（建议先用私有部署模型验证数据安全）</li>
+        <li>在 GitLab CI 中集成 <code>ocr review</code></li>
+        <li>对比 OCR 与 Sonar 扫描结果，评估准确率和误报率</li>
+        <li>与财富张森团队同步评估 OCR，做 50-100 个 PR 对比测试</li>
+        <li>排查其他业务部门是否有类似自研 LLM 扫描工具</li>
+        <li>安全团队评审代码数据流向</li>
+      </ul>
+    </td>
+    <td>试点评估报告</td>
+  </tr>
+  <tr>
+    <td><strong>阶段二<br>规则迁移</strong></td>
+    <td>3-4 周</td>
+    <td>
+      <ul>
+        <li>将公司级 Sonar 规则中高频命中的规则迁移为 OCR 自定义规则</li>
+        <li>为各产品线编写 <code>.opencodereview/rule.json</code> 项目级规则</li>
+        <li>对接效能平台：OCR JSON 输出 → 任务单关联 → 精准退回</li>
+      </ul>
+    </td>
+    <td>规则集迁移完成</td>
+  </tr>
+  <tr>
+    <td><strong>阶段三<br>全面推广</strong></td>
+    <td>4-6 周</td>
+    <td>
+      <ul>
+        <li>所有产品线 CI 接入 OCR 增量审查卡点</li>
+        <li>前端扫描插件问题随之解决（OCR 原生支持 JS/TS）</li>
+        <li>SonarQube 降级为按周基线扫描，不再做日常卡点</li>
+        <li>取消前端 Sonar 插件升级计划</li>
+      </ul>
+    </td>
+    <td>全面上线</td>
+  </tr>
+  <tr>
+    <td><strong>阶段四<br>持续优化</strong></td>
+    <td>持续</td>
+    <td>
+      <ul>
+        <li>根据审查数据持续优化规则集</li>
+        <li>评估 LLM 成本，优化 Token 消耗</li>
+        <li>探索 OCR 全文件扫描模式用于历史代码审计</li>
+      </ul>
+    </td>
+    <td>运营报告</td>
+  </tr>
+</table>
+
+<h3>8.3 关于前端扫描插件升级的决策</h3>
+
+<div class="success-box">
+  <p><strong>建议：暂停前端 Sonar 扫描插件升级工作。</strong></p>
+  <p>理由：</p>
+  <ul>
+    <li>OCR 原生支持 JavaScript/TypeScript 扫描，内置 React Hooks、XSS、TypeScript 类型安全等前端规则</li>
+    <li>如采用混合方案，前端增量审查由 OCR 负责，Sonar 仅做低频基线扫描，前端插件升级的紧迫性大幅降低</li>
+    <li>如最终确认方案不变（不采用 OCR），再启动前端插件升级，联系李文博支持</li>
+  </ul>
+  <p><strong>前端插件升级的决策应等待选型结论后再定。</strong></p>
+</div>
+
+<h3>8.4 关于 JDK 17 升级引发的 Sonar 升级</h3>
+
+<div class="info-box">
+  <p><strong>如采用混合方案：</strong></p>
+  <ul>
+    <li>OCR 不依赖 JDK，JDK 17 升级对 OCR 零影响</li>
+    <li>Sonar 升级可降级为"按需升级"——仅当需要新版 Sonar 的基线扫描功能时才升级</li>
+    <li>恒生规约插件、多分支插件的适配改造可暂缓，降低短期改造成本</li>
+  </ul>
+</div>
+
+<h3>8.5 关于业务部门自研 LLM 扫描工具的整合</h3>
+
+<div class="info-box">
+  <p><strong>背景：</strong>财富部门张森团队已自建 LLM 业务代码逻辑扫描工具，双方确认技术方向一致，后续各自评估后对齐结论。</p>
+</div>
+
+<table>
+  <tr><th style="width:20%">场景</th><th style="width:40%">处理方式</th><th style="width:40%">理由</th></tr>
+  <tr>
+    <td><strong>OCR 能覆盖</strong>财富业务特定规则</td>
+    <td>统一收敛为 OCR 公司级方案，财富部门特定规则迁移为 OCR 自定义规则</td>
+    <td>避免重复造轮子；四层规则优先级链天然支持业务部门差异；社区持续维护替代个人维护</td>
+  </tr>
+  <tr>
+    <td><strong>OCR 不能完全覆盖</strong>金融特定规则</td>
+    <td>OCR 作为统一平台 + 财富特定规则通过 <code>.opencodereview/rule.json</code> 注入</td>
+    <td>统一平台 + 差异化规则；规则可追溯、可继承；财富部门不再独立维护工具</td>
+  </tr>
+  <tr>
+    <td><strong>财富工具审查质量优于</strong> OCR</td>
+    <td>财富工具继续使用，OCR 负责其他业务部门；后续评估是否将财富规则反哺 OCR</td>
+    <td>尊重已有积累；不强行替换；以审查效果为标准</td>
+  </tr>
+</table>
+
+<div class="success-box">
+  <p><strong>建议行动：</strong></p>
+  <ol>
+    <li><strong>对比测试（2-3 周）</strong>：选 50-100 个财富团队 PR，同样的 diff 跑 OCR 和财富自研工具，对比 Precision/Recall/审查质量</li>
+    <li><strong>规则对齐</strong>：获取财富自研工具的规则清单，逐一比对 OCR 内置规则能否覆盖</li>
+    <li><strong>各自评估后对齐结论</strong>：财富团队同步评估 OCR，双方交流评估结果后统一决策</li>
+    <li><strong>其他业务部门</strong>：排查是否有类似自研 LLM 扫描工具的部门，统一纳入选型视野</li>
+  </ol>
+</div>
+
+<h3>8.6 LLM 模型选型与成本测算</h3>
+
+<p>OCR 需配置 LLM 端点，模型选型直接影响审查质量、成本和数据安全。三种方案对比：</p>
+
+<table>
+  <tr>
+    <th style="width:18%">方案</th>
+    <th style="width:25%">模型选项</th>
+    <th style="width:20%">成本参考</th>
+    <th style="width:20%">数据安全</th>
+    <th style="width:17%">适用阶段</th>
+  </tr>
+  <tr>
+    <td><strong>方案A<br>私有部署</strong></td>
+    <td>自建 Qwen2.5-72B / GLM-4 / DeepSeek-V3 等</td>
+    <td>GPU 服务器成本（公司已有算力可复用），无按次计费</td>
+    <td><span class="badge badge-green">最优</span> 代码不出内网</td>
+    <td><span class="badge badge-blue">推荐试点</span></td>
+  </tr>
+  <tr>
+    <td><strong>方案B<br>委托模式</strong></td>
+    <td>复用已有编码 Agent 订阅（Claude Code/Codex/Cursor）</td>
+    <td><span class="badge badge-green">零额外成本</span>（复用已有订阅）</td>
+    <td><span class="badge badge-green">优</span> OCR 仅做文件选择，代码不经第三方</td>
+    <td><span class="badge badge-blue">推荐试点</span></td>
+  </tr>
+  <tr>
+    <td><strong>方案C<br>云端 API</strong></td>
+    <td>OpenAI / Anthropic / 阿里通义千问 API</td>
+    <td>~$0.01/次（GPT-4-mini）；DeepSeek 免费层零成本</td>
+    <td><span class="badge badge-orange">需评估</span> Diff 发送至云端</td>
+    <td>仅适合非敏感项目验证</td>
+  </tr>
+</table>
+
+<div class="info-box">
+  <p><strong>成本估算参考（方案A/C）：</strong></p>
+  <ul>
+    <li>假设日均 200 个 PR/MR，每次审查消耗 ~5,000 Token（OCR 增量模式）</li>
+    <li><strong>方案A（私有部署）</strong>：复用已有 GPU 算力，月增成本≈电费+运维，边际成本趋近于零</li>
+    <li><strong>方案C（GPT-4-mini）</strong>：200 PR × 22 天 × 5,000 Token × $0.15/M ≈ <strong>$33/月</strong>（约 ¥240/月）</li>
+    <li><strong>方案C（DeepSeek 免费层）</strong>：免费，但有速率限制</li>
+    <li><strong>对比之前痛点</strong>：章总提到"技术平台给的 skill 扫代码很耗 token"——OCR 混合架构 Token 消耗仅通用 Agent 的 1/9，成本可控</li>
+  </ul>
+  <p><strong>建议：试点阶段优先用方案B（委托模式，零成本验证）或方案A（私有部署，数据安全最优），大规模推广时定方案A。</strong></p>
+</div>
+
+<h3>8.7 SVN 仓库处理方案</h3>
+
+<div class="warn-box">
+  <p><strong>已知限制：</strong>OCR 依赖 Git >= 2.41 做 diff 生成、代码搜索和仓库操作，<strong>原生不支持 SVN</strong>。</p>
+</div>
+
+<table>
+  <tr><th style="width:20%">方案</th><th style="width:40%">处理方式</th><th style="width:20%">能力保留</th><th style="width:20%">适用场景</th></tr>
+  <tr>
+    <td><strong>方案A<br>ocr scan 兜底</strong></td>
+    <td>SVN 仓库 checkout 到本地后 <code>ocr scan .</code>，不需要 Git 历史，可扫描任意目录</td>
+    <td>失去增量能力，仅全文件扫描</td>
+    <td>少量 SVN 仓库的历史代码审计</td>
+  </tr>
+  <tr>
+    <td><strong>方案B<br>适配脚本</strong></td>
+    <td>SVN diff 输出转 Git diff 格式再喂给 OCR，定制一层适配脚本</td>
+    <td>保留增量审查能力</td>
+    <td>SVN 仓库需实时卡点</td>
+  </tr>
+  <tr>
+    <td><strong>方案C<br>Sonar 兜底</strong></td>
+    <td>SVN 仓库继续用 Sonar 扫描，Git 仓库用 OCR</td>
+    <td>维持现状，不强行统一</td>
+    <td><span class="badge badge-blue">推荐</span> 务实方案</td>
+  </tr>
+</table>
+
+<div class="info-box">
+  <p><strong>务实建议：</strong>如公司 SVN 仓库数量少且无实时卡点需求，方案C（Sonar 兜底）最简单；如有增量需求，方案B（适配脚本）开发量不大（SVN diff → Git diff 格式转换约 2-3 天开发量）。不必强求所有仓库统一工具。</p>
+</div>
+
+<h3>8.8 效能平台/卡点平台对接方案</h3>
+
+<p>现有 Sonar 卡点依赖效能平台和卡点平台取数逻辑，OCR 替换后需对接改造：</p>
+
+<table>
+  <tr><th style="width:20%">对接项</th><th style="width:35%">现有方式（Sonar）</th><th style="width:45%">OCR 对接方式</th></tr>
+  <tr>
+    <td><strong>审查结果输出</strong></td>
+    <td>SonarQube 数据库 API 拉取</td>
+    <td>OCR JSON 输出（含 severity/category/行号/评论），直接在 CI 流水线中解析</td>
+  </tr>
+  <tr>
+    <td><strong>MR 评论回贴</strong></td>
+    <td>需自研适配逻辑</td>
+    <td>OCR 原生支持行级评论直接回贴 MR（GitLab/GitHub API）</td>
+  </tr>
+  <tr>
+    <td><strong>卡点阻断</strong></td>
+    <td>卡点平台从 Sonar 拉数判断</td>
+    <td>CI 中解析 OCR JSON，按 severity 过滤：<code>critical/ blocker → 阻断合并</code></td>
+  </tr>
+  <tr>
+    <td><strong>任务单关联</strong></td>
+    <td>无法定位到效能任务单</td>
+    <td>OCR JSON 含 file + line + commit，可关联到具体提交 → 关联效能任务单 → <strong>精准退回</strong></td>
+  </tr>
+  <tr>
+    <td><strong>SARIF 导入</strong></td>
+    <td>不支持</td>
+    <td>OCR 支持 SARIF 输出，可导入 GitHub Code Scanning / 兼容 SARIF 的平台</td>
+  </tr>
+  <tr>
+    <td><strong>数据可视化</strong></td>
+    <td>Sonar Web 仪表盘</td>
+    <td>JSON → 效能平台报表；Session Viewer（<code>ocr viewer</code>）回放审查会话</td>
+  </tr>
+</table>
+
+<div class="info-box">
+  <p><strong>改造量评估：</strong>OCR JSON 输出格式标准、结构清晰，对接改造量小于 Sonar 数据库迁移改造。建议阶段二（规则迁移）同步开发效能平台适配层，优先实现"MR 评论回贴 + 卡点阻断"两个核心能力。</p>
+</div>
+
+<h3>8.9 回退方案与验收标准</h3>
+
+<div class="warn-box">
+  <h4>回退方案</h4>
+  <p>如 OCR 试点验证阶段不达标，按以下路径回退：</p>
+  <ul>
+    <li><strong>回退触发条件：</strong>试点期间审查准确率 < 80%（误报率 > 20%），或 LLM API 成本超预算 2 倍，或安全团队不予通过</li>
+    <li><strong>回退动作：</strong>OCR 停用，恢复 Sonar 按日构建模式，前端插件升级重新启动（联系李文博），不影响现有流程</li>
+    <li><strong>风险可控：</strong>OCR 是"增量叠加"方案，不修改 Sonar 现有配置，回退只需关闭 OCR CI 步骤</li>
+  </ul>
+</div>
+
+<table>
+  <tr><th style="width:15%">阶段</th><th style="width:42%">验收标准</th><th style="width:18%">决策门槛</th><th style="width:25%">不达标处理</th></tr>
+  <tr>
+    <td><strong>阶段一<br>试点验证</strong></td>
+    <td>
+      <ul>
+        <li>OCR 审查准确率 ≥ 80%</li>
+        <li>误报率 ≤ 20%</li>
+        <li>单 PR 审查时间 ≤ 5 分钟</li>
+        <li>安全团队评审通过</li>
+        <li>与财富工具对比测试有结论</li>
+      </ul>
+    </td>
+    <td><span class="badge badge-green">全部达标</span></td>
+    <td>降级 Sonar 模式，分析原因后重新试点或终止</td>
+  </tr>
+  <tr>
+    <td><strong>阶段二<br>规则迁移</strong></td>
+    <td>
+      <ul>
+        <li>公司级高频规则迁移完成 ≥ 90%</li>
+        <li>各产品线 <code>.opencodereview/rule.json</code> 配置完成</li>
+        <li>效能平台适配层开发完成（评论回贴 + 卡点阻断可用）</li>
+      </ul>
+    </td>
+    <td><span class="badge badge-green">全部达标</span></td>
+    <td>延后阶段三，补齐规则缺口</td>
+  </tr>
+  <tr>
+    <td><strong>阶段三<br>全面推广</strong></td>
+    <td>
+      <ul>
+        <li>所有产品线 CI 接入 OCR</li>
+        <li>前端扫描问题解决</li>
+        <li>Sonar 降级为按周基线扫描</li>
+        <li>LLM 月度成本在预算内</li>
+      </ul>
+    </td>
+    <td><span class="badge badge-green">全部达标</span></td>
+    <td>分批推广，未就绪产品线暂留 Sonar</td>
+  </tr>
+</table>
+
+<div class="success-box">
+  <p><strong>组织保障建议：</strong></p>
+  <ul>
+    <li><strong>牵头人</strong>：黄华（技术平台），负责选型决策和资源协调</li>
+    <li><strong>执行人</strong>：谢超（配管），负责 OCR 集成、规则迁移、效能平台对接</li>
+    <li><strong>协同方</strong>：张森（财富），负责自研工具评估对比；王小恒/唐冬（Java/C++ 插件），负责规则迁移；李文博（前端），待选型结论后决定是否启动插件升级</li>
+    <li><strong>安全评审</strong>：安全团队评审数据流向和模型选型</li>
+    <li><strong>汇报对象</strong>：章总（章乐焱），关键决策点汇报</li>
+  </ul>
+</div>
+
+<!-- ==================== APPENDIX ==================== -->
+<h2 id="appendix">附录：OCR 关键技术参数</h2>
+
+<table>
+  <tr><th style="width:30%">参数</th><th>值</th></tr>
+  <tr><td>项目地址</td><td>github.com/alibaba/open-code-review</td></tr>
+  <tr><td>官方文档</td><td>open-codereview.ai/docs</td></tr>
+  <tr><td>npm 包名</td><td>@alibaba-group/open-code-review</td></tr>
+  <tr><td>最新版本</td><td>v1.7.17（2026-07-26）</td></tr>
+  <tr><td>GitHub Stars</td><td>18,000+（2026-08-06）</td></tr>
+  <tr><td>Forks</td><td>1,200+（2026-08）</td></tr>
+  <tr><td>Commits</td><td>486（2026-08-06）</td></tr>
+  <tr><td>开源协议</td><td>Apache-2.0</td></tr>
+  <tr><td>主要语言</td><td>Go 65.6% + TypeScript 19.2%</td></tr>
+  <tr><td>创建时间</td><td>2026-05-18</td></tr>
+  <tr><td>Git 版本要求</td><td>>= 2.41</td></tr>
+  <tr><td>默认并发数</td><td>8（可配置）</td></tr>
+  <tr><td>Token 预算</td><td>MAX_TOKENS = 58,888（三分区压缩策略）</td></tr>
+  <tr><td>模型兼容</td><td>OpenAI API / Anthropic API / 自定义端点 / 委托模式（无需独立 API Key）</td></tr>
+  <tr><td>CI/CD 集成</td><td>GitHub Actions、GitLab CI、Gerrit、GitFlic CI</td></tr>
+  <tr><td>IDE 集成</td><td>VSCode 扩展</td></tr>
+  <tr><td>Agent 集成</td><td>Claude Code、Codex、Cursor、OpenCode、MCP Server</td></tr>
+  <tr><td>输出格式</td><td>Terminal、JSON、SARIF（可对接 GitHub Code Scanning）、HTML</td></tr>
+  <tr><td>可观测性</td><td>OpenTelemetry 集成 + Session Viewer（ocr viewer WebUI 回放）</td></tr>
+  <tr><td>安全认证</td><td>OpenSSF Best Practices <strong>Gold</strong> + CodeQL 扫描 + Sigstore 签名 + 90% 覆盖率门禁</td></tr>
+  <tr><td>委托模式</td><td>ocr delegate preview / ocr delegate rule（无需配置 LLM，复用已有 Agent）</td></tr>
+  <tr><td>多语言文档</td><td>英文、中文、日文、韩文、俄文</td></tr>
+</table>
+
+<div class="footer">
+  <p>本报告基于公开资料整理，数据截至 2026 年 8 月 7 日。8 月 7 日新增「业务部门对业务逻辑扫描的需求现状」章节及选型建议补充（8.6~8.9）。</p>
+  <p>如需进一步讨论或调整，请联系调研人。</p>
+</div>
+
+</div>
+
+</body>
+</html>
